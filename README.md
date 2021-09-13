@@ -62,8 +62,8 @@ This repo consists of the Backend code of the project, the backend code is in [S
     - Clone the code & install the modules-
     
         ```
-        git clone https://github.com/Mayank0255/Stackoverflow-Clone.git
-        cd Stackoverflow-Clone
+        git clone https://github.com/Mayank0255/Stackoverflow-Clone-Frontend.git
+        cd Stackoverflow-Clone-Frontend
         
         npm install
         ```
