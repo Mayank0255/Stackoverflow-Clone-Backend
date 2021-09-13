@@ -7,7 +7,7 @@ const path = require('path');
 const http = require('http');
 const express = require('express');
 const pool = require('./config/db.config');
-const index = require('./server/routes/index.route');
+const index = require('./src/routes/index.route');
 
 const app = express();
 
