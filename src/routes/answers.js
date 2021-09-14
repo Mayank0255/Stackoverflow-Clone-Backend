@@ -1,5 +1,5 @@
 const express = require('express');
-const {check} = require('express-validator');
+const { check } = require('express-validator');
 const auth = require('../middleware/auth');
 const checkOwnership = require('../middleware/checkOwnership');
 const answersController = require('../controllers/answers');
@@ -19,7 +19,7 @@ router.get('/:id', answersController.getAnswers);
 router.post(
   '/:id',
   [auth, [check('text', 'Answer is required').not().isEmpty()]],
-  answersController.addAnswer
+  answersController.addAnswer,
 );
 
 /** @route      DELETE /api/posts/answers/:id

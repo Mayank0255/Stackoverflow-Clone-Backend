@@ -1,5 +1,5 @@
 const express = require('express');
-const {check} = require('express-validator');
+const { check } = require('express-validator');
 const auth = require('../middleware/auth');
 const checkOwnership = require('../middleware/checkOwnership');
 const commentsController = require('../controllers/comments');
@@ -19,7 +19,7 @@ router.get('/:id', commentsController.getComments);
 router.post(
   '/:id',
   [auth, [check('body', 'Comment is required').not().isEmpty()]],
-  commentsController.addComment
+  commentsController.addComment,
 );
 
 /** @route      DELETE /api/posts/comments/:id

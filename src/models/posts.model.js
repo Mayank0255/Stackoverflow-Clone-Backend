@@ -2,6 +2,7 @@ const helperFunction = require('../helpers/helperFunction');
 const investApi = require('../services/investApi');
 
 // constructor
+// eslint-disable-next-line func-names
 const Post = function (post) {
   this.title = post.title;
   this.body = post.body;
@@ -13,10 +14,10 @@ Post.create = async (newPost, result) => {
   const tagDescription = await investApi.fetchTagDesc(newPost.tagname);
 
   const query = ` INSERT INTO posts(title,body,user_id) VALUES (?,?,?);
-                    SET @v1 := (SELECT LAST_INSERT_ID());
-                    INSERT IGNORE INTO tags(tagname, description) VALUES (?, ?);
-                    SET @v2 := (SELECT id FROM tags WHERE tagname = ?);
-                    INSERT INTO posttag(post_id,tag_id) VALUES(@v1,@v2);`;
+                  SET @v1 := (SELECT LAST_INSERT_ID());
+                  INSERT IGNORE INTO tags(tagname, description) VALUES (?, ?);
+                  SET @v2 := (SELECT id FROM tags WHERE tagname = ?);
+                  INSERT INTO posttag(post_id,tag_id) VALUES(@v1,@v2);`;
 
   pool.query(
     query,
@@ -36,25 +37,25 @@ Post.create = async (newPost, result) => {
             false,
             err.statusCode,
             err.message,
-            null
+            null,
           ),
-          null
+          null,
         );
         return;
       }
       result(
         null,
-        helperFunction.responseHandler(true, 200, 'Post Created', res.insertId)
+        helperFunction.responseHandler(true, 200, 'Post Created', res.insertId),
       );
-    }
+    },
   );
 };
 
 Post.remove = (id, result) => {
   const query = ` DELETE FROM posttag WHERE post_id = ?;
-                    DELETE FROM comments WHERE post_id = ?; 
-                    DELETE FROM answers WHERE post_id = ?; 
-                    DELETE FROM posts WHERE id = ? ;`;
+                  DELETE FROM comments WHERE post_id = ?; 
+                  DELETE FROM answers WHERE post_id = ?; 
+                  DELETE FROM posts WHERE id = ? ;`;
 
   pool.query(query, [id, id, id, id], (err) => {
     if (err) {
@@ -64,15 +65,15 @@ Post.remove = (id, result) => {
           false,
           err.statusCode,
           err.message,
-          null
+          null,
         ),
-        null
+        null,
       );
       return;
     }
     result(
       null,
-      helperFunction.responseHandler(true, 200, 'Post Removed', null)
+      helperFunction.responseHandler(true, 200, 'Post Removed', null),
     );
   });
 };
@@ -81,17 +82,17 @@ Post.retrieveOne = (postId, result) => {
   const updateQuery = `UPDATE posts SET views = views + 1 WHERE posts.id = ?;`;
 
   const query = ` SELECT 
-                    posts.id,posts.user_id,tag_id,COUNT(DISTINCT answers.id) 
-                    as answer_count,COUNT(DISTINCT comments.id) 
-                    as comment_count,username,title,posts.body 
-                    as post_body,tagname,posts.created_at,posts.views as views
-                    FROM posts 
-                    JOIN posttag ON posts.id = post_id 
-                    JOIN tags ON tag_id = tags.id 
-                    JOIN users ON user_id = users.id 
-                    LEFT JOIN answers ON answers.post_id = posts.id 
-                    LEFT JOIN comments ON posts.id = comments.post_id 
-                    WHERE posts.id = ?;`;
+                  posts.id,posts.user_id,tag_id,COUNT(DISTINCT answers.id) 
+                  as answer_count,COUNT(DISTINCT comments.id) 
+                  as comment_count,username,title,posts.body 
+                  as post_body,tagname,posts.created_at,posts.views as views
+                  FROM posts 
+                  JOIN posttag ON posts.id = post_id 
+                  JOIN tags ON tag_id = tags.id 
+                  JOIN users ON user_id = users.id 
+                  LEFT JOIN answers ON answers.post_id = posts.id 
+                  LEFT JOIN comments ON posts.id = comments.post_id 
+                  WHERE posts.id = ?;`;
 
   pool.query(updateQuery, postId, (err) => {
     if (err) {
@@ -100,10 +101,10 @@ Post.retrieveOne = (postId, result) => {
         helperFunction.responseHandler(
           false,
           err ? err.statusCode : 404,
-          err ? err.message : "There isn't any post by this id",
-          null
+          err ? err.message : 'There isn\'t any post by this id',
+          null,
         ),
-        null
+        null,
       );
     }
   });
@@ -115,21 +116,21 @@ Post.retrieveOne = (postId, result) => {
         helperFunction.responseHandler(
           false,
           err ? err.statusCode : 404,
-          err ? err.message : "There isn't any post by this id",
-          null
+          err ? err.message : 'There isn\'t any post by this id',
+          null,
         ),
-        null
+        null,
       );
       return;
     }
     result(
       null,
-      helperFunction.responseHandler(true, 200, 'Success', results[0])
+      helperFunction.responseHandler(true, 200, 'Success', results[0]),
     );
   });
 };
 
-Post.retrieveAll = ({action, tagName}, result) => {
+Post.retrieveAll = ({ action, tagName }, result) => {
   let query = '';
   const base = `SELECT 
                 posts.id,posts.user_id,username,COUNT(DISTINCT answers.id) 
@@ -147,12 +148,11 @@ Post.retrieveAll = ({action, tagName}, result) => {
   } else if (action === 'top') {
     query = 'GROUP BY posts.id ORDER BY answer_count DESC,comment_count DESC;';
   } else if (action === 'tag') {
-    query =
-      'WHERE tags.tagname = ? GROUP BY posts.id ORDER BY posts.created_at DESC;';
+    query = 'WHERE tags.tagname = ? GROUP BY posts.id ORDER BY posts.created_at DESC;';
   } else {
     result(
       helperFunction.responseHandler(false, 400, 'Incorrect Action', null),
-      null
+      null,
     );
     return;
   }
@@ -164,9 +164,9 @@ Post.retrieveAll = ({action, tagName}, result) => {
           false,
           err ? err.statusCode : 404,
           err ? err.message : 'There are no posts',
-          null
+          null,
         ),
-        null
+        null,
       );
       return;
     }

@@ -1,4 +1,4 @@
-const {validationResult} = require('express-validator');
+const { validationResult } = require('express-validator');
 const helperFunction = require('../helpers/helperFunction');
 const Answer = require('../models/answers.model');
 
@@ -25,9 +25,7 @@ const addAnswer = (req, res) => {
   if (!errors.isEmpty()) {
     return res
       .status(400)
-      .json(
-        helperFunction.responseHandler(false, 400, errors.array()[0].msg, null)
-      );
+      .json(helperFunction.responseHandler(false, 400, errors.array()[0].msg, null));
   }
   try {
     const answer = new Answer({

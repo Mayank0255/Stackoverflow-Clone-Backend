@@ -1,10 +1,10 @@
-const {validationResult} = require('express-validator');
+const { validationResult } = require('express-validator');
 const helperFunction = require('../helpers/helperFunction');
 const User = require('../models/users.model');
 
 const getUsers = (req, res) => {
   try {
-    const {id} = req.params;
+    const { id } = req.params;
 
     User.retrieve(
       {
@@ -17,7 +17,7 @@ const getUsers = (req, res) => {
           return res.status(err.code).json(err);
         }
         return res.status(data.code).json(data);
-      }
+      },
     );
   } catch (err) {
     console.log(err);
@@ -32,9 +32,7 @@ const register = async (req, res) => {
   if (!errors.isEmpty()) {
     return res
       .status(400)
-      .json(
-        helperFunction.responseHandler(false, 400, errors.array()[0].msg, null)
-      );
+      .json(helperFunction.responseHandler(false, 400, errors.array()[0].msg, null));
   }
   try {
     // Register user in the database

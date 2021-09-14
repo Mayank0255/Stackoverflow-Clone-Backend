@@ -1,5 +1,5 @@
 const express = require('express');
-const {check} = require('express-validator');
+const { check } = require('express-validator');
 const auth = require('../middleware/auth');
 const authController = require('../controllers/auth');
 
@@ -18,10 +18,10 @@ router.get('/', auth, authController.loadUser);
 router.post(
   '/',
   [
-    check('username', 'Please include a valid username').isLength({min: 5}),
+    check('username', 'Please include a valid username').isLength({ min: 5 }),
     check('password', 'Password is required').not().isEmpty(),
   ],
-  authController.login
+  authController.login,
 );
 
 module.exports = router;

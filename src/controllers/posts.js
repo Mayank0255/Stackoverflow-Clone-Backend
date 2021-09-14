@@ -1,9 +1,9 @@
-const {validationResult} = require('express-validator');
+const { validationResult } = require('express-validator');
 const helperFunction = require('../helpers/helperFunction');
 const Post = require('../models/posts.model');
 
 const getPosts = (req, res) => {
-  const {tagname} = req.params;
+  const { tagname } = req.params;
 
   try {
     Post.retrieveAll(
@@ -18,7 +18,7 @@ const getPosts = (req, res) => {
           return res.status(err.code).json(err);
         }
         return res.status(data.code).json(data);
-      }
+      },
     );
   } catch (err) {
     console.log(err);
@@ -50,9 +50,7 @@ const addPost = (req, res) => {
   if (!errors.isEmpty()) {
     return res
       .status(400)
-      .json(
-        helperFunction.responseHandler(false, 400, errors.array()[0].msg, null)
-      );
+      .json(helperFunction.responseHandler(false, 400, errors.array()[0].msg, null));
   }
   try {
     const post = new Post({

@@ -1,5 +1,5 @@
 const express = require('express');
-const {check} = require('express-validator');
+const { check } = require('express-validator');
 const auth = require('../middleware/auth');
 const checkOwnership = require('../middleware/checkOwnership');
 const postsController = require('../controllers/posts');
@@ -47,7 +47,7 @@ router.post(
       }),
     ],
   ],
-  postsController.addPost
+  postsController.addPost,
 );
 
 /** @route      DELETE /api/posts/:id

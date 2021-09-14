@@ -4,6 +4,7 @@ const config = require('config');
 const helperFunction = require('../helpers/helperFunction');
 
 // constructor
+// eslint-disable-next-line func-names
 const User = function (user) {
   this.username = user.username;
   this.password = user.password;
@@ -23,9 +24,9 @@ User.register = async (newUser, result) => {
           false,
           err.statusCode,
           err.message,
-          null
+          null,
         ),
-        null
+        null,
       );
       return;
     }
@@ -39,26 +40,26 @@ User.register = async (newUser, result) => {
     jwt.sign(
       payload,
       config.get('jwtSecret'),
-      {expiresIn: 3600},
-      (err, token) => {
-        if (err) {
-          console.log('error: ', err);
+      { expiresIn: 3600 },
+      (error, token) => {
+        if (error) {
+          console.log('error: ', error);
           result(
             helperFunction.responseHandler(
               false,
               err.statusCode,
               err.message,
-              null
+              null,
             ),
-            null
+            null,
           );
           return;
         }
         result(
           null,
-          helperFunction.responseHandler(true, 200, 'User registered', {token})
+          helperFunction.responseHandler(true, 200, 'User registered', { token }),
         );
-      }
+      },
     );
   });
 };
@@ -75,9 +76,9 @@ User.login = (newUser, result) => {
           false,
           code,
           !results[0] ? 'User does not exists' : err.message,
-          null
+          null,
         ),
-        null
+        null,
       );
       return;
     }
@@ -89,7 +90,7 @@ User.login = (newUser, result) => {
     if (!isMatch) {
       result(
         helperFunction.responseHandler(false, 400, 'Incorrect password', null),
-        null
+        null,
       );
     }
 
@@ -102,49 +103,49 @@ User.login = (newUser, result) => {
     jwt.sign(
       payload,
       config.get('jwtSecret'),
-      {expiresIn: 3600},
-      (err, token) => {
-        if (err) {
-          console.log('error: ', err);
+      { expiresIn: 3600 },
+      (error, token) => {
+        if (error) {
+          console.log('error: ', error);
           result(
             helperFunction.responseHandler(
               false,
-              err.statusCode,
-              err.message,
-              null
+              error.statusCode,
+              error.message,
+              null,
             ),
-            null
+            null,
           );
           return;
         }
         result(
           null,
-          helperFunction.responseHandler(true, 200, 'User logged in', {token})
+          helperFunction.responseHandler(true, 200, 'User logged in', { token }),
         );
-      }
+      },
     );
   });
 };
 
-User.retrieve = ({action, id}, result) => {
+User.retrieve = ({ action, id }, result) => {
   action = action.toLowerCase();
   const updateQuery = `UPDATE users SET views = views + 1 WHERE users.id = ?;`;
-  const head = `  SELECT users.id,username,users.created_at, users.views, COUNT(DISTINCT posts.id) `;
+  const head = `SELECT users.id,username,users.created_at, users.views, COUNT(DISTINCT posts.id) `;
   const middle = `FROM users 
-                    LEFT JOIN posts ON posts.user_id = users.id 
-                    LEFT JOIN posttag ON posttag.post_id = posts.id 
-                    LEFT JOIN tags ON posttag.tag_id = tags.id`;
+                  LEFT JOIN posts ON posts.user_id = users.id 
+                  LEFT JOIN posttag ON posttag.post_id = posts.id 
+                  LEFT JOIN tags ON posttag.tag_id = tags.id`;
 
   const q1 = `as posts_count,COUNT(DISTINCT tagname) as tags_count  
-                 ${middle} GROUP BY users.id ORDER BY posts_count DESC;`;
+              ${middle} GROUP BY users.id ORDER BY posts_count DESC;`;
 
   const q2 = `as post_count,COUNT(DISTINCT tagname) 
-                as tag_count, COUNT(DISTINCT answers.id) 
-                as answer_count, COUNT(DISTINCT comments.id) 
-                as comment_count 
-                 ${middle} LEFT JOIN answers ON answers.user_id = users.id 
-                LEFT JOIN comments ON comments.user_id = users.id 
-                WHERE users.id = ? GROUP BY users.id;`;
+              as tag_count, COUNT(DISTINCT answers.id) 
+              as answer_count, COUNT(DISTINCT comments.id) 
+              as comment_count 
+                ${middle} LEFT JOIN answers ON answers.user_id = users.id 
+              LEFT JOIN comments ON comments.user_id = users.id 
+              WHERE users.id = ? GROUP BY users.id;`;
 
   if (action === 'one') {
     pool.query(updateQuery, id, (err) => {
@@ -154,10 +155,10 @@ User.retrieve = ({action, id}, result) => {
           helperFunction.responseHandler(
             false,
             err ? err.statusCode : 404,
-            err ? err.message : "There isn't any user by this id",
-            null
+            err ? err.message : 'There isn\'t any user by this id',
+            null,
           ),
-          null
+          null,
         );
       }
     });
@@ -174,9 +175,9 @@ User.retrieve = ({action, id}, result) => {
             false,
             err ? err.statusCode : 404,
             err ? err.message : 'There are no users',
-            null
+            null,
           ),
-          null
+          null,
         );
         return;
       }
@@ -186,10 +187,10 @@ User.retrieve = ({action, id}, result) => {
           true,
           200,
           'Success',
-          action === 'one' ? results[0] : results
-        )
+          action === 'one' ? results[0] : results,
+        ),
       );
-    }
+    },
   );
 };
 
@@ -204,15 +205,15 @@ User.loadUser = (userId, result) => {
           false,
           err.statusCode,
           err.message,
-          null
+          null,
         ),
-        null
+        null,
       );
       return;
     }
     result(
       null,
-      helperFunction.responseHandler(true, 200, 'Success', results[0])
+      helperFunction.responseHandler(true, 200, 'Success', results[0]),
     );
   });
 };
