@@ -1,5 +1,5 @@
 const express = require('express');
-const {check} = require('express-validator');
+const { check } = require('express-validator');
 const checkExistence = require('../middleware/checkExistence');
 const usersController = require('../controllers/users');
 
@@ -24,14 +24,14 @@ router.get('/:id', usersController.getUsers);
 router.post(
   '/',
   [
-    check('username', 'Please include a valid username').isLength({min: 5}),
+    check('username', 'Please include a valid username').isLength({ min: 5 }),
     check(
       'password',
-      'Please enter a password with 5 or more characters'
-    ).isLength({min: 5}),
+      'Please enter a password with 5 or more characters',
+    ).isLength({ min: 5 }),
     checkExistence,
   ],
-  usersController.register
+  usersController.register,
 );
 
 module.exports = router;
