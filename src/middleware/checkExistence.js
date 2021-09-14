@@ -1,7 +1,7 @@
 const helperFunction = require('../helpers/helperFunction');
 
 module.exports = (req, res, next) => {
-  const {username} = req.body;
+  const { username } = req.body;
 
   pool.query(
     `SELECT * FROM users WHERE username = ?;`,
@@ -15,8 +15,8 @@ module.exports = (req, res, next) => {
               false,
               err.statusCode,
               err.message,
-              null
-            )
+              null,
+            ),
           );
       }
       if (results[0]) {
@@ -27,11 +27,11 @@ module.exports = (req, res, next) => {
               false,
               400,
               'User already exists',
-              null
-            )
+              null,
+            ),
           );
       }
       next();
-    }
+    },
   );
 };

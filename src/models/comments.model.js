@@ -1,6 +1,7 @@
 const helperFunction = require('../helpers/helperFunction');
 
 // constructor
+// eslint-disable-next-line func-names
 const Comment = function (answer) {
   this.body = answer.body;
   this.user_id = answer.user_id;
@@ -21,17 +22,17 @@ Comment.create = (newComment, result) => {
             false,
             err.statusCode,
             err.message,
-            null
+            null,
           ),
-          null
+          null,
         );
         return;
       }
       result(
         null,
-        helperFunction.responseHandler(true, 200, 'Comment Added', res.insertId)
+        helperFunction.responseHandler(true, 200, 'Comment Added', res.insertId),
       );
-    }
+    },
   );
 };
 
@@ -46,15 +47,15 @@ Comment.remove = (id, result) => {
           false,
           err.statusCode,
           err.message,
-          null
+          null,
         ),
-        null
+        null,
       );
       return;
     }
     result(
       null,
-      helperFunction.responseHandler(true, 200, 'Comment Removed', null)
+      helperFunction.responseHandler(true, 200, 'Comment Removed', null),
     );
   });
 };
@@ -75,9 +76,9 @@ Comment.retrieveAll = (postId, result) => {
           false,
           err ? err.statusCode : 404,
           err ? err.message : 'There are no comments',
-          null
+          null,
         ),
-        null
+        null,
       );
       return;
     }

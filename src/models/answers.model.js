@@ -1,5 +1,6 @@
 const helperFunction = require('../helpers/helperFunction');
 
+// eslint-disable-next-line func-names
 const Answer = function (answer) {
   this.body = answer.body;
   this.user_id = answer.user_id;
@@ -20,17 +21,17 @@ Answer.create = (newAnswer, result) => {
             false,
             err.statusCode,
             err.message,
-            null
+            null,
           ),
-          null
+          null,
         );
         return;
       }
       result(
         null,
-        helperFunction.responseHandler(true, 200, 'Answer Added', res.insertId)
+        helperFunction.responseHandler(true, 200, 'Answer Added', res.insertId),
       );
-    }
+    },
   );
 };
 
@@ -45,26 +46,26 @@ Answer.remove = (id, result) => {
           false,
           err.statusCode,
           err.message,
-          null
+          null,
         ),
-        null
+        null,
       );
       return;
     }
     result(
       null,
-      helperFunction.responseHandler(true, 200, 'Answer Removed', null)
+      helperFunction.responseHandler(true, 200, 'Answer Removed', null),
     );
   });
 };
 
 Answer.retrieveAll = (postId, result) => {
   const query = ` SELECT
-                    answers.id, post_id, answers.user_id, username, answers.body, answers.created_at 
-                    FROM answers 
-                    JOIN posts ON posts.id = post_id 
-                    JOIN users ON users.id = answers.user_id 
-                    WHERE post_id = ?;`;
+                  answers.id, post_id, answers.user_id, username, answers.body, answers.created_at 
+                  FROM answers 
+                  JOIN posts ON posts.id = post_id 
+                  JOIN users ON users.id = answers.user_id 
+                  WHERE post_id = ?;`;
 
   pool.query(query, postId, (err, results) => {
     if (err || results.length === 0) {
@@ -74,9 +75,9 @@ Answer.retrieveAll = (postId, result) => {
           false,
           err ? err.statusCode : 404,
           err ? err.message : 'There are no answers',
-          null
+          null,
         ),
-        null
+        null,
       );
       return;
     }

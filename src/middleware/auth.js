@@ -9,9 +9,7 @@ module.exports = (req, res, next) => {
   if (!token) {
     return res
       .status(401)
-      .json(
-        helperFunction.responseHandler(false, 401, 'Sign-in required', null)
-      );
+      .json(helperFunction.responseHandler(false, 401, 'Sign-in required', null));
   }
 
   // Verify token

@@ -23,8 +23,8 @@ module.exports = (req, res, next) => {
             false,
             err.statusCode,
             err.message,
-            null
-          )
+            null,
+          ),
         );
     }
     if (results[0].user_id !== req.user.id) {
@@ -34,8 +34,8 @@ module.exports = (req, res, next) => {
           false,
           401,
           'User not authorized to delete',
-          null
-        )
+          null,
+        ),
       );
     }
     next();
