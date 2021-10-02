@@ -29,7 +29,7 @@ This repo consists of the Backend code of the project, the backend code is in [S
 * `.NET` as well
 
 ## Contributing
-* Go to `Contributing.md`
+* Go to [Contributing.md](./CONTRIBUTING.md)
 
 ## Guidelines to setup
 1. Open your local CLI -
