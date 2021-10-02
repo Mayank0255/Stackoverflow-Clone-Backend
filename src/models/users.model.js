@@ -16,7 +16,7 @@ User.register = async (newUser, result) => {
 
   const query = `INSERT INTO users(username,password) VALUES(?,?);`;
 
-  await pool.query(query, [newUser.username, newUser.password], (err, res) => {
+  pool.query(query, [newUser.username, newUser.password], (err, res) => {
     if (err) {
       console.log('error: ', err);
       result(
