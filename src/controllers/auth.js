@@ -1,10 +1,11 @@
 const { validationResult } = require('express-validator');
 const helperFunction = require('../helpers/helperFunction');
-const User = require('../models/users.model');
+const { User } = require('../models/users.model');
+const service = require('../services/users.service');
 
 const loadUser = (req, res) => {
   try {
-    User.loadUser(req.user.id, (err, data) => {
+    service.loadUser(req.user.id, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -28,7 +29,7 @@ const login = (req, res) => {
   }
   try {
     // Login the user
-    User.login(new User(req.body), (err, data) => {
+    service.login(new User(req.body), (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);

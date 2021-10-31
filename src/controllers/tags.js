@@ -1,9 +1,9 @@
 const helperFunction = require('../helpers/helperFunction');
-const Tag = require('../models/tags.model');
+const service = require('../services/tags.service');
 
 const getTags = (req, res) => {
   try {
-    Tag.retrieveAll((err, data) => {
+    service.retrieveAll((err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -20,7 +20,7 @@ const getTags = (req, res) => {
 
 const getSingleTag = (req, res) => {
   try {
-    Tag.retrieveOne(req.params.tagname, (err, data) => {
+    service.retrieveOne(req.params.tagname, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);

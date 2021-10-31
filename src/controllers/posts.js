@@ -1,12 +1,13 @@
 const { validationResult } = require('express-validator');
 const helperFunction = require('../helpers/helperFunction');
-const Post = require('../models/posts.model');
+const { Post } = require('../models/posts.model');
+const service = require('../services/posts.service');
 
 const getPosts = (req, res) => {
   const { tagname } = req.params;
 
   try {
-    Post.retrieveAll(
+    service.retrieveAll(
       {
         // eslint-disable-next-line no-nested-ternary
         action: tagname ? 'tag' : req.url.includes('top') ? 'top' : 'basic',
@@ -30,7 +31,7 @@ const getPosts = (req, res) => {
 
 const getSinglePost = (req, res) => {
   try {
-    Post.retrieveOne(req.params.id, (err, data) => {
+    service.retrieveOne(req.params.id, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -60,7 +61,7 @@ const addPost = (req, res) => {
       tagname: req.body.tagname,
     });
     // Save Post in the database
-    Post.create(post, (err, data) => {
+    service.create(post, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -77,7 +78,7 @@ const addPost = (req, res) => {
 
 const deletePost = (req, res) => {
   try {
-    Post.remove(req.params.id, (err, data) => {
+    service.remove(req.params.id, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
