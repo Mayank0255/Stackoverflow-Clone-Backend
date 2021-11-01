@@ -1,15 +1,15 @@
 const Sequelize = require('sequelize');
 const helperFunction = require('../helpers/helperFunction');
-const { Tags } = require('../models/tags.model');
-const { Posts } = require('../models/posts.model');
+const { TagsModelSequelize } = require('../models/tags.model');
+const { PostsModelSequelize } = require('../models/posts.model');
 
 const retrieveAll = async (result) => {
   try {
-    const queryResult = await Tags.findAll({
+    const queryResult = await TagsModelSequelize.findAll({
       require: false,
       distinct: true,
       col: 'posts.id',
-      include: Posts,
+      include: PostsModelSequelize,
       attributes: ['id',
         'tagname',
         'description',
@@ -60,9 +60,9 @@ const retrieveAll = async (result) => {
 
 const retrieveOne = async (tagName, result) => {
   try {
-    const queryResult = await Tags.findOne({
+    const queryResult = await TagsModelSequelize.findOne({
       require: false,
-      include: Posts,
+      include: PostsModelSequelize,
       attributes: ['id',
         'tagname',
         'description',

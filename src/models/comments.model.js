@@ -8,7 +8,7 @@ const Comment = function (answer) {
   this.post_id = answer.post_id;
 };
 
-const Comments = db.define('comments', {
+const CommentsModelSequelize = db.define('comments', {
   id: {
     autoIncrement: true,
     type: Sequelize.INTEGER,
@@ -70,4 +70,4 @@ const Comments = db.define('comments', {
   ],
 });
 
-module.exports = { Comment, Comments };
+module.exports = { Comment, CommentsModelSequelize };

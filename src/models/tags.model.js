@@ -1,13 +1,13 @@
 const Sequelize = require('sequelize');
 const db = require('../../config/db.sequelize');
-const { Posts } = require('./posts.model');
-const { PostTag } = require('./posttag.model');
+const { PostsModelSequelize } = require('./posts.model');
+const { PostTagModelSequelize } = require('./posttag.model');
 
 // constructor
 // eslint-disable-next-line func-names
 const Tag = function () {};
 
-const Tags = db.define('tags', {
+const TagsModelSequelize = db.define('tags', {
   id: {
     autoIncrement: true,
     type: Sequelize.INTEGER,
@@ -53,7 +53,7 @@ const Tags = db.define('tags', {
 });
 
 // eslint-disable-next-line object-curly-newline
-Tags.belongsToMany(Posts, { through: PostTag, foreignKey: 'tag_id' });
-Posts.belongsToMany(Tags, { through: PostTag, foreignKey: 'post_id' });
+TagsModelSequelize.belongsToMany(PostsModelSequelize, { through: PostTagModelSequelize, foreignKey: 'tag_id' });
+PostsModelSequelize.belongsToMany(TagsModelSequelize, { through: PostTagModelSequelize, foreignKey: 'post_id' });
 
-module.exports = { Tag, Tags };
+module.exports = { Tag, TagsModelSequelize };

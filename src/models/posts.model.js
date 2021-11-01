@@ -10,7 +10,7 @@ const Post = function (post) {
   this.tagname = post.tagname;
 };
 
-const Posts = db.define('posts', {
+const PostsModelSequelize = db.define('posts', {
   id: {
     autoIncrement: true,
     type: Sequelize.INTEGER,
@@ -66,4 +66,4 @@ const Posts = db.define('posts', {
   ],
 });
 
-module.exports = { Post, Posts };
+module.exports = { Post, PostsModelSequelize };

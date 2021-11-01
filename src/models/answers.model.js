@@ -7,7 +7,7 @@ const Answer = function (answer) {
   this.post_id = answer.post_id;
 };
 
-const Answers = db.define('answers', {
+const AnswersModelSequelize = db.define('answers', {
   id: {
     autoIncrement: true,
     type: Sequelize.INTEGER,
@@ -69,4 +69,4 @@ const Answers = db.define('answers', {
   ],
 });
 
-module.exports = { Answer, Answers };
+module.exports = { Answer, AnswersModelSequelize };

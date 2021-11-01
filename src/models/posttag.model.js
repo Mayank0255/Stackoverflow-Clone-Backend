@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const db = require('../../config/db.sequelize');
 
-const PostTag = db.define('posttag', {
+const PostTagModelSequelize = db.define('posttag', {
   created_at: {
     type: Sequelize.DATE,
     allowNull: true,
@@ -31,4 +31,4 @@ const PostTag = db.define('posttag', {
   ],
 });
 
-module.exports = { PostTag };
+module.exports = { PostTagModelSequelize };

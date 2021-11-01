@@ -8,7 +8,7 @@ const User = function (user) {
   this.password = user.password;
 };
 
-const Users = db.define('users', {
+const UsersModelSequelize = db.define('users', {
   id: {
     autoIncrement: true,
     type: Sequelize.INTEGER,
@@ -58,4 +58,4 @@ const Users = db.define('users', {
   ],
 });
 
-module.exports = { User, Users };
+module.exports = { User, UsersModelSequelize };
