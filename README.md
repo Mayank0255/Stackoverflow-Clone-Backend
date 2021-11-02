@@ -32,6 +32,9 @@ This repo consists of the Backend code of the project, the backend code is in [S
 * Go to [Contributing.md](./CONTRIBUTING.md)
 
 ## Guidelines to setup
+
+There is two way to setup the project: manually or using the Dockerfile. Read below for more details:
+### Manual Setup
 1. Open your local CLI -
 
     ```
@@ -68,9 +71,27 @@ This repo consists of the Backend code of the project, the backend code is in [S
         npm install
         ```
     - Run the client server `npm start`.
+### Docker Setup
 
-_Follow the steps properly and you are good to go._
+The back-end has support for Docker. So if you want to run the back-end in a container, you need do:
 
+- Setup environment variables in `.env` file.
+- Build the Docker image:
+    
+    ```
+    docker build -t stackoverflowclone .
+    ```
+- Run the container. For example, if you want to run the container in a new terminal, you can do:
+    
+    ```
+    docker run -p -d 3000:5000 stackoverflowclone
+    ```
+
+The default port of api is 5000. After running the container, you can access the api by typing:
+        
+    http://localhost:3000/api/<endpoint that you request - see next section>
+
+_Follow the steps properly (manual or Docker) and you are good to go._
 ## API Endpoints
 
 #### Base Url - `http://localhost:5000/api`
