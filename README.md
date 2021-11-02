@@ -71,9 +71,6 @@ There is two way to setup the project: manually or using the Dockerfile. Read be
         npm install
         ```
     - Run the client server `npm start`.
-
-_Follow the steps properly and you are good to go._
-
 ### Docker Setup
 
 The back-end has support for Docker. So if you want to run the back-end in a container, you need do:
@@ -96,6 +93,7 @@ The default port of api is 5000. After running the container, you can access the
     http://localhost:3000/api/<endpoint that you request - see next section>
     ```
 
+_Follow the steps properly (manual or Docker) and you are good to go._
 ## API Endpoints
 
 #### Base Url - `http://localhost:5000/api`
