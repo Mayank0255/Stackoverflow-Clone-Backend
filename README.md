@@ -33,7 +33,7 @@ This repo consists of the Backend code of the project, the backend code is in [S
 
 ## Guidelines to setup
 
-There is two way to setup the project: manually or using the Dockerfile. Read below for more details:
+There are two ways to setup the project: manually or using the Dockerfile. Read below for more details:
 ### Manual Setup
 1. Open your local CLI -
 
