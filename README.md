@@ -32,6 +32,9 @@ This repo consists of the Backend code of the project, the backend code is in [S
 * Go to [Contributing.md](./CONTRIBUTING.md)
 
 ## Guidelines to setup
+
+There is two way to setup the project: manually or using the Dockerfile. Read below for more details:
+### Manual Setup
 1. Open your local CLI -
 
     ```
@@ -71,9 +74,9 @@ This repo consists of the Backend code of the project, the backend code is in [S
 
 _Follow the steps properly and you are good to go._
 
-## Docker Support for back-end
+### Docker Setup
 
-The backe-end has support for Docker. So if you want to run the back-end in a container, you need do:
+The back-end has support for Docker. So if you want to run the back-end in a container, you need do:
 
 - Setup environment variables in `.env` file.
 - Build the Docker image -
