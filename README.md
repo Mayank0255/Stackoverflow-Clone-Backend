@@ -79,7 +79,7 @@ _Follow the steps properly and you are good to go._
 The back-end has support for Docker. So if you want to run the back-end in a container, you need do:
 
 - Setup environment variables in `.env` file.
-- Build the Docker image -
+- Build the Docker image:
     
     ```
     docker build -t stackoverflowclone .
@@ -90,7 +90,11 @@ The back-end has support for Docker. So if you want to run the back-end in a con
     docker run -p -d 3000:5000 stackoverflowclone
     ```
 
-The default port of api is 5000.
+The default port of api is 5000. After running the container, you can access the api by typing:
+    
+    ```
+    http://localhost:3000/api/<endpoint that you request - see next section>
+    ```
 
 ## API Endpoints
 
