@@ -90,7 +90,7 @@ The back-end has support for Docker. So if you want to run the back-end in a con
     docker run -p -d 3000:5000 stackoverflowclone
     ```
 
-The port number is default port of api is 5000.
+The default port of api is 5000.
 
 ## API Endpoints
 
