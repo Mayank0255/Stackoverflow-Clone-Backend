@@ -71,6 +71,24 @@ This repo consists of the Backend code of the project, the backend code is in [S
 
 _Follow the steps properly and you are good to go._
 
+## Docker Support for back-end
+
+The backe-end has support for Docker. So if you want to run the back-end in a container, you need do:
+
+- Setup environment variables in `.env` file.
+- Build the Docker image -
+    
+    ```
+    docker build -t stackoverflowclone .
+    ```
+- Run the container. For example, if you want to run the container in a new terminal, you can do:
+    
+    ```
+    docker run -p -d 3000:5000 stackoverflowclone
+    ```
+
+The port number is default port of api is 5000.
+
 ## API Endpoints
 
 #### Base Url - `http://localhost:5000/api`
