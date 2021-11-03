@@ -1,11 +1,12 @@
 const { validationResult } = require('express-validator');
 const helperFunction = require('../helpers/helperFunction');
-const Answer = require('../models/answers.model');
+const { Answer } = require('../models/answers.model');
+const service = require('../services/answers.service');
 
 const getAnswers = (req, res) => {
   try {
     console.log(req);
-    Answer.retrieveAll(req.params.id, (err, data) => {
+    service.retrieveAll(req.params.id, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -34,7 +35,7 @@ const addAnswer = (req, res) => {
       post_id: req.params.id,
     });
     // Save Answer in the database
-    Answer.create(answer, (err, data) => {
+    service.create(answer, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -51,7 +52,7 @@ const addAnswer = (req, res) => {
 
 const deleteAnswer = async (req, res) => {
   try {
-    Answer.remove(req.params.id, (err, data) => {
+    service.remove(req.params.id, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);

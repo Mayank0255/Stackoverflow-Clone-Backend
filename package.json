@@ -23,7 +23,8 @@
     "helmet": "^3.23.3",
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.10.0",
-    "mysql2": "^2.2.5"
+    "mysql2": "^2.3.2",
+    "sequelize": "^6.6.4"
   },
   "devDependencies": {
     "eslint": "^7.32.0",

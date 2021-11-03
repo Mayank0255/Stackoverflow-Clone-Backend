@@ -1,10 +1,11 @@
 const { validationResult } = require('express-validator');
 const helperFunction = require('../helpers/helperFunction');
-const Comment = require('../models/comments.model');
+const { Comment } = require('../models/comments.model');
+const service = require('../services/comments.service');
 
 const getComments = (req, res) => {
   try {
-    Comment.retrieveAll(req.params.id, (err, data) => {
+    service.retrieveAll(req.params.id, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -34,7 +35,7 @@ const addComment = (req, res) => {
       post_id: req.params.id,
     });
     // Save Comment in the database
-    Comment.create(comment, (err, data) => {
+    service.create(comment, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -51,7 +52,7 @@ const addComment = (req, res) => {
 
 const deleteComment = (req, res) => {
   try {
-    Comment.remove(req.params.id, (err, data) => {
+    service.remove(req.params.id, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);

@@ -1,12 +1,13 @@
 const { validationResult } = require('express-validator');
 const helperFunction = require('../helpers/helperFunction');
-const User = require('../models/users.model');
+const { User } = require('../models/users.model');
+const service = require('../services/users.service');
 
 const getUsers = (req, res) => {
   try {
     const { id } = req.params;
 
-    User.retrieve(
+    service.retrieve(
       {
         action: id ? 'one' : 'all',
         id: id || null,
@@ -36,7 +37,7 @@ const register = async (req, res) => {
   }
   try {
     // Register user in the database
-    await User.register(new User(req.body), (err, data) => {
+    await service.register(new User(req.body), (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
