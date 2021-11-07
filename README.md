@@ -75,7 +75,8 @@ There are two ways to setup the project: manually or using the Dockerfile. Read 
 
 The back-end has support for Docker. So if you want to run the back-end in a container, you need do:
 
-- Setup environment variables in `.env` file.
+- Setup environment variables in `.env` file. Note when you use Docker setup and run the database in localhost (host machine), you need to setup the environment variables for use correct IP of MySQL Database. Please, read [here](https://docs.docker.com/compose/environment-variables/) and [here](https://docs.docker.com/desktop/windows/networking/) for more details.
+
 - Build the Docker image:
     
     ```
@@ -84,7 +85,7 @@ The back-end has support for Docker. So if you want to run the back-end in a con
 - Run the container. For example, if you want to run the container in a new terminal, you can do:
     
     ```
-    docker run -p -d 3000:5000 stackoverflowclone
+    docker run -p -d 5000:5000 stackoverflowclone
     ```
 
 The default port of api is 5000. After running the container, you can access the api by typing:
