@@ -94,6 +94,16 @@ The default port of api is 5000. After running the container, you can access the
 _Follow the steps properly (manual or Docker) and you are good to go._
 ## API Endpoints
 
+You can view and read the API endpoints samples [here](https://documenter.getpostman.com/view/10053385/UVC3kTiG#f02c9fce-5737-4cd6-9d8e-ad48233102c7). This is API documentation for the back-end.
+
+But, if you want use Postman to test the API in local machine, you need to follow the steps below:
+
+- Get the Postman app from [here](https://www.getpostman.com/downloads/).
+- Download the Postman collection file in folder "postman_collection"
+- Import the collection file in Postman
+- **Important:** will be necessary to setup the enviroment with the "VARIABLE"=urlAPI and "INITIAL VALUE"=http://localhost:5000, for example.
+- **Remember**: keep the Postman collection updated with the latest API endpoints.
+
 #### Base Url - `http://localhost:5000/api`
 
 #### Users

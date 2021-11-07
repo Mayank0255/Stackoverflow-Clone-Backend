@@ -1,0 +1,520 @@
+{
+	"info": {
+		"_postman_id": "5a511980-4fd6-444e-bd75-a67f73b6527b",
+		"name": "StackOverflowClone - API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Answers",
+			"item": [
+				{
+					"name": "GET /posts/answers/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlAPI}}/posts/answers/1",
+							"host": [
+								"{{urlAPI}}"
+							],
+							"path": [
+								"posts",
+								"answers",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /posts/answers/:id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjo4fSwiaWF0IjoxNjM1NzE4NTM2LCJleHAiOjE2MzU3MjIxMzZ9.YgFcD6XqYRiapFswfazNvvLp5fxvRRm40F7TaRXZ7Vg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjo4fSwiaWF0IjoxNjM1NzE4NTM2LCJleHAiOjE2MzU3MjIxMzZ9.YgFcD6XqYRiapFswfazNvvLp5fxvRRm40F7TaRXZ7Vg",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user\": {\r\n        \"id\": 8\r\n    },\r\n    \"text\": \"Test answer\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlAPI}}/posts/answers/1",
+							"host": [
+								"{{urlAPI}}"
+							],
+							"path": [
+								"posts",
+								"answers",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /posts/answers/:id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjo4fSwiaWF0IjoxNjM1NzE4NTM2LCJleHAiOjE2MzU3MjIxMzZ9.YgFcD6XqYRiapFswfazNvvLp5fxvRRm40F7TaRXZ7Vg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjo4fSwiaWF0IjoxNjM1NzE4NTM2LCJleHAiOjE2MzU3MjIxMzZ9.YgFcD6XqYRiapFswfazNvvLp5fxvRRm40F7TaRXZ7Vg",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user\": {\r\n        \"id\": 8\r\n    }    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlAPI}}/posts/answers/5",
+							"host": [
+								"{{urlAPI}}"
+							],
+							"path": [
+								"posts",
+								"answers",
+								"5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Comments",
+			"item": [
+				{
+					"name": "GET /posts/comments/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlAPI}}/posts/comments/1",
+							"host": [
+								"{{urlAPI}}"
+							],
+							"path": [
+								"posts",
+								"comments",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /posts/comments/:id",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjo4fSwiaWF0IjoxNjM1NzE5OTI0LCJleHAiOjE2MzU3MjM1MjR9.wpBbYKVPj4-WKJF7szL1EIvX8Eqz1MmGxej8teXDQf8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user\": {\r\n        \"id\": 3\r\n    },\r\n    \"body\": \"Test comment\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlAPI}}/posts/comments/1",
+							"host": [
+								"{{urlAPI}}"
+							],
+							"path": [
+								"posts",
+								"comments",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /posts/comments/:id Copy",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjo4fSwiaWF0IjoxNjM1NzE5OTI0LCJleHAiOjE2MzU3MjM1MjR9.wpBbYKVPj4-WKJF7szL1EIvX8Eqz1MmGxej8teXDQf8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user\": {\r\n        \"id\": 3\r\n    }    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlAPI}}/posts/comments/7",
+							"host": [
+								"{{urlAPI}}"
+							],
+							"path": [
+								"posts",
+								"comments",
+								"7"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Posts",
+			"item": [
+				{
+					"name": "GET /posts/top",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlAPI}}/posts/top",
+							"host": [
+								"{{urlAPI}}"
+							],
+							"path": [
+								"posts",
+								"top"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /posts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlAPI}}/posts",
+							"host": [
+								"{{urlAPI}}"
+							],
+							"path": [
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /posts/tag/:tagname",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlAPI}}/posts/tag/java",
+							"host": [
+								"{{urlAPI}}"
+							],
+							"path": [
+								"posts",
+								"tag",
+								"java"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /posts/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlAPI}}/posts/1",
+							"host": [
+								"{{urlAPI}}"
+							],
+							"path": [
+								"posts",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /posts",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjo4fSwiaWF0IjoxNjM1NzIyODQ0LCJleHAiOjE2MzU3MjY0NDR9.rpkTuMuO3-ChJZelhsKgza9nEzjgr8lCU80WGG7s3c0",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user\": {\r\n        \"id\": 8\r\n    },\r\n    \"title\": \"Test of question about any topic\",\r\n    \"tagname\": \"javascript\",\r\n    \"body\": \"<p>&nbsp;</p>\\n<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum cursus odio a blandit interdum. Maecenas tincidunt ac quam at interdum. Donec ac ultricies est, at lacinia quam. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Integer turpis ligula, ornare sed pellentesque ac, luctus a velit. Fusce tempus porttitor porttitor. Ut dapibus velit suscipit ipsum pretium pretium. Fusce a viverra neque. Morbi egestas cursus eros. Sed finibus ex et mi fermentum laoreet. Nunc aliquam luctus finibus. Curabitur urna est, euismod non sem nec, cursus fringilla lectus.</p>\\n<p>Integer non dui ut orci dapibus auctor. Nullam blandit condimentum dui vitae ultrices. Nunc bibendum iaculis tellus vel posuere. In hac habitasse platea dictumst. Ut id tortor lacus. In in vehicula sapien, vel imperdiet nisi. Nam maximus porttitor fringilla. Donec vehicula massa et justo posuere, id hendrerit ipsum auctor. Aliquam interdum lobortis varius.</p>\\n<p>Nam accumsan eget diam quis scelerisque. Suspendisse vestibulum nunc vel dolor pulvinar pharetra. Nullam tincidunt quis ligula quis luctus. Quisque sed sollicitudin leo, quis lacinia est. Fusce consequat purus nec nibh condimentum elementum. Morbi iaculis ut metus eu commodo. Donec sed lacus et lacus posuere elementum non vitae felis. Ut imperdiet neque odio, vel cursus lectus elementum nec. Aenean dignissim dui erat, in vehicula leo condimentum dignissim. Pellentesque efficitur id justo at scelerisque. Mauris porta ex sed faucibus gravida.</p>\\n<p>Nam a consectetur mi. Vestibulum ullamcorper blandit eleifend. Nullam a sapien non leo auctor mollis nec in eros. Duis tincidunt sed leo vitae feugiat. Proin id turpis sit amet lorem pellentesque dapibus a vel purus. Sed vitae congue nisi. Nulla sit amet tincidunt risus. Praesent non nulla eget erat volutpat gravida vel et diam. Vestibulum id interdum sem, ut congue dolor. Etiam sollicitudin leo augue. Donec mattis sollicitudin augue.</p>\\n<p>Fusce nec elit at felis posuere hendrerit. Vivamus vel dui vitae odio aliquet pulvinar. Vivamus faucibus molestie nisl, eget porttitor ante fringilla vel. Duis iaculis metus sit amet erat dictum iaculis. Praesent vitae enim mi. Sed sollicitudin maximus tortor ut suscipit. Donec eleifend euismod massa at gravida. Nam tempus lacus eget enim mattis condimentum. Aliquam dictum, est non pellentesque finibus, neque ligula egestas est, sit amet commodo quam tortor et dolor. Nunc a dolor aliquet, dignissim lectus in, cursus nibh. Maecenas augue tellus, tempus a ex ac, mattis molestie purus.</p>\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlAPI}}/posts",
+							"host": [
+								"{{urlAPI}}"
+							],
+							"path": [
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /posts:id",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjo4fSwiaWF0IjoxNjM1NzIyODQ0LCJleHAiOjE2MzU3MjY0NDR9.rpkTuMuO3-ChJZelhsKgza9nEzjgr8lCU80WGG7s3c0",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlAPI}}/posts/7",
+							"host": [
+								"{{urlAPI}}"
+							],
+							"path": [
+								"posts",
+								"7"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tags",
+			"item": [
+				{
+					"name": "GET /tags",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlAPI}}/tags",
+							"host": [
+								"{{urlAPI}}"
+							],
+							"path": [
+								"tags"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /tags:tag_name",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlAPI}}/tags/java",
+							"host": [
+								"{{urlAPI}}"
+							],
+							"path": [
+								"tags",
+								"java"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "GET /users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlAPI}}/users",
+							"host": [
+								"{{urlAPI}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /users:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{urlAPI}}/users/8",
+							"host": [
+								"{{urlAPI}}"
+							],
+							"path": [
+								"users",
+								"8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /auth",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjo4fSwiaWF0IjoxNjM1NzE0Nzg3LCJleHAiOjE2MzU3MTgzODd9.httmWzky6YbgDHB8Ckdgq4DD1xJOecSkHpwmh4i2sfM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjo4fSwiaWF0IjoxNjM1NzE0Nzg3LCJleHAiOjE2MzU3MTgzODd9.httmWzky6YbgDHB8Ckdgq4DD1xJOecSkHpwmh4i2sfM",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{urlAPI}}/auth",
+							"host": [
+								"{{urlAPI}}"
+							],
+							"path": [
+								"auth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /auth",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"your_new_user\",\r\n    \"password\": \"123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlAPI}}/auth",
+							"host": [
+								"{{urlAPI}}"
+							],
+							"path": [
+								"auth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /users",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"your_new_user\",\r\n    \"password\": \"123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urlAPI}}/users",
+							"host": [
+								"{{urlAPI}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
