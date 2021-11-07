@@ -90,7 +90,7 @@ The back-end has support for Docker. So if you want to run the back-end in a con
 
 The default port of api is 5000. After running the container, you can access the api by typing:
         
-    http://localhost:3000/api/<endpoint that you request - see next section>
+    http://localhost:5000/api/<endpoint that you request - see next section>
 
 _Follow the steps properly (manual or Docker) and you are good to go._
 ## API Endpoints
