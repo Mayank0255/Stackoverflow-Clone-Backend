@@ -85,7 +85,7 @@ The back-end has support for Docker. So if you want to run the back-end in a con
 - Run the container. For example, if you want to run the container in a new terminal, you can do:
     
     ```
-    docker run -p -d 5000:5000 stackoverflowclone
+    docker run -d -p 5000:5000 stackoverflowclone
     ```
 
 The default port of api is 5000. After running the container, you can access the api by typing:
