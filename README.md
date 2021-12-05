@@ -75,7 +75,8 @@ There are two ways to setup the project: manually or using the Dockerfile. Read 
 
 The back-end has support for Docker. So if you want to run the back-end in a container, you need do:
 
-- Setup environment variables in `.env` file.
+- Setup environment variables in `.env` file. Note when you use Docker setup and run the database in localhost (host machine), you need to setup the environment variables for use correct IP of MySQL Database. Please, read [here](https://docs.docker.com/compose/environment-variables/) and [here](https://docs.docker.com/desktop/windows/networking/) for more details.
+
 - Build the Docker image:
     
     ```
@@ -84,15 +85,25 @@ The back-end has support for Docker. So if you want to run the back-end in a con
 - Run the container. For example, if you want to run the container in a new terminal, you can do:
     
     ```
-    docker run -p -d 3000:5000 stackoverflowclone
+    docker run -d -p 5000:5000 stackoverflowclone
     ```
 
 The default port of api is 5000. After running the container, you can access the api by typing:
         
-    http://localhost:3000/api/<endpoint that you request - see next section>
+    http://localhost:5000/api/<endpoint that you request - see next section>
 
 _Follow the steps properly (manual or Docker) and you are good to go._
 ## API Endpoints
+
+You can view and read the API endpoints samples [here](https://documenter.getpostman.com/view/10053385/UVC3kTiG#f02c9fce-5737-4cd6-9d8e-ad48233102c7). This is API documentation for the back-end.
+
+But, if you want use Postman to test the API in local machine, you need to follow the steps below:
+
+- Get the Postman app from [here](https://www.getpostman.com/downloads/).
+- Download the Postman collection file in folder "postman_collection"
+- Import the collection file in Postman
+- **Important:** will be necessary to setup the enviroment with the "VARIABLE"=urlAPI and "INITIAL VALUE"=http://localhost:5000, for example.
+- **Remember**: keep the Postman collection updated with the latest API endpoints.
 
 #### Base Url - `http://localhost:5000/api`
 
