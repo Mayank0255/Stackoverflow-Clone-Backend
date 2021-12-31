@@ -4,8 +4,8 @@
   "description": "StackOverflow clone with it's main functionalities",
   "main": "server.js",
   "scripts": {
-    "start": "node server",
-    "server": "nodemon server"
+    "start": "nodemon server",
+    "server": "node server"
   },
   "author": "Mayank Aggarwal",
   "license": "MIT",

@@ -1,4 +1,4 @@
-USE stack_overflow_v2;
+USE stack_overflow;
 
 INSERT INTO users(username, password)
 VALUES

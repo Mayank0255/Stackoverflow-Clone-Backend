@@ -1,6 +1,6 @@
-CREATE DATABASE stack_overflow_v2;
+CREATE DATABASE stack_overflow;
 
-USE stack_overflow_v2;
+USE stack_overflow;
 
  CREATE TABLE users(
       id INT AUTO_INCREMENT PRIMARY KEY,
