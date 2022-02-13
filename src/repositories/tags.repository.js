@@ -63,7 +63,8 @@ const retrieveOne = async (tagName, result) => {
     const queryResult = await TagsModelSequelize.findOne({
       require: false,
       include: PostsModelSequelize,
-      attributes: ['id',
+      attributes: [
+        'id',
         'tagname',
         'description',
         [Sequelize.fn('COUNT', Sequelize.col('posts.id')), 'posts_count'],

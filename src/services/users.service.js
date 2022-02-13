@@ -15,7 +15,8 @@ const login = async (newUser, result) => {
   getJwtToken(payload, 'User logged in', result);
 };
 
-const retrieve = ({ action, id }, result) => repository.retrieve(action, id, result);
+const retrieveAll = (result) => repository.retrieveAll(result);
+const retrieveOne = (id, result) => repository.retrieveOne(id, result);
 
 const loadUser = (userId, result) => repository.loadUser(userId, result);
 
@@ -49,6 +50,7 @@ const getJwtToken = (payload, logMessage, result) => {
 module.exports = {
   register,
   login,
-  retrieve,
+  retrieveAll,
+  retrieveOne,
   loadUser,
 };

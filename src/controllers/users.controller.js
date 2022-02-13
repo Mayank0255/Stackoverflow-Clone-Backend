@@ -3,15 +3,31 @@ const helperFunction = require('../helpers/helperFunction');
 const { User } = require('../models/users.model');
 const service = require('../services/users.service');
 
-const getUsers = (req, res) => {
+const getOneUser = (req, res) => {
   try {
     const { id } = req.params;
 
-    service.retrieve(
-      {
-        action: id ? 'one' : 'all',
-        id: id || null,
+    service.retrieveOne(
+      id,
+      (err, data) => {
+        if (err) {
+          console.log(err);
+          return res.status(err.code).json(err);
+        }
+        return res.status(data.code).json(data);
       },
+    );
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(500)
+      .json(helperFunction.responseHandler(false, 500, 'Server Error', null));
+  }
+};
+
+const getAllUsers = (req, res) => {
+  try {
+    service.retrieveAll(
       (err, data) => {
         if (err) {
           console.log(err);
@@ -53,6 +69,7 @@ const register = async (req, res) => {
 };
 
 module.exports = usersController = {
-  getUsers,
+  getOneUser,
+  getAllUsers,
   register,
 };

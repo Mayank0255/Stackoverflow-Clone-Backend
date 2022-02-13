@@ -9,13 +9,13 @@ const router = express.Router();
  *  @desc       fetch all the users
  *  @access     Private
  */
-router.get('/', usersController.getUsers);
+router.get('/', usersController.getAllUsers);
 
 /** @route      GET /api/users/:id
  *  @desc       fetch single user
  *  @access     Private
  */
-router.get('/:id', usersController.getUsers);
+router.get('/:id', usersController.getOneUser);
 
 /** @route      POST /api/users/:id
  *  @desc       register a new user

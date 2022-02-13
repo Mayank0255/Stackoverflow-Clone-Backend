@@ -79,46 +79,27 @@ const login = async (newUser, result) => {
   return payload;
 };
 
-const retrieve = (action, id, result) => {
-  action = action.toLowerCase();
-  const updateQuery = `UPDATE users SET views = views + 1 WHERE users.id = ?;`;
-  const head = `SELECT users.id,username,users.created_at, users.views, COUNT(DISTINCT posts.id) `;
-  const middle = `FROM users 
-                  LEFT JOIN posts ON posts.user_id = users.id 
-                  LEFT JOIN posttag ON posttag.post_id = posts.id 
-                  LEFT JOIN tags ON posttag.tag_id = tags.id`;
-
-  const q1 = `as posts_count,COUNT(DISTINCT tagname) as tags_count  
-              ${middle} GROUP BY users.id ORDER BY posts_count DESC;`;
-
-  const q2 = `as post_count,COUNT(DISTINCT tagname) 
-              as tag_count, COUNT(DISTINCT answers.id) 
-              as answer_count, COUNT(DISTINCT comments.id) 
-              as comment_count 
-                ${middle} LEFT JOIN answers ON answers.user_id = users.id 
-              LEFT JOIN comments ON comments.user_id = users.id 
-              WHERE users.id = ? GROUP BY users.id;`;
-
-  if (action === 'one') {
-    pool.query(updateQuery, id, (err) => {
-      if (err) {
-        console.log('error: ', err);
-        result(
-          helperFunction.responseHandler(
-            false,
-            err ? err.statusCode : 404,
-            err ? err.message : 'There isn\'t any user by this id',
-            null,
-          ),
-          null,
-        );
-      }
-    });
-  }
+const retrieveAll = (result) => {
+  const selectQuery = `
+  SELECT 
+    users.id, 
+    username, 
+    users.created_at, 
+    users.views, 
+    COUNT(DISTINCT posts.id) as posts_count, 
+    COUNT(DISTINCT tagname) as tags_count 
+  FROM 
+    users 
+    LEFT JOIN posts ON posts.user_id = users.id 
+    LEFT JOIN posttag ON posttag.post_id = posts.id 
+    LEFT JOIN tags ON posttag.tag_id = tags.id 
+  GROUP BY 
+    users.id 
+  ORDER BY 
+    posts_count DESC;`;
 
   pool.query(
-    action === 'one' ? head + q2 : head + q1,
-    action === 'one' ? id : null,
+    selectQuery,
     (err, results) => {
       if (err || results.length === 0) {
         console.log('error: ', err);
@@ -139,14 +120,84 @@ const retrieve = (action, id, result) => {
           true,
           200,
           'Success',
-          action === 'one' ? results[0] : results,
+          results,
         ),
       );
     },
   );
 };
 
-const loadUser = (userId, result) => {  
+const retrieveOne = (id, result) => {
+  const updateQuery = `UPDATE users SET views = views + 1 WHERE users.id = ?;`;
+
+  const selectQuery = `
+  SELECT 
+    users.id, 
+    username, 
+    users.created_at, 
+    users.views, 
+    COUNT(DISTINCT posts.id) as post_count, 
+    COUNT(DISTINCT tagname) as tag_count, 
+    COUNT(DISTINCT answers.id) as answer_count, 
+    COUNT(DISTINCT comments.id) as comment_count 
+  FROM 
+    users 
+    LEFT JOIN posts ON posts.user_id = users.id 
+    LEFT JOIN posttag ON posttag.post_id = posts.id 
+    LEFT JOIN tags ON posttag.tag_id = tags.id 
+    LEFT JOIN answers ON answers.user_id = users.id 
+    LEFT JOIN comments ON comments.user_id = users.id 
+  WHERE 
+    users.id = ? 
+  GROUP BY 
+    users.id;`;
+
+  pool.query(updateQuery, id, (err) => {
+    if (err) {
+      console.log('error: ', err);
+      result(
+        helperFunction.responseHandler(
+          false,
+          err ? err.statusCode : 404,
+          err ? err.message : 'There isn\'t any user by this id',
+          null,
+        ),
+        null,
+      );
+    }
+  });
+
+  pool.query(
+    selectQuery,
+    id,
+    (err, results) => {
+      if (err || results.length === 0) {
+        console.log('error: ', err);
+        result(
+          helperFunction.responseHandler(
+            false,
+            err ? err.statusCode : 404,
+            err ? err.message : 'There are no users',
+            null,
+          ),
+          null,
+        );
+        return;
+      }
+      result(
+        null,
+        helperFunction.responseHandler(
+          true,
+          200,
+          'Success',
+          results[0],
+        ),
+      );
+    },
+  );
+};
+
+const loadUser = (userId, result) => {
   const query = `SELECT id,username,created_at FROM users WHERE id = ?;`;
 
   pool.query(query, userId, (err, results) => {
@@ -173,6 +224,7 @@ const loadUser = (userId, result) => {
 module.exports = {
   register,
   login,
-  retrieve,
+  retrieveAll,
+  retrieveOne,
   loadUser,
 };
