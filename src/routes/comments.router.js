@@ -2,7 +2,7 @@ const express = require('express');
 const { check } = require('express-validator');
 const auth = require('../middleware/auth');
 const checkOwnership = require('../middleware/checkOwnership');
-const commentsController = require('../controllers/comments');
+const commentsController = require('../controllers/comments.controller');
 
 const router = express.Router();
 
