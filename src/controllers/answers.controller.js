@@ -5,7 +5,6 @@ const service = require('../services/answers.service');
 
 const getAnswers = (req, res) => {
   try {
-    console.log(req);
     service.retrieveAll(req.params.id, (err, data) => {
       if (err) {
         console.log(err);
@@ -32,7 +31,7 @@ const addAnswer = (req, res) => {
     const answer = new Answer({
       body: req.body.text,
       user_id: req.user.id,
-      post_id: req.params.id,
+      post_id: +req.params.id,
     });
     // Save Answer in the database
     service.create(answer, (err, data) => {

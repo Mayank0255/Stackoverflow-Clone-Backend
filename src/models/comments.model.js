@@ -22,7 +22,7 @@ const CommentsModelSequelize = db.define('comments', {
   created_at: {
     type: Sequelize.DATE,
     allowNull: true,
-    defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+    defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
   },
   post_id: {
     type: Sequelize.INTEGER,

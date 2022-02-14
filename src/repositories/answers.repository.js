@@ -1,55 +1,29 @@
 const helperFunction = require('../helpers/helperFunction');
+const { AnswersModelSequelize } = require('../models/answers.model');
 
-const create = (newAnswer, result) => {
-  const query = `INSERT INTO answers(body,user_id,post_id) VALUES(?,?,?);`;
+const create = async (newAnswer, result) => {
+  const queryResult = await AnswersModelSequelize.create({
+    body: newAnswer.body,
+    user_id: newAnswer.user_id,
+    post_id: newAnswer.post_id,
+  });
 
-  pool.query(
-    query,
-    [newAnswer.body, newAnswer.user_id, newAnswer.post_id],
-    (err, res) => {
-      if (err) {
-        console.log('error: ', err);
-        result(
-          helperFunction.responseHandler(
-            false,
-            err.statusCode,
-            err.message,
-            null,
-          ),
-          null,
-        );
-        return;
-      }
-      result(
-        null,
-        helperFunction.responseHandler(true, 200, 'Answer Added', res.insertId),
-      );
-    },
+  result(
+    null,
+    helperFunction.responseHandler(true, 200, 'Answer Added', queryResult.id),
   );
 };
 
-const remove = (id, result) => {
-  const query = `DELETE FROM answers WHERE id = ?;`;
-
-  pool.query(query, id, (err) => {
-    if (err) {
-      console.log('error: ', err);
-      result(
-        helperFunction.responseHandler(
-          false,
-          err.statusCode,
-          err.message,
-          null,
-        ),
-        null,
-      );
-      return;
-    }
-    result(
-      null,
-      helperFunction.responseHandler(true, 200, 'Answer Removed', null),
-    );
+const remove = async (id, result) => {
+  const queryResult = await AnswersModelSequelize.destroy({
+    where: { id },
   });
+
+  if (queryResult === 1) {
+    result(null, helperFunction.responseHandler(true, 200, 'Answer Removed', null));
+  } else {
+    result(helperFunction.responseHandler(false, 404, 'This answer doesn\'t exists', null), null);
+  }
 };
 
 const retrieveAll = (postId, result) => {

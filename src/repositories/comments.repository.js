@@ -1,4 +1,5 @@
 const helperFunction = require('../helpers/helperFunction');
+const { CommentsModelSequelize } = require('../models/comments.model');
 
 const create = (newComment, result) => {
   const query = `INSERT INTO comments(body,user_id,post_id) VALUES(?,?,?);`;
@@ -28,28 +29,16 @@ const create = (newComment, result) => {
   );
 };
 
-const remove = (id, result) => {
-  const query = ` DELETE FROM comments WHERE id = ?;`;
-
-  pool.query(query, id, (err) => {
-    if (err) {
-      console.log('error: ', err);
-      result(
-        helperFunction.responseHandler(
-          false,
-          err.statusCode,
-          err.message,
-          null,
-        ),
-        null,
-      );
-      return;
-    }
-    result(
-      null,
-      helperFunction.responseHandler(true, 200, 'Comment Removed', null),
-    );
+const remove = async (id, result) => {
+  const queryResult = await CommentsModelSequelize.destroy({
+    where: { id },
   });
+
+  if (queryResult === 1) {
+    result(null, helperFunction.responseHandler(true, 200, 'Comment Removed', null));
+  } else {
+    result(helperFunction.responseHandler(false, 404, 'This comment doesn\'t exists', null), null);
+  }
 };
 
 const retrieveAll = (postId, result) => {

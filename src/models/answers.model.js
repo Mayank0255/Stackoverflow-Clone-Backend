@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 const db = require('../../config/db.sequelize');
 
+// eslint-disable-next-line func-names
 const Answer = function (answer) {
   this.body = answer.body;
   this.user_id = answer.user_id;
@@ -21,7 +22,7 @@ const AnswersModelSequelize = db.define('answers', {
   created_at: {
     type: Sequelize.DATE,
     allowNull: true,
-    defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+    defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
   },
   post_id: {
     type: Sequelize.INTEGER,
