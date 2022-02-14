@@ -129,17 +129,31 @@ const retrieveOne = (postId, result) => {
 };
 
 const retrieveAll = (result) => {
-  const query = `SELECT 
-                posts.id,posts.user_id,username,COUNT(DISTINCT answers.id) 
-                as answer_count,COUNT(DISTINCT comments.id) 
-                as comment_count,tag_id,title,posts.body,tagname,description,posts.created_at,posts.views 
-                FROM posts 
-                JOIN posttag ON posts.id = post_id 
-                JOIN tags ON tag_id = tags.id 
-                JOIN users ON user_id = users.id 
-                LEFT JOIN answers ON answers.post_id = posts.id 
-                LEFT JOIN comments ON posts.id = comments.post_id 
-                GROUP BY posts.id ORDER BY posts.created_at DESC;`;
+  const query = `
+  SELECT 
+    posts.id, 
+    posts.user_id, 
+    username, 
+    COUNT(DISTINCT answers.id) as answer_count, 
+    COUNT(DISTINCT comments.id) as comment_count, 
+    tag_id, 
+    title, 
+    posts.body, 
+    tagname, 
+    description, 
+    posts.created_at, 
+    posts.views 
+  FROM 
+    posts 
+    JOIN posttag ON posts.id = post_id 
+    JOIN tags ON tag_id = tags.id 
+    JOIN users ON user_id = users.id 
+    LEFT JOIN answers ON answers.post_id = posts.id 
+    LEFT JOIN comments ON posts.id = comments.post_id 
+  GROUP BY 
+    posts.id 
+  ORDER BY 
+    posts.created_at DESC;`;
 
   pool.query(query, (err, results) => {
     if (err || results.length === 0) {
@@ -160,17 +174,32 @@ const retrieveAll = (result) => {
 };
 
 const retrieveAllTop = (result) => {
-  const query = `SELECT 
-                posts.id,posts.user_id,username,COUNT(DISTINCT answers.id) 
-                as answer_count,COUNT(DISTINCT comments.id) 
-                as comment_count,tag_id,title,posts.body,tagname,description,posts.created_at,posts.views 
-                FROM posts 
-                JOIN posttag ON posts.id = post_id 
-                JOIN tags ON tag_id = tags.id 
-                JOIN users ON user_id = users.id 
-                LEFT JOIN answers ON answers.post_id = posts.id 
-                LEFT JOIN comments ON posts.id = comments.post_id
-                GROUP BY posts.id ORDER BY answer_count DESC,comment_count DESC;`;
+  const query = `
+  SELECT 
+    posts.id, 
+    posts.user_id, 
+    username, 
+    COUNT(DISTINCT answers.id) as answer_count, 
+    COUNT(DISTINCT comments.id) as comment_count, 
+    tag_id, 
+    title, 
+    posts.body, 
+    tagname, 
+    description, 
+    posts.created_at, 
+    posts.views 
+  FROM 
+    posts 
+    JOIN posttag ON posts.id = post_id 
+    JOIN tags ON tag_id = tags.id 
+    JOIN users ON user_id = users.id 
+    LEFT JOIN answers ON answers.post_id = posts.id 
+    LEFT JOIN comments ON posts.id = comments.post_id 
+  GROUP BY 
+    posts.id 
+  ORDER BY 
+    answer_count DESC, 
+    comment_count DESC;`;
 
   pool.query(query, (err, results) => {
     if (err || results.length === 0) {
@@ -191,17 +220,33 @@ const retrieveAllTop = (result) => {
 };
 
 const retrieveAllTag = (tagName, result) => {
-  const query = `SELECT 
-                posts.id,posts.user_id,username,COUNT(DISTINCT answers.id) 
-                as answer_count,COUNT(DISTINCT comments.id) 
-                as comment_count,tag_id,title,posts.body,tagname,description,posts.created_at,posts.views 
-                FROM posts 
-                JOIN posttag ON posts.id = post_id 
-                JOIN tags ON tag_id = tags.id 
-                JOIN users ON user_id = users.id 
-                LEFT JOIN answers ON answers.post_id = posts.id 
-                LEFT JOIN comments ON posts.id = comments.post_id
-                WHERE tags.tagname = ? GROUP BY posts.id ORDER BY posts.created_at DESC;`;
+  const query = `
+  SELECT 
+    posts.id, 
+    posts.user_id, 
+    username, 
+    COUNT(DISTINCT answers.id) as answer_count, 
+    COUNT(DISTINCT comments.id) as comment_count, 
+    tag_id, 
+    title, 
+    posts.body, 
+    tagname, 
+    description, 
+    posts.created_at, 
+    posts.views 
+  FROM 
+    posts 
+    JOIN posttag ON posts.id = post_id 
+    JOIN tags ON tag_id = tags.id 
+    JOIN users ON user_id = users.id 
+    LEFT JOIN answers ON answers.post_id = posts.id 
+    LEFT JOIN comments ON posts.id = comments.post_id 
+  WHERE 
+    tags.tagname = ? 
+  GROUP BY 
+    posts.id 
+  ORDER BY 
+    posts.created_at DESC;`;
 
   pool.query(query, tagName, (err, results) => {
     if (err || results.length === 0) {
