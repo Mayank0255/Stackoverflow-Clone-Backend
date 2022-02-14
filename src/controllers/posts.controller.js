@@ -4,15 +4,48 @@ const { Post } = require('../models/posts.model');
 const service = require('../services/posts.service');
 
 const getPosts = (req, res) => {
-  const { tagname } = req.params;
+  try {
+    service.retrieveAll((err, data) => {
+      if (err) {
+        console.log(err);
+        return res.status(err.code).json(err);
+      }
+
+      return res.status(data.code).json(data);
+    });
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(500)
+      .json(helperFunction.responseHandler(true, 500, 'Server Error', null));
+  }
+};
+
+const getTopPosts = (req, res) => {
+  try {
+    service.retrieveAllTop(
+      (err, data) => {
+        if (err) {
+          console.log(err);
+          return res.status(err.code).json(err);
+        }
+        return res.status(data.code).json(data);
+      },
+    );
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(500)
+      .json(helperFunction.responseHandler(true, 500, 'Server Error', null));
+  }
+};
+
+const getTagPosts = (req, res) => {
+  const tagName = req.params.tagname;
 
   try {
-    service.retrieveAll(
-      {
-        // eslint-disable-next-line no-nested-ternary
-        action: tagname ? 'tag' : req.url.includes('top') ? 'top' : 'basic',
-        tagName: tagname,
-      },
+    service.retrieveAllTag(
+      tagName,
       (err, data) => {
         if (err) {
           console.log(err);
@@ -95,6 +128,8 @@ const deletePost = (req, res) => {
 
 module.exports = postsController = {
   getPosts,
+  getTopPosts,
+  getTagPosts,
   getSinglePost,
   addPost,
   deletePost,

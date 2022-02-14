@@ -53,12 +53,20 @@ const remove = (id, result) => {
 };
 
 const retrieveAll = (postId, result) => {
-  const query = `   SELECT
-                    comments.id, post_id, comments.user_id, username, comments.body, comments.created_at 
-                    FROM comments 
-                    JOIN posts ON posts.id = comments.post_id 
-                    JOIN users ON users.id = comments.user_id 
-                    WHERE post_id = ?;`;
+  const query = `
+  SELECT 
+    comments.id, 
+    post_id, 
+    comments.user_id, 
+    username, 
+    comments.body, 
+    comments.created_at 
+  FROM 
+    comments 
+    JOIN posts ON posts.id = comments.post_id 
+    JOIN users ON users.id = comments.user_id 
+  WHERE 
+    post_id = ?;`;
 
   pool.query(query, postId, (err, results) => {
     if (err || results.length === 0) {

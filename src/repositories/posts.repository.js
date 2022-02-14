@@ -69,18 +69,28 @@ const remove = (id, result) => {
 const retrieveOne = (postId, result) => {
   const updateQuery = `UPDATE posts SET views = views + 1 WHERE posts.id = ?;`;
 
-  const query = ` SELECT 
-                  posts.id,posts.user_id,tag_id,COUNT(DISTINCT answers.id) 
-                  as answer_count,COUNT(DISTINCT comments.id) 
-                  as comment_count,username,title,posts.body 
-                  as post_body,tagname,posts.created_at,posts.views as views
-                  FROM posts 
-                  JOIN posttag ON posts.id = post_id 
-                  JOIN tags ON tag_id = tags.id 
-                  JOIN users ON user_id = users.id 
-                  LEFT JOIN answers ON answers.post_id = posts.id 
-                  LEFT JOIN comments ON posts.id = comments.post_id 
-                  WHERE posts.id = ?;`;
+  const query = `
+  SELECT 
+    posts.id, 
+    posts.user_id, 
+    tag_id, 
+    COUNT(DISTINCT answers.id) as answer_count, 
+    COUNT(DISTINCT comments.id) as comment_count, 
+    username, 
+    title, 
+    posts.body as post_body, 
+    tagname, 
+    posts.created_at, 
+    posts.views as views 
+  FROM 
+    posts 
+    JOIN posttag ON posts.id = post_id 
+    JOIN tags ON tag_id = tags.id 
+    JOIN users ON user_id = users.id 
+    LEFT JOIN answers ON answers.post_id = posts.id 
+    LEFT JOIN comments ON posts.id = comments.post_id 
+  WHERE 
+    posts.id = ?;`;
 
   pool.query(updateQuery, postId, (err) => {
     if (err) {
@@ -118,9 +128,8 @@ const retrieveOne = (postId, result) => {
   });
 };
 
-const retrieveAll = (action, tagName, result) => {
-  let query = '';
-  const base = `SELECT 
+const retrieveAll = (result) => {
+  const query = `SELECT 
                 posts.id,posts.user_id,username,COUNT(DISTINCT answers.id) 
                 as answer_count,COUNT(DISTINCT comments.id) 
                 as comment_count,tag_id,title,posts.body,tagname,description,posts.created_at,posts.views 
@@ -129,22 +138,72 @@ const retrieveAll = (action, tagName, result) => {
                 JOIN tags ON tag_id = tags.id 
                 JOIN users ON user_id = users.id 
                 LEFT JOIN answers ON answers.post_id = posts.id 
-                LEFT JOIN comments ON posts.id = comments.post_id `;
+                LEFT JOIN comments ON posts.id = comments.post_id 
+                GROUP BY posts.id ORDER BY posts.created_at DESC;`;
 
-  if (action === 'basic') {
-    query = 'GROUP BY posts.id ORDER BY posts.created_at DESC;';
-  } else if (action === 'top') {
-    query = 'GROUP BY posts.id ORDER BY answer_count DESC,comment_count DESC;';
-  } else if (action === 'tag') {
-    query = 'WHERE tags.tagname = ? GROUP BY posts.id ORDER BY posts.created_at DESC;';
-  } else {
-    result(
-      helperFunction.responseHandler(false, 400, 'Incorrect Action', null),
-      null,
-    );
-    return;
-  }
-  pool.query(base + query, tagName || null, (err, results) => {
+  pool.query(query, (err, results) => {
+    if (err || results.length === 0) {
+      console.log('error: ', err);
+      result(
+        helperFunction.responseHandler(
+          false,
+          err ? err.statusCode : 404,
+          err ? err.message : 'There are no posts',
+          null,
+        ),
+        null,
+      );
+      return;
+    }
+    result(null, helperFunction.responseHandler(true, 200, 'Success', results));
+  });
+};
+
+const retrieveAllTop = (result) => {
+  const query = `SELECT 
+                posts.id,posts.user_id,username,COUNT(DISTINCT answers.id) 
+                as answer_count,COUNT(DISTINCT comments.id) 
+                as comment_count,tag_id,title,posts.body,tagname,description,posts.created_at,posts.views 
+                FROM posts 
+                JOIN posttag ON posts.id = post_id 
+                JOIN tags ON tag_id = tags.id 
+                JOIN users ON user_id = users.id 
+                LEFT JOIN answers ON answers.post_id = posts.id 
+                LEFT JOIN comments ON posts.id = comments.post_id
+                GROUP BY posts.id ORDER BY answer_count DESC,comment_count DESC;`;
+
+  pool.query(query, (err, results) => {
+    if (err || results.length === 0) {
+      console.log('error: ', err);
+      result(
+        helperFunction.responseHandler(
+          false,
+          err ? err.statusCode : 404,
+          err ? err.message : 'There are no posts',
+          null,
+        ),
+        null,
+      );
+      return;
+    }
+    result(null, helperFunction.responseHandler(true, 200, 'Success', results));
+  });
+};
+
+const retrieveAllTag = (tagName, result) => {
+  const query = `SELECT 
+                posts.id,posts.user_id,username,COUNT(DISTINCT answers.id) 
+                as answer_count,COUNT(DISTINCT comments.id) 
+                as comment_count,tag_id,title,posts.body,tagname,description,posts.created_at,posts.views 
+                FROM posts 
+                JOIN posttag ON posts.id = post_id 
+                JOIN tags ON tag_id = tags.id 
+                JOIN users ON user_id = users.id 
+                LEFT JOIN answers ON answers.post_id = posts.id 
+                LEFT JOIN comments ON posts.id = comments.post_id
+                WHERE tags.tagname = ? GROUP BY posts.id ORDER BY posts.created_at DESC;`;
+
+  pool.query(query, tagName, (err, results) => {
     if (err || results.length === 0) {
       console.log('error: ', err);
       result(
@@ -167,4 +226,6 @@ module.exports = {
   remove,
   retrieveOne,
   retrieveAll,
+  retrieveAllTop,
+  retrieveAllTag,
 };

@@ -11,11 +11,17 @@ const remove = (id, result) => repository.remove(id, result);
 
 const retrieveOne = (postId, result) => repository.retrieveOne(postId, result);
 
-const retrieveAll = ({ action, tagName }, result) => repository.retrieveAll(action, tagName, result);
+const retrieveAll = (result) => repository.retrieveAll(result);
+
+const retrieveAllTop = (result) => repository.retrieveAllTop(result);
+
+const retrieveAllTag = (tagName, result) => repository.retrieveAllTag(tagName, result);
 
 module.exports = {
   create,
   remove,
   retrieveOne,
   retrieveAll,
+  retrieveAllTop,
+  retrieveAllTag,
 };

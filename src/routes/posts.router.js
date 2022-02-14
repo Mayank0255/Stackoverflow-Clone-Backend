@@ -16,13 +16,13 @@ router.get('/', postsController.getPosts);
  *  @desc       fetch all posts sorted by maximum interactivity
  *  @access     Private
  */
-router.get('/top', postsController.getPosts);
+router.get('/top', postsController.getTopPosts);
 
 /** @route      GET /api/posts/tag/:tagname
  *  @desc       fetch all posts of a specific tag
  *  @access     Private
  */
-router.get('/tag/:tagname', postsController.getPosts);
+router.get('/tag/:tagname', postsController.getTagPosts);
 
 /** @route      GET /api/posts/:id
  *  @desc       fetch a single post
