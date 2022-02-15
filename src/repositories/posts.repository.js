@@ -13,7 +13,7 @@ exports.create = async (newPost, result, tagDescription) => {
     [
       newPost.title,
       newPost.body,
-      newPost.userId,
+      newPost.user_id,
       newPost.tagname,
       tagDescription,
       newPost.tagname,

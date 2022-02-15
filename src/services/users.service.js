@@ -18,7 +18,8 @@ exports.login = async (newUser, result) => {
 exports.retrieveAll = (result) => repository.retrieveAll(result);
 exports.retrieveOne = (id, result) => repository.retrieveOne(id, result);
 
-exports.loadUser = (userId, result) => repository.loadUser(userId, result);
+// eslint-disable-next-line camelcase
+exports.loadUser = (user_id, result) => repository.loadUser(user_id, result);
 
 const getJwtToken = (payload, logMessage, result) => {
   jwt.sign(

@@ -90,7 +90,7 @@ exports.addPost = (req, res) => {
     const post = new Post({
       title: req.body.title,
       body: req.body.body,
-      userId: req.user.id,
+      user_id: req.user.id,
       tagname: req.body.tagname,
     });
     // Save Post in the database

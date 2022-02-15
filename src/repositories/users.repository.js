@@ -201,9 +201,10 @@ exports.retrieveOne = async (id, result) => {
   );
 };
 
-exports.loadUser = async (userId, result) => {
+// eslint-disable-next-line camelcase
+exports.loadUser = async (user_id, result) => {
   await UsersModelSequelize.findOne({
-    where: { id: userId },
+    where: { id: user_id },
     attributes: ['id', 'username', 'created_at'],
   })
     .then((response) => {

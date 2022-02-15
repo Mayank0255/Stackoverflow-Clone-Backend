@@ -8,7 +8,7 @@ const { CommentsModelSequelize } = require('./comments.model');
 const Post = function (post) {
   this.title = post.title;
   this.body = post.body;
-  this.userId = post.userId;
+  this.user_id = post.user_id;
   this.tagname = post.tagname;
 };
 
