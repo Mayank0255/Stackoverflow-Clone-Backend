@@ -1,7 +1,7 @@
-const helperFunction = require('../helpers/helperFunction');
+const responseHandler = require('../helpers/responseHandler');
 const service = require('../services/tags.service');
 
-const getTags = (req, res) => {
+exports.getTags = (req, res) => {
   try {
     service.retrieveAll((err, data) => {
       if (err) {
@@ -14,11 +14,11 @@ const getTags = (req, res) => {
     console.log(err);
     return res
       .status(500)
-      .json(helperFunction.responseHandler(false, 500, 'Server Error', null));
+      .json(responseHandler(false, 500, 'Server Error', null));
   }
 };
 
-const getSingleTag = (req, res) => {
+exports.getSingleTag = (req, res) => {
   try {
     service.retrieveOne(req.params.tagname, (err, data) => {
       if (err) {
@@ -31,11 +31,6 @@ const getSingleTag = (req, res) => {
     console.log(err);
     return res
       .status(500)
-      .json(helperFunction.responseHandler(false, 500, 'Server Error', null));
+      .json(responseHandler(false, 500, 'Server Error', null));
   }
-};
-
-module.exports = tagsController = {
-  getTags,
-  getSingleTag,
 };

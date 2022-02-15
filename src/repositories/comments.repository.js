@@ -1,4 +1,4 @@
-const helperFunction = require('../helpers/helperFunction');
+const responseHandler = require('../helpers/responseHandler');
 const { CommentsModelSequelize } = require('../models/comments.model');
 
 const create = (newComment, result) => {
@@ -11,7 +11,7 @@ const create = (newComment, result) => {
       if (err) {
         console.log('error: ', err);
         result(
-          helperFunction.responseHandler(
+          responseHandler(
             false,
             err.statusCode,
             err.message,
@@ -23,7 +23,7 @@ const create = (newComment, result) => {
       }
       result(
         null,
-        helperFunction.responseHandler(true, 200, 'Comment Added', res.insertId),
+        responseHandler(true, 200, 'Comment Added', res.insertId),
       );
     },
   );
@@ -35,9 +35,9 @@ const remove = async (id, result) => {
   });
 
   if (queryResult === 1) {
-    result(null, helperFunction.responseHandler(true, 200, 'Comment Removed', null));
+    result(null, responseHandler(true, 200, 'Comment Removed', null));
   } else {
-    result(helperFunction.responseHandler(false, 404, 'This comment doesn\'t exists', null), null);
+    result(responseHandler(false, 404, 'This comment doesn\'t exists', null), null);
   }
 };
 
@@ -61,7 +61,7 @@ const retrieveAll = (postId, result) => {
     if (err || results.length === 0) {
       console.log('error: ', err);
       result(
-        helperFunction.responseHandler(
+        responseHandler(
           false,
           err ? err.statusCode : 404,
           err ? err.message : 'There are no comments',
@@ -71,7 +71,7 @@ const retrieveAll = (postId, result) => {
       );
       return;
     }
-    result(null, helperFunction.responseHandler(true, 200, 'Success', results));
+    result(null, responseHandler(true, 200, 'Success', results));
   });
 };
 

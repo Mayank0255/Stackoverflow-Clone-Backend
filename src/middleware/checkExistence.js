@@ -1,4 +1,4 @@
-const helperFunction = require('../helpers/helperFunction');
+const responseHandler = require('../helpers/responseHandler');
 
 module.exports = (req, res, next) => {
   const { username } = req.body;
@@ -11,7 +11,7 @@ module.exports = (req, res, next) => {
         return res
           .status(err.statusCode)
           .json(
-            helperFunction.responseHandler(
+            responseHandler(
               false,
               err.statusCode,
               err.message,
@@ -23,7 +23,7 @@ module.exports = (req, res, next) => {
         return res
           .status(400)
           .json(
-            helperFunction.responseHandler(
+            responseHandler(
               false,
               400,
               'User already exists',

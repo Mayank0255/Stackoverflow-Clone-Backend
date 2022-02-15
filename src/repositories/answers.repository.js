@@ -1,4 +1,4 @@
-const helperFunction = require('../helpers/helperFunction');
+const responseHandler = require('../helpers/responseHandler');
 const { AnswersModelSequelize } = require('../models/answers.model');
 
 const create = async (newAnswer, result) => {
@@ -10,7 +10,7 @@ const create = async (newAnswer, result) => {
 
   result(
     null,
-    helperFunction.responseHandler(true, 200, 'Answer Added', queryResult.id),
+    responseHandler(true, 200, 'Answer Added', queryResult.id),
   );
 };
 
@@ -20,9 +20,9 @@ const remove = async (id, result) => {
   });
 
   if (queryResult === 1) {
-    result(null, helperFunction.responseHandler(true, 200, 'Answer Removed', null));
+    result(null, responseHandler(true, 200, 'Answer Removed', null));
   } else {
-    result(helperFunction.responseHandler(false, 404, 'This answer doesn\'t exists', null), null);
+    result(responseHandler(false, 404, 'This answer doesn\'t exists', null), null);
   }
 };
 
@@ -46,7 +46,7 @@ const retrieveAll = (postId, result) => {
     if (err || results.length === 0) {
       console.log('error: ', err);
       result(
-        helperFunction.responseHandler(
+        responseHandler(
           false,
           err ? err.statusCode : 404,
           err ? err.message : 'There are no answers',
@@ -56,7 +56,7 @@ const retrieveAll = (postId, result) => {
       );
       return;
     }
-    result(null, helperFunction.responseHandler(true, 200, 'Success', results));
+    result(null, responseHandler(true, 200, 'Success', results));
   });
 };
 

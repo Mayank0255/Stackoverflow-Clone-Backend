@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const config = require('config');
-const helperFunction = require('../helpers/helperFunction');
+const responseHandler = require('../helpers/responseHandler');
 const repository = require('../repositories/users.repository');
 
 const register = async (newUser, result) => {
@@ -29,7 +29,7 @@ const getJwtToken = (payload, logMessage, result) => {
       if (error) {
         console.log('error: ', error);
         result(
-          helperFunction.responseHandler(
+          responseHandler(
             false,
             error.statusCode,
             error.message,
@@ -41,7 +41,7 @@ const getJwtToken = (payload, logMessage, result) => {
       }
       result(
         null,
-        helperFunction.responseHandler(true, 200, logMessage, { token }),
+        responseHandler(true, 200, logMessage, { token }),
       );
     },
   );

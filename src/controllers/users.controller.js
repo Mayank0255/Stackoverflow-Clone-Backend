@@ -1,9 +1,9 @@
 const { validationResult } = require('express-validator');
-const helperFunction = require('../helpers/helperFunction');
+const responseHandler = require('../helpers/responseHandler');
 const { User } = require('../models/users.model');
 const service = require('../services/users.service');
 
-const getOneUser = (req, res) => {
+exports.getOneUser = (req, res) => {
   try {
     const { id } = req.params;
 
@@ -21,11 +21,11 @@ const getOneUser = (req, res) => {
     console.log(err);
     return res
       .status(500)
-      .json(helperFunction.responseHandler(false, 500, 'Server Error', null));
+      .json(responseHandler(false, 500, 'Server Error', null));
   }
 };
 
-const getAllUsers = (req, res) => {
+exports.getAllUsers = (req, res) => {
   try {
     service.retrieveAll(
       (err, data) => {
@@ -40,16 +40,16 @@ const getAllUsers = (req, res) => {
     console.log(err);
     return res
       .status(500)
-      .json(helperFunction.responseHandler(false, 500, 'Server Error', null));
+      .json(responseHandler(false, 500, 'Server Error', null));
   }
 };
 
-const register = async (req, res) => {
+exports.register = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res
       .status(400)
-      .json(helperFunction.responseHandler(false, 400, errors.array()[0].msg, null));
+      .json(responseHandler(false, 400, errors.array()[0].msg, null));
   }
   try {
     // Register user in the database
@@ -64,12 +64,6 @@ const register = async (req, res) => {
     console.log(err);
     return res
       .status(500)
-      .json(helperFunction.responseHandler(true, 500, 'Server Error', null));
+      .json(responseHandler(true, 500, 'Server Error', null));
   }
-};
-
-module.exports = usersController = {
-  getOneUser,
-  getAllUsers,
-  register,
 };

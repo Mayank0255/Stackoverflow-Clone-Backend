@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const util = require('util');
-const helperFunction = require('../helpers/helperFunction');
+const responseHandler = require('../helpers/responseHandler');
 
 const register = async (newUser, result) => {
   const salt = await bcrypt.genSalt(10);
@@ -14,7 +14,7 @@ const register = async (newUser, result) => {
     if (err) {
       console.log('error: ', err);
       result(
-        helperFunction.responseHandler(
+        responseHandler(
           false,
           err.statusCode,
           err.message,
@@ -45,7 +45,7 @@ const login = async (newUser, result) => {
       console.log('error: ', err);
       const code = !results[0] ? 404 : err.statusCode;
       result(
-        helperFunction.responseHandler(
+        responseHandler(
           false,
           code,
           !results[0] ? 'User does not exists' : err.message,
@@ -62,7 +62,7 @@ const login = async (newUser, result) => {
 
     if (!isMatch) {
       result(
-        helperFunction.responseHandler(false, 400, 'Incorrect password', null),
+        responseHandler(false, 400, 'Incorrect password', null),
         null,
       );
 
@@ -104,7 +104,7 @@ const retrieveAll = (result) => {
       if (err || results.length === 0) {
         console.log('error: ', err);
         result(
-          helperFunction.responseHandler(
+          responseHandler(
             false,
             err ? err.statusCode : 404,
             err ? err.message : 'There are no users',
@@ -116,7 +116,7 @@ const retrieveAll = (result) => {
       }
       result(
         null,
-        helperFunction.responseHandler(
+        responseHandler(
           true,
           200,
           'Success',
@@ -156,7 +156,7 @@ const retrieveOne = (id, result) => {
     if (err) {
       console.log('error: ', err);
       result(
-        helperFunction.responseHandler(
+        responseHandler(
           false,
           err ? err.statusCode : 404,
           err ? err.message : 'There isn\'t any user by this id',
@@ -174,7 +174,7 @@ const retrieveOne = (id, result) => {
       if (err || results.length === 0) {
         console.log('error: ', err);
         result(
-          helperFunction.responseHandler(
+          responseHandler(
             false,
             err ? err.statusCode : 404,
             err ? err.message : 'There are no users',
@@ -186,7 +186,7 @@ const retrieveOne = (id, result) => {
       }
       result(
         null,
-        helperFunction.responseHandler(
+        responseHandler(
           true,
           200,
           'Success',
@@ -204,7 +204,7 @@ const loadUser = (userId, result) => {
     if (err) {
       console.log('error: ', err);
       result(
-        helperFunction.responseHandler(
+        responseHandler(
           false,
           err.statusCode,
           err.message,
@@ -216,7 +216,7 @@ const loadUser = (userId, result) => {
     }
     result(
       null,
-      helperFunction.responseHandler(true, 200, 'Success', results[0]),
+      responseHandler(true, 200, 'Success', results[0]),
     );
   });
 };

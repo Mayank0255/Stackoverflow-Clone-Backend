@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const helperFunction = require('../helpers/helperFunction');
+const responseHandler = require('../helpers/responseHandler');
 const { TagsModelSequelize } = require('../models/tags.model');
 const { PostsModelSequelize } = require('../models/posts.model');
 
@@ -33,7 +33,7 @@ const retrieveAll = async (result) => {
 
     if (queryResultMap.length === 0) {
       result(
-        helperFunction.responseHandler(
+        responseHandler(
           false,
           404,
           'There are no tags',
@@ -43,11 +43,11 @@ const retrieveAll = async (result) => {
       );
       return;
     }
-    result(null, helperFunction.responseHandler(true, 200, 'Success', queryResultMap));
+    result(null, responseHandler(true, 200, 'Success', queryResultMap));
   } catch (error) {
     console.log('error: ', error);
     result(
-      helperFunction.responseHandler(
+      responseHandler(
         false,
         error ? error.statusCode : 500,
         error ? error.message : 'Internal error',
@@ -75,7 +75,7 @@ const retrieveOne = async (tagName, result) => {
 
     if (!queryResult) {
       result(
-        helperFunction.responseHandler(
+        responseHandler(
           false,
           404,
           'This tag doesn\'t exists',
@@ -95,11 +95,11 @@ const retrieveOne = async (tagName, result) => {
       id, tagname, description, posts_count, created_at,
     };
 
-    result(null, helperFunction.responseHandler(true, 200, 'Success', tagResult));
+    result(null, responseHandler(true, 200, 'Success', tagResult));
   } catch (error) {
     console.log('error: ', error);
     result(
-      helperFunction.responseHandler(
+      responseHandler(
         false,
         error ? error.statusCode : 500,
         error ? error.message : 'Internal error',

@@ -1,5 +1,5 @@
 const { validationResult } = require('express-validator');
-const helperFunction = require('../helpers/helperFunction');
+const responseHandler = require('../helpers/responseHandler');
 const { Answer } = require('../models/answers.model');
 const service = require('../services/answers.service');
 
@@ -16,7 +16,7 @@ exports.getAnswers = (req, res) => {
     console.log(err);
     return res
       .status(500)
-      .json(helperFunction.responseHandler(false, 500, 'Server Error', null));
+      .json(responseHandler(false, 500, 'Server Error', null));
   }
 };
 
@@ -25,7 +25,7 @@ exports.addAnswer = (req, res) => {
   if (!errors.isEmpty()) {
     return res
       .status(400)
-      .json(helperFunction.responseHandler(false, 400, errors.array()[0].msg, null));
+      .json(responseHandler(false, 400, errors.array()[0].msg, null));
   }
   try {
     const answer = new Answer({
@@ -45,7 +45,7 @@ exports.addAnswer = (req, res) => {
     console.log(err);
     return res
       .status(500)
-      .json(helperFunction.responseHandler(false, 500, 'Server Error', null));
+      .json(responseHandler(false, 500, 'Server Error', null));
   }
 };
 
@@ -62,12 +62,6 @@ exports.deleteAnswer = async (req, res) => {
     console.log(err);
     return res
       .status(500)
-      .json(helperFunction.responseHandler(false, 500, 'Server Error', null));
+      .json(responseHandler(false, 500, 'Server Error', null));
   }
 };
-
-// module.exports = answersController = {
-//   getAnswers,
-//   addAnswer,
-//   deleteAnswer,
-// };

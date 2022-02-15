@@ -1,9 +1,9 @@
 const { validationResult } = require('express-validator');
-const helperFunction = require('../helpers/helperFunction');
+const responseHandler = require('../helpers/responseHandler');
 const { Post } = require('../models/posts.model');
 const service = require('../services/posts.service');
 
-const getPosts = (req, res) => {
+exports.getPosts = (req, res) => {
   try {
     service.retrieveAll((err, data) => {
       if (err) {
@@ -17,11 +17,11 @@ const getPosts = (req, res) => {
     console.log(err);
     return res
       .status(500)
-      .json(helperFunction.responseHandler(true, 500, 'Server Error', null));
+      .json(responseHandler(true, 500, 'Server Error', null));
   }
 };
 
-const getTopPosts = (req, res) => {
+exports.getTopPosts = (req, res) => {
   try {
     service.retrieveAllTop(
       (err, data) => {
@@ -36,11 +36,11 @@ const getTopPosts = (req, res) => {
     console.log(err);
     return res
       .status(500)
-      .json(helperFunction.responseHandler(true, 500, 'Server Error', null));
+      .json(responseHandler(true, 500, 'Server Error', null));
   }
 };
 
-const getTagPosts = (req, res) => {
+exports.getTagPosts = (req, res) => {
   const tagName = req.params.tagname;
 
   try {
@@ -58,11 +58,11 @@ const getTagPosts = (req, res) => {
     console.log(err);
     return res
       .status(500)
-      .json(helperFunction.responseHandler(true, 500, 'Server Error', null));
+      .json(responseHandler(true, 500, 'Server Error', null));
   }
 };
 
-const getSinglePost = (req, res) => {
+exports.getSinglePost = (req, res) => {
   try {
     service.retrieveOne(req.params.id, (err, data) => {
       if (err) {
@@ -75,16 +75,16 @@ const getSinglePost = (req, res) => {
     console.log(err);
     return res
       .status(500)
-      .json(helperFunction.responseHandler(false, 500, 'Server Error', null));
+      .json(responseHandler(false, 500, 'Server Error', null));
   }
 };
 
-const addPost = (req, res) => {
+exports.addPost = (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res
       .status(400)
-      .json(helperFunction.responseHandler(false, 400, errors.array()[0].msg, null));
+      .json(responseHandler(false, 400, errors.array()[0].msg, null));
   }
   try {
     const post = new Post({
@@ -105,11 +105,11 @@ const addPost = (req, res) => {
     console.log(err);
     return res
       .status(500)
-      .json(helperFunction.responseHandler(false, 500, 'Server Error', null));
+      .json(responseHandler(false, 500, 'Server Error', null));
   }
 };
 
-const deletePost = (req, res) => {
+exports.deletePost = (req, res) => {
   try {
     service.remove(req.params.id, (err, data) => {
       if (err) {
@@ -122,15 +122,6 @@ const deletePost = (req, res) => {
     console.log(err);
     return res
       .status(500)
-      .json(helperFunction.responseHandler(false, 500, 'Server Error', null));
+      .json(responseHandler(false, 500, 'Server Error', null));
   }
-};
-
-module.exports = postsController = {
-  getPosts,
-  getTopPosts,
-  getTagPosts,
-  getSinglePost,
-  addPost,
-  deletePost,
 };

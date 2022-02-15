@@ -1,4 +1,4 @@
-const helperFunction = require('../helpers/helperFunction');
+const responseHandler = require('../helpers/responseHandler');
 
 const create = async (newPost, result, tagDescription) => {
   const query = ` INSERT INTO posts(title,body,user_id) VALUES (?,?,?);
@@ -21,7 +21,7 @@ const create = async (newPost, result, tagDescription) => {
       if (err) {
         console.log('error: ', err);
         result(
-          helperFunction.responseHandler(
+          responseHandler(
             false,
             err.statusCode,
             err.message,
@@ -33,7 +33,7 @@ const create = async (newPost, result, tagDescription) => {
       }
       result(
         null,
-        helperFunction.responseHandler(true, 200, 'Post Created', res.insertId),
+        responseHandler(true, 200, 'Post Created', res.insertId),
       );
     },
   );
@@ -49,7 +49,7 @@ const remove = (id, result) => {
     if (err) {
       console.log('error: ', err);
       result(
-        helperFunction.responseHandler(
+        responseHandler(
           false,
           err.statusCode,
           err.message,
@@ -61,7 +61,7 @@ const remove = (id, result) => {
     }
     result(
       null,
-      helperFunction.responseHandler(true, 200, 'Post Removed', null),
+      responseHandler(true, 200, 'Post Removed', null),
     );
   });
 };
@@ -96,7 +96,7 @@ const retrieveOne = (postId, result) => {
     if (err) {
       console.log('error: ', err);
       result(
-        helperFunction.responseHandler(
+        responseHandler(
           false,
           err ? err.statusCode : 404,
           err ? err.message : 'There isn\'t any post by this id',
@@ -111,7 +111,7 @@ const retrieveOne = (postId, result) => {
     if (err || results.length === 0) {
       console.log('error: ', err);
       result(
-        helperFunction.responseHandler(
+        responseHandler(
           false,
           err ? err.statusCode : 404,
           err ? err.message : 'There isn\'t any post by this id',
@@ -123,7 +123,7 @@ const retrieveOne = (postId, result) => {
     }
     result(
       null,
-      helperFunction.responseHandler(true, 200, 'Success', results[0]),
+      responseHandler(true, 200, 'Success', results[0]),
     );
   });
 };
@@ -159,7 +159,7 @@ const retrieveAll = (result) => {
     if (err || results.length === 0) {
       console.log('error: ', err);
       result(
-        helperFunction.responseHandler(
+        responseHandler(
           false,
           err ? err.statusCode : 404,
           err ? err.message : 'There are no posts',
@@ -169,7 +169,7 @@ const retrieveAll = (result) => {
       );
       return;
     }
-    result(null, helperFunction.responseHandler(true, 200, 'Success', results));
+    result(null, responseHandler(true, 200, 'Success', results));
   });
 };
 
@@ -205,7 +205,7 @@ const retrieveAllTop = (result) => {
     if (err || results.length === 0) {
       console.log('error: ', err);
       result(
-        helperFunction.responseHandler(
+        responseHandler(
           false,
           err ? err.statusCode : 404,
           err ? err.message : 'There are no posts',
@@ -215,7 +215,7 @@ const retrieveAllTop = (result) => {
       );
       return;
     }
-    result(null, helperFunction.responseHandler(true, 200, 'Success', results));
+    result(null, responseHandler(true, 200, 'Success', results));
   });
 };
 
@@ -252,7 +252,7 @@ const retrieveAllTag = (tagName, result) => {
     if (err || results.length === 0) {
       console.log('error: ', err);
       result(
-        helperFunction.responseHandler(
+        responseHandler(
           false,
           err ? err.statusCode : 404,
           err ? err.message : 'There are no posts',
@@ -262,7 +262,7 @@ const retrieveAllTag = (tagName, result) => {
       );
       return;
     }
-    result(null, helperFunction.responseHandler(true, 200, 'Success', results));
+    result(null, responseHandler(true, 200, 'Success', results));
   });
 };
 

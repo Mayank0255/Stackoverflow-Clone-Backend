@@ -5,6 +5,4 @@ const responseHandler = (success, code = 400, message = 'valid', data) => ({
   data,
 });
 
-module.exports = helperFunction = {
-  responseHandler,
-};
+module.exports = responseHandler;

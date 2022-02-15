@@ -1,4 +1,4 @@
-const helperFunction = require('../helpers/helperFunction');
+const responseHandler = require('../helpers/responseHandler');
 
 module.exports = (req, res, next) => {
   let action;
@@ -19,7 +19,7 @@ module.exports = (req, res, next) => {
       return res
         .status(err.statusCode)
         .json(
-          helperFunction.responseHandler(
+          responseHandler(
             false,
             err.statusCode,
             err.message,
@@ -30,7 +30,7 @@ module.exports = (req, res, next) => {
     if (results[0].user_id !== req.user.id) {
       console.log('error: User not authorized to delete');
       return res.json(
-        helperFunction.responseHandler(
+        responseHandler(
           false,
           401,
           'User not authorized to delete',
