@@ -3,7 +3,7 @@ const helperFunction = require('../helpers/helperFunction');
 const { Answer } = require('../models/answers.model');
 const service = require('../services/answers.service');
 
-const getAnswers = (req, res) => {
+exports.getAnswers = (req, res) => {
   try {
     service.retrieveAll(req.params.id, (err, data) => {
       if (err) {
@@ -20,7 +20,7 @@ const getAnswers = (req, res) => {
   }
 };
 
-const addAnswer = (req, res) => {
+exports.addAnswer = (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res
@@ -49,7 +49,7 @@ const addAnswer = (req, res) => {
   }
 };
 
-const deleteAnswer = async (req, res) => {
+exports.deleteAnswer = async (req, res) => {
   try {
     service.remove(req.params.id, (err, data) => {
       if (err) {
@@ -66,8 +66,8 @@ const deleteAnswer = async (req, res) => {
   }
 };
 
-module.exports = answersController = {
-  getAnswers,
-  addAnswer,
-  deleteAnswer,
-};
+// module.exports = answersController = {
+//   getAnswers,
+//   addAnswer,
+//   deleteAnswer,
+// };

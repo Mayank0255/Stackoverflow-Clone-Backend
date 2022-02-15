@@ -7,7 +7,7 @@ const path = require('path');
 const http = require('http');
 const express = require('express');
 const pool = require('./config/db.config');
-const index = require('./src/routes/index');
+const index = require('./src/routers/index');
 
 const app = express();
 
@@ -41,7 +41,7 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-// all the api routes
+// all the api routers
 app.use('/api', index);
 
 // port initialized
