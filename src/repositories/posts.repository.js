@@ -1,6 +1,6 @@
 const responseHandler = require('../helpers/responseHandler');
 
-const create = async (newPost, result, tagDescription) => {
+exports.create = async (newPost, result, tagDescription) => {
   const query = ` INSERT INTO posts(title,body,user_id) VALUES (?,?,?);
                   SET @v1 := (SELECT LAST_INSERT_ID());
                   INSERT IGNORE INTO tags(tagname, description) VALUES (?, ?);
@@ -39,7 +39,7 @@ const create = async (newPost, result, tagDescription) => {
   );
 };
 
-const remove = (id, result) => {
+exports.remove = (id, result) => {
   const query = ` DELETE FROM posttag WHERE post_id = ?;
                   DELETE FROM comments WHERE post_id = ?; 
                   DELETE FROM answers WHERE post_id = ?; 
@@ -66,7 +66,7 @@ const remove = (id, result) => {
   });
 };
 
-const retrieveOne = (postId, result) => {
+exports.retrieveOne = (postId, result) => {
   const updateQuery = `UPDATE posts SET views = views + 1 WHERE posts.id = ?;`;
 
   const query = `
@@ -128,7 +128,7 @@ const retrieveOne = (postId, result) => {
   });
 };
 
-const retrieveAll = (result) => {
+exports.retrieveAll = (result) => {
   const query = `
   SELECT 
     posts.id, 
@@ -173,7 +173,7 @@ const retrieveAll = (result) => {
   });
 };
 
-const retrieveAllTop = (result) => {
+exports.retrieveAllTop = (result) => {
   const query = `
   SELECT 
     posts.id, 
@@ -219,7 +219,7 @@ const retrieveAllTop = (result) => {
   });
 };
 
-const retrieveAllTag = (tagName, result) => {
+exports.retrieveAllTag = (tagName, result) => {
   const query = `
   SELECT 
     posts.id, 
@@ -264,13 +264,4 @@ const retrieveAllTag = (tagName, result) => {
     }
     result(null, responseHandler(true, 200, 'Success', results));
   });
-};
-
-module.exports = {
-  create,
-  remove,
-  retrieveOne,
-  retrieveAll,
-  retrieveAllTop,
-  retrieveAllTag,
 };

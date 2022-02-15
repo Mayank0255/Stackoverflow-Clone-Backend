@@ -3,22 +3,22 @@ const config = require('config');
 const responseHandler = require('../helpers/responseHandler');
 const repository = require('../repositories/users.repository');
 
-const register = async (newUser, result) => {
+exports.register = async (newUser, result) => {
   const payload = await repository.register(newUser, result);
   // eslint-disable-next-line no-use-before-define
   getJwtToken(payload, 'User registered', result);
 };
 
-const login = async (newUser, result) => {
+exports.login = async (newUser, result) => {
   const payload = await repository.login(newUser, result);
   // eslint-disable-next-line no-use-before-define
   getJwtToken(payload, 'User logged in', result);
 };
 
-const retrieveAll = (result) => repository.retrieveAll(result);
-const retrieveOne = (id, result) => repository.retrieveOne(id, result);
+exports.retrieveAll = (result) => repository.retrieveAll(result);
+exports.retrieveOne = (id, result) => repository.retrieveOne(id, result);
 
-const loadUser = (userId, result) => repository.loadUser(userId, result);
+exports.loadUser = (userId, result) => repository.loadUser(userId, result);
 
 const getJwtToken = (payload, logMessage, result) => {
   jwt.sign(
@@ -45,12 +45,4 @@ const getJwtToken = (payload, logMessage, result) => {
       );
     },
   );
-};
-
-module.exports = {
-  register,
-  login,
-  retrieveAll,
-  retrieveOne,
-  loadUser,
 };

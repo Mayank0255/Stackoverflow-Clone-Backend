@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const util = require('util');
 const responseHandler = require('../helpers/responseHandler');
 
-const register = async (newUser, result) => {
+exports.register = async (newUser, result) => {
   const salt = await bcrypt.genSalt(10);
   newUser.password = await bcrypt.hash(newUser.password, salt);
   const query = `INSERT INTO users(username,password) VALUES(?,?);`;
@@ -35,7 +35,7 @@ const register = async (newUser, result) => {
   return payload;
 };
 
-const login = async (newUser, result) => {
+exports.login = async (newUser, result) => {
   const query = `SELECT * FROM users WHERE username = ?;`;
   const queryResult = util.promisify(pool.query).bind(pool);
   const rows = await queryResult(query, [newUser.username, newUser.password]);
@@ -79,7 +79,7 @@ const login = async (newUser, result) => {
   return payload;
 };
 
-const retrieveAll = (result) => {
+exports.retrieveAll = (result) => {
   const selectQuery = `
   SELECT 
     users.id, 
@@ -127,7 +127,7 @@ const retrieveAll = (result) => {
   );
 };
 
-const retrieveOne = (id, result) => {
+exports.retrieveOne = (id, result) => {
   const updateQuery = `UPDATE users SET views = views + 1 WHERE users.id = ?;`;
 
   const selectQuery = `
@@ -197,7 +197,7 @@ const retrieveOne = (id, result) => {
   );
 };
 
-const loadUser = (userId, result) => {
+exports.loadUser = (userId, result) => {
   const query = `SELECT id,username,created_at FROM users WHERE id = ?;`;
 
   pool.query(query, userId, (err, results) => {
@@ -219,12 +219,4 @@ const loadUser = (userId, result) => {
       responseHandler(true, 200, 'Success', results[0]),
     );
   });
-};
-
-module.exports = {
-  register,
-  login,
-  retrieveAll,
-  retrieveOne,
-  loadUser,
 };

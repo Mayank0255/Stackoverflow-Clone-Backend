@@ -3,7 +3,7 @@ const responseHandler = require('../helpers/responseHandler');
 const { TagsModelSequelize } = require('../models/tags.model');
 const { PostsModelSequelize } = require('../models/posts.model');
 
-const retrieveAll = async (result) => {
+exports.retrieveAll = async (result) => {
   try {
     const queryResult = await TagsModelSequelize.findAll({
       require: false,
@@ -58,7 +58,7 @@ const retrieveAll = async (result) => {
   }
 };
 
-const retrieveOne = async (tagName, result) => {
+exports.retrieveOne = async (tagName, result) => {
   try {
     const queryResult = await TagsModelSequelize.findOne({
       require: false,
@@ -108,9 +108,4 @@ const retrieveOne = async (tagName, result) => {
       null,
     );
   }
-};
-
-module.exports = {
-  retrieveAll,
-  retrieveOne,
 };

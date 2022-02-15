@@ -1,7 +1,7 @@
 const responseHandler = require('../helpers/responseHandler');
 const { CommentsModelSequelize } = require('../models/comments.model');
 
-const create = (newComment, result) => {
+exports.create = (newComment, result) => {
   const query = `INSERT INTO comments(body,user_id,post_id) VALUES(?,?,?);`;
 
   pool.query(
@@ -29,7 +29,7 @@ const create = (newComment, result) => {
   );
 };
 
-const remove = async (id, result) => {
+exports.remove = async (id, result) => {
   const queryResult = await CommentsModelSequelize.destroy({
     where: { id },
   });
@@ -41,7 +41,7 @@ const remove = async (id, result) => {
   }
 };
 
-const retrieveAll = (postId, result) => {
+exports.retrieveAll = (postId, result) => {
   const query = `
   SELECT 
     comments.id, 
@@ -73,10 +73,4 @@ const retrieveAll = (postId, result) => {
     }
     result(null, responseHandler(true, 200, 'Success', results));
   });
-};
-
-module.exports = {
-  create,
-  remove,
-  retrieveAll,
 };

@@ -1,7 +1,7 @@
 const responseHandler = require('../helpers/responseHandler');
 const { AnswersModelSequelize } = require('../models/answers.model');
 
-const create = async (newAnswer, result) => {
+exports.create = async (newAnswer, result) => {
   const queryResult = await AnswersModelSequelize.create({
     body: newAnswer.body,
     user_id: newAnswer.user_id,
@@ -14,7 +14,7 @@ const create = async (newAnswer, result) => {
   );
 };
 
-const remove = async (id, result) => {
+exports.remove = async (id, result) => {
   const queryResult = await AnswersModelSequelize.destroy({
     where: { id },
   });
@@ -26,7 +26,7 @@ const remove = async (id, result) => {
   }
 };
 
-const retrieveAll = (postId, result) => {
+exports.retrieveAll = (postId, result) => {
   const query = ` 
   SELECT 
     answers.id, 
@@ -58,10 +58,4 @@ const retrieveAll = (postId, result) => {
     }
     result(null, responseHandler(true, 200, 'Success', results));
   });
-};
-
-module.exports = {
-  create,
-  remove,
-  retrieveAll,
 };
