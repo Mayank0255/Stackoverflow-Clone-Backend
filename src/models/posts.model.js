@@ -1,5 +1,7 @@
 const Sequelize = require('sequelize');
 const db = require('../../config/db.sequelize');
+const { AnswersModelSequelize } = require('./answers.model');
+const { CommentsModelSequelize } = require('./comments.model');
 
 // constructor
 // eslint-disable-next-line func-names
@@ -64,6 +66,14 @@ const PostsModelSequelize = db.define('posts', {
       ],
     },
   ],
+});
+
+PostsModelSequelize.hasMany(CommentsModelSequelize, {
+  foreignKey: 'post_id',
+});
+
+PostsModelSequelize.hasMany(AnswersModelSequelize, {
+  foreignKey: 'post_id',
 });
 
 module.exports = { Post, PostsModelSequelize };
