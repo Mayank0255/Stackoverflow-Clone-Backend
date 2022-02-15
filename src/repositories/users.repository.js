@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const util = require('util');
 const responseHandler = require('../helpers/responseHandler');
+const { UsersModelSequelize } = require('../models/users.model');
 
 exports.register = async (newUser, result) => {
   const salt = await bcrypt.genSalt(10);
@@ -127,8 +128,26 @@ exports.retrieveAll = (result) => {
   );
 };
 
-exports.retrieveOne = (id, result) => {
-  const updateQuery = `UPDATE users SET views = views + 1 WHERE users.id = ?;`;
+exports.retrieveOne = async (id, result) => {
+  await UsersModelSequelize.increment('views',
+    {
+      by: 1,
+      where: { id },
+    })
+    .catch((error) => {
+      console.log('error: ', error);
+      result(
+        responseHandler(
+          false,
+          error ? error.statusCode : 404,
+          error ? error.message : 'There isn\'t any user by this id',
+          null,
+        ),
+        null,
+      );
+      // eslint-disable-next-line no-useless-return
+      return;
+    });
 
   const selectQuery = `
   SELECT 
@@ -151,21 +170,6 @@ exports.retrieveOne = (id, result) => {
     users.id = ? 
   GROUP BY 
     users.id;`;
-
-  pool.query(updateQuery, id, (err) => {
-    if (err) {
-      console.log('error: ', err);
-      result(
-        responseHandler(
-          false,
-          err ? err.statusCode : 404,
-          err ? err.message : 'There isn\'t any user by this id',
-          null,
-        ),
-        null,
-      );
-    }
-  });
 
   pool.query(
     selectQuery,
@@ -197,26 +201,15 @@ exports.retrieveOne = (id, result) => {
   );
 };
 
-exports.loadUser = (userId, result) => {
-  const query = `SELECT id,username,created_at FROM users WHERE id = ?;`;
-
-  pool.query(query, userId, (err, results) => {
-    if (err) {
-      console.log('error: ', err);
-      result(
-        responseHandler(
-          false,
-          err.statusCode,
-          err.message,
-          null,
-        ),
-        null,
-      );
-      return;
-    }
-    result(
-      null,
-      responseHandler(true, 200, 'Success', results[0]),
-    );
-  });
+exports.loadUser = async (userId, result) => {
+  await UsersModelSequelize.findOne({
+    where: { id: userId },
+    attributes: ['id', 'username', 'created_at'],
+  })
+    .then((response) => {
+      result(null, responseHandler(true, 200, 'Success', response));
+    }).catch((error) => {
+      console.log('error: ', error);
+      result(responseHandler(false, error.statusCode, 'User not found', null), null);
+    });
 };

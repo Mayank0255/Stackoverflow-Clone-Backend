@@ -1,4 +1,5 @@
 const responseHandler = require('../helpers/responseHandler');
+const { PostsModelSequelize } = require('../models/posts.model');
 
 exports.create = async (newPost, result, tagDescription) => {
   const query = ` INSERT INTO posts(title,body,user_id) VALUES (?,?,?);
@@ -66,8 +67,26 @@ exports.remove = (id, result) => {
   });
 };
 
-exports.retrieveOne = (postId, result) => {
-  const updateQuery = `UPDATE posts SET views = views + 1 WHERE posts.id = ?;`;
+exports.retrieveOne = async (postId, result) => {
+  await PostsModelSequelize.increment('views',
+    {
+      by: 1,
+      where: { id: postId },
+    })
+    .catch((error) => {
+      console.log('error: ', error);
+      result(
+        responseHandler(
+          false,
+          error ? error.statusCode : 404,
+          error ? error.message : 'There isn\'t any post by this id',
+          null,
+        ),
+        null,
+      );
+      // eslint-disable-next-line no-useless-return
+      return;
+    });
 
   const query = `
   SELECT 
@@ -91,21 +110,6 @@ exports.retrieveOne = (postId, result) => {
     LEFT JOIN comments ON posts.id = comments.post_id 
   WHERE 
     posts.id = ?;`;
-
-  pool.query(updateQuery, postId, (err) => {
-    if (err) {
-      console.log('error: ', err);
-      result(
-        responseHandler(
-          false,
-          err ? err.statusCode : 404,
-          err ? err.message : 'There isn\'t any post by this id',
-          null,
-        ),
-        null,
-      );
-    }
-  });
 
   pool.query(query, postId, (err, results) => {
     if (err || results.length === 0) {
