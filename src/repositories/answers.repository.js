@@ -2,28 +2,34 @@ const responseHandler = require('../helpers/responseHandler');
 const { AnswersModelSequelize } = require('../models/answers.model');
 
 exports.create = async (newAnswer, result) => {
-  const queryResult = await AnswersModelSequelize.create({
+  await AnswersModelSequelize.create({
     body: newAnswer.body,
     user_id: newAnswer.user_id,
     post_id: newAnswer.post_id,
-  });
-
-  result(
-    null,
-    responseHandler(true, 200, 'Answer Added', queryResult.id),
-  );
+  })
+    .then((response) => {
+      result(
+        null,
+        responseHandler(true, 200, 'Answer Added', response.id),
+      );
+    })
+    .catch((error) => {
+      console.log(error.message);
+      result(responseHandler(false, 500, 'Some error occurred while adding the answer.', null), null);
+    });
 };
 
 exports.remove = async (id, result) => {
-  const queryResult = await AnswersModelSequelize.destroy({
+  await AnswersModelSequelize.destroy({
     where: { id },
-  });
-
-  if (queryResult === 1) {
-    result(null, responseHandler(true, 200, 'Answer Removed', null));
-  } else {
-    result(responseHandler(false, 404, 'This answer doesn\'t exists', null), null);
-  }
+  })
+    .then(() => {
+      result(null, responseHandler(true, 200, 'Answer Removed', null));
+    })
+    .catch((error) => {
+      console.log(error.message);
+      result(responseHandler(false, 404, 'This answer doesn\'t exists', null), null);
+    });
 };
 
 exports.retrieveAll = (postId, result) => {

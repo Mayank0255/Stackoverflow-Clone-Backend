@@ -1,44 +1,35 @@
 const responseHandler = require('../helpers/responseHandler');
 const { CommentsModelSequelize } = require('../models/comments.model');
 
-exports.create = (newComment, result) => {
-  const query = `INSERT INTO comments(body,user_id,post_id) VALUES(?,?,?);`;
-
-  pool.query(
-    query,
-    [newComment.body, newComment.user_id, newComment.post_id],
-    (err, res) => {
-      if (err) {
-        console.log('error: ', err);
-        result(
-          responseHandler(
-            false,
-            err.statusCode,
-            err.message,
-            null,
-          ),
-          null,
-        );
-        return;
-      }
+exports.create = async (newComment, result) => {
+  await CommentsModelSequelize.create({
+    body: newComment.body,
+    user_id: newComment.user_id,
+    post_id: newComment.post_id,
+  })
+    .then((response) => {
       result(
         null,
-        responseHandler(true, 200, 'Comment Added', res.insertId),
+        responseHandler(true, 200, 'Comment Added', response.id),
       );
-    },
-  );
+    })
+    .catch((error) => {
+      console.log(error.message);
+      result(responseHandler(false, 500, 'Some error occurred while adding the comment.', null), null);
+    });
 };
 
 exports.remove = async (id, result) => {
-  const queryResult = await CommentsModelSequelize.destroy({
+  await CommentsModelSequelize.destroy({
     where: { id },
-  });
-
-  if (queryResult === 1) {
-    result(null, responseHandler(true, 200, 'Comment Removed', null));
-  } else {
-    result(responseHandler(false, 404, 'This comment doesn\'t exists', null), null);
-  }
+  })
+    .then(() => {
+      result(null, responseHandler(true, 200, 'Comment Removed', null));
+    })
+    .catch((error) => {
+      console.log(error.message);
+      result(responseHandler(false, 404, 'This comment doesn\'t exists', null), null);
+    });
 };
 
 exports.retrieveAll = (postId, result) => {
