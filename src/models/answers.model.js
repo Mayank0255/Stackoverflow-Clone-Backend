@@ -10,10 +10,10 @@ const Answer = function (answer) {
 
 const AnswersModelSequelize = db.define('answers', {
   id: {
-    autoIncrement: true,
-    type: DataTypes.INTEGER,
+    type: DataTypes.UUID,
     allowNull: false,
     primaryKey: true,
+    defaultValue: DataTypes.UUIDV4,
   },
   body: {
     type: DataTypes.TEXT,
