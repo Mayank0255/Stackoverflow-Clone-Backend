@@ -1,11 +1,11 @@
-const Sequelize = require('sequelize');
+const { Sequelize, DataTypes } = require('sequelize');
 const db = require('../../config/db.sequelize');
 
 const PostTagModelSequelize = db.define('posttag', {
   created_at: {
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
     allowNull: false,
-    defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
+    defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
   },
 }, {
   db,

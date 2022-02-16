@@ -1,4 +1,4 @@
-const Sequelize = require('sequelize');
+const { Sequelize, DataTypes } = require('sequelize');
 const db = require('../../config/db.sequelize');
 
 // constructor
@@ -11,28 +11,28 @@ const User = function (user) {
 const UsersModelSequelize = db.define('users', {
   id: {
     autoIncrement: true,
-    type: Sequelize.INTEGER,
+    type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true,
   },
   username: {
-    type: Sequelize.STRING(255),
+    type: DataTypes.STRING(255),
     allowNull: false,
     unique: 'username',
   },
   password: {
-    type: Sequelize.STRING(100),
+    type: DataTypes.STRING(100),
     allowNull: false,
   },
   views: {
-    type: Sequelize.INTEGER,
+    type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 0,
   },
   created_at: {
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
     allowNull: false,
-    defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
+    defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
   },
 }, {
   db,

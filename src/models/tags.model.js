@@ -1,30 +1,26 @@
-const Sequelize = require('sequelize');
+const { Sequelize, DataTypes } = require('sequelize');
 const db = require('../../config/db.sequelize');
-
-// constructor
-// eslint-disable-next-line func-names
-const Tag = function () {};
 
 const TagsModelSequelize = db.define('tags', {
   id: {
     autoIncrement: true,
-    type: Sequelize.INTEGER,
+    type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true,
   },
   tagname: {
-    type: Sequelize.STRING(255),
+    type: DataTypes.STRING(255),
     allowNull: false,
     unique: 'tagname',
   },
   description: {
-    type: Sequelize.TEXT,
+    type: DataTypes.TEXT,
     allowNull: false,
   },
   created_at: {
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
     allowNull: false,
-    defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
+    defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
   },
 }, {
   db,
@@ -51,4 +47,4 @@ const TagsModelSequelize = db.define('tags', {
   ],
 });
 
-module.exports = { Tag, TagsModelSequelize };
+module.exports = { TagsModelSequelize };
