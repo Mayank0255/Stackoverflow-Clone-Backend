@@ -1,5 +1,3 @@
-const Sequelize = require('sequelize');
-
 const { UsersModelSequelize } = require('./users.model');
 const { PostsModelSequelize } = require('./posts.model');
 const { TagsModelSequelize } = require('./tags.model');

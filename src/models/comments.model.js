@@ -24,22 +24,6 @@ const CommentsModelSequelize = db.define('comments', {
     allowNull: true,
     defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
   },
-  post_id: {
-    type: Sequelize.INTEGER,
-    allowNull: true,
-    references: {
-      model: 'posts',
-      key: 'id',
-    },
-  },
-  user_id: {
-    type: Sequelize.INTEGER,
-    allowNull: true,
-    references: {
-      model: 'users',
-      key: 'id',
-    },
-  },
 }, {
   db,
   tableName: 'comments',

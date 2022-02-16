@@ -1,7 +1,5 @@
 const Sequelize = require('sequelize');
 const db = require('../../config/db.sequelize');
-const { PostsModelSequelize } = require('./posts.model');
-const { PostTagModelSequelize } = require('./posttag.model');
 
 // constructor
 // eslint-disable-next-line func-names
@@ -52,11 +50,5 @@ const TagsModelSequelize = db.define('tags', {
     },
   ],
 });
-
-// eslint-disable-next-line object-curly-newline
-// TagsModelSequelize.belongsToMany(PostsModelSequelize,
-// { through: PostTagModelSequelize, foreignKey: 'tag_id' });
-// PostsModelSequelize.belongsToMany(TagsModelSequelize,
-// { through: PostTagModelSequelize, foreignKey: 'post_id' });
 
 module.exports = { Tag, TagsModelSequelize };
