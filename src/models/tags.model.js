@@ -3,10 +3,10 @@ const db = require('../../config/db.sequelize');
 
 const TagsModelSequelize = db.define('tags', {
   id: {
-    type: DataTypes.UUID,
+    autoIncrement: true,
+    type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true,
-    defaultValue: DataTypes.UUIDV4,
   },
   tagname: {
     type: DataTypes.STRING(255),

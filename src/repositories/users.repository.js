@@ -42,14 +42,13 @@ exports.login = async (newUser, result) => {
   const rows = await queryResult(query, [newUser.username, newUser.password]);
 
   if (rows === null || rows.length === 0) {
-    if (err || !results[0]) {
-      console.log('error: ', err);
-      const code = !results[0] ? 404 : err.statusCode;
+    if (!results[0]) {
+      const code = 404;
       result(
         responseHandler(
           false,
           code,
-          !results[0] ? 'User does not exists' : err.message,
+          'User does not exists',
           null,
         ),
         null,

@@ -1,4 +1,4 @@
-const { Sequelize, DataTypes } = require('sequelize');
+const { DataTypes } = require('sequelize');
 const db = require('../../config/db.sequelize');
 
 // eslint-disable-next-line func-names
@@ -19,16 +19,11 @@ const AnswersModelSequelize = db.define('answers', {
     type: DataTypes.TEXT,
     allowNull: false,
   },
-  created_at: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
-  },
 }, {
   db,
   tableName: 'answers',
   underscored: true,
-  timestamps: false,
+  timestamps: true,
   indexes: [
     {
       name: 'PRIMARY',
