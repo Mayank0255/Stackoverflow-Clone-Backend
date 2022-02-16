@@ -12,26 +12,26 @@ const UsersModelSequelize = db.define('users', {
   id: {
     autoIncrement: true,
     type: Sequelize.INTEGER,
-    allowNull: true,
+    allowNull: false,
     primaryKey: true,
   },
   username: {
     type: Sequelize.STRING(255),
-    allowNull: true,
+    allowNull: false,
     unique: 'username',
   },
   password: {
     type: Sequelize.STRING(100),
-    allowNull: true,
+    allowNull: false,
   },
   views: {
     type: Sequelize.INTEGER,
-    allowNull: true,
+    allowNull: false,
     defaultValue: 0,
   },
   created_at: {
     type: Sequelize.DATE,
-    allowNull: true,
+    allowNull: false,
     defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
   },
 }, {

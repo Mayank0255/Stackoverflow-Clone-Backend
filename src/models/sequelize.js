@@ -6,32 +6,32 @@ const { AnswersModelSequelize } = require('./answers.model');
 const { CommentsModelSequelize } = require('./comments.model');
 
 UsersModelSequelize.hasMany(PostsModelSequelize, {
-  foreignKey: 'user_id',
+  foreignKey: { name: 'user_id', allowNull: false },
 });
 PostsModelSequelize.belongsTo(UsersModelSequelize);
 
 UsersModelSequelize.hasMany(CommentsModelSequelize, {
-  foreignKey: 'user_id',
+  foreignKey: { name: 'user_id', allowNull: false },
 });
 CommentsModelSequelize.belongsTo(UsersModelSequelize);
 
 UsersModelSequelize.hasMany(AnswersModelSequelize, {
-  foreignKey: 'user_id',
+  foreignKey: { name: 'user_id', allowNull: false },
 });
 AnswersModelSequelize.belongsTo(UsersModelSequelize);
 
 PostsModelSequelize.hasMany(CommentsModelSequelize, {
-  foreignKey: 'post_id',
+  foreignKey: { name: 'post_id', allowNull: false },
 });
 CommentsModelSequelize.belongsTo(PostsModelSequelize);
 
 PostsModelSequelize.hasMany(AnswersModelSequelize, {
-  foreignKey: 'post_id',
+  foreignKey: { name: 'post_id', allowNull: false },
 });
 AnswersModelSequelize.belongsTo(PostsModelSequelize);
 
-PostsModelSequelize.belongsToMany(TagsModelSequelize, { through: PostTagModelSequelize, foreignKey: 'post_id' });
-TagsModelSequelize.belongsToMany(PostsModelSequelize, { through: PostTagModelSequelize, foreignKey: 'tag_id' });
+PostsModelSequelize.belongsToMany(TagsModelSequelize, { through: PostTagModelSequelize, foreignKey: { name: 'post_id', allowNull: false } });
+TagsModelSequelize.belongsToMany(PostsModelSequelize, { through: PostTagModelSequelize, foreignKey: { name: 'tag_id', allowNull: false } });
 
 module.exports = {
   UsersModelSequelize,

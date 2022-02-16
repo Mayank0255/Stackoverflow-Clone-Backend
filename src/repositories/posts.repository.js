@@ -1,7 +1,7 @@
 const responseHandler = require('../helpers/responseHandler');
 const { PostsModelSequelize } = require('../models/sequelize');
 
-exports.create = async (newPost, result, tagDescription) => {
+exports.create = (newPost, result, tagDescription) => {
   const query = ` INSERT INTO posts(title,body,user_id) VALUES (?,?,?);
                   SET @v1 := (SELECT LAST_INSERT_ID());
                   INSERT IGNORE INTO tags(tagname, description) VALUES (?, ?);

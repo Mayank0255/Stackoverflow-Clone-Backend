@@ -9,21 +9,21 @@ const TagsModelSequelize = db.define('tags', {
   id: {
     autoIncrement: true,
     type: Sequelize.INTEGER,
-    allowNull: true,
+    allowNull: false,
     primaryKey: true,
   },
   tagname: {
     type: Sequelize.STRING(255),
-    allowNull: true,
+    allowNull: false,
     unique: 'tagname',
   },
   description: {
     type: Sequelize.TEXT,
-    allowNull: true,
+    allowNull: false,
   },
   created_at: {
     type: Sequelize.DATE,
-    allowNull: true,
+    allowNull: false,
     defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
   },
 }, {

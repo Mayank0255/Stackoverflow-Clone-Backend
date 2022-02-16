@@ -12,16 +12,16 @@ const CommentsModelSequelize = db.define('comments', {
   id: {
     autoIncrement: true,
     type: Sequelize.INTEGER,
-    allowNull: true,
+    allowNull: false,
     primaryKey: true,
   },
   body: {
     type: Sequelize.TEXT,
-    allowNull: true,
+    allowNull: false,
   },
   created_at: {
     type: Sequelize.DATE,
-    allowNull: true,
+    allowNull: false,
     defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
   },
 }, {

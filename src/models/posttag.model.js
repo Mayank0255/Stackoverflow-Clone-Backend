@@ -4,7 +4,7 @@ const db = require('../../config/db.sequelize');
 const PostTagModelSequelize = db.define('posttag', {
   created_at: {
     type: Sequelize.DATE,
-    allowNull: true,
+    allowNull: false,
     defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
   },
 }, {
