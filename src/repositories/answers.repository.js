@@ -1,5 +1,5 @@
 const responseHandler = require('../helpers/responseHandler');
-const { AnswersModelSequelize } = require('../models/answers.model');
+const { AnswersModelSequelize } = require('../models/sequelize');
 
 exports.create = async (newAnswer, result) => {
   await AnswersModelSequelize.create({

@@ -1,5 +1,5 @@
 const responseHandler = require('../helpers/responseHandler');
-const { CommentsModelSequelize } = require('../models/comments.model');
+const { CommentsModelSequelize } = require('../models/sequelize');
 
 exports.create = async (newComment, result) => {
   await CommentsModelSequelize.create({

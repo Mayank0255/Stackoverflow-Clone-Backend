@@ -10,6 +10,7 @@ const PostTagModelSequelize = db.define('posttag', {
 }, {
   db,
   tableName: 'posttag',
+  underscored: true,
   timestamps: false,
   indexes: [
     {

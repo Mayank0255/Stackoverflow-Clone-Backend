@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const util = require('util');
 const responseHandler = require('../helpers/responseHandler');
-const { UsersModelSequelize } = require('../models/users.model');
+const { UsersModelSequelize } = require('../models/sequelize');
 
 exports.register = async (newUser, result) => {
   const salt = await bcrypt.genSalt(10);

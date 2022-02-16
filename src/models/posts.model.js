@@ -16,7 +16,7 @@ const PostsModelSequelize = db.define('posts', {
   id: {
     autoIncrement: true,
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
     primaryKey: true,
   },
   title: {
@@ -39,7 +39,7 @@ const PostsModelSequelize = db.define('posts', {
   },
   user_id: {
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
     references: {
       model: 'users',
       key: 'id',
@@ -48,6 +48,7 @@ const PostsModelSequelize = db.define('posts', {
 }, {
   db,
   tableName: 'posts',
+  underscored: true,
   timestamps: false,
   indexes: [
     {
@@ -68,12 +69,12 @@ const PostsModelSequelize = db.define('posts', {
   ],
 });
 
-PostsModelSequelize.hasMany(CommentsModelSequelize, {
-  foreignKey: 'post_id',
-});
+// PostsModelSequelize.hasMany(CommentsModelSequelize, {
+//   foreignKey: 'post_id',
+// });
 
-PostsModelSequelize.hasMany(AnswersModelSequelize, {
-  foreignKey: 'post_id',
-});
+// PostsModelSequelize.hasMany(AnswersModelSequelize, {
+//   foreignKey: 'post_id',
+// });
 
 module.exports = { Post, PostsModelSequelize };

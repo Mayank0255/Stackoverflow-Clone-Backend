@@ -1,5 +1,5 @@
 const responseHandler = require('../helpers/responseHandler');
-const { PostsModelSequelize } = require('../models/posts.model');
+const { PostsModelSequelize } = require('../models/sequelize');
 
 exports.create = async (newPost, result, tagDescription) => {
   const query = ` INSERT INTO posts(title,body,user_id) VALUES (?,?,?);

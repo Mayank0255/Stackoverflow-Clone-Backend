@@ -12,7 +12,7 @@ const AnswersModelSequelize = db.define('answers', {
   id: {
     autoIncrement: true,
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
     primaryKey: true,
   },
   body: {
@@ -26,7 +26,7 @@ const AnswersModelSequelize = db.define('answers', {
   },
   post_id: {
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
     references: {
       model: 'posts',
       key: 'id',
@@ -34,7 +34,7 @@ const AnswersModelSequelize = db.define('answers', {
   },
   user_id: {
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
     references: {
       model: 'users',
       key: 'id',
@@ -43,6 +43,7 @@ const AnswersModelSequelize = db.define('answers', {
 }, {
   db,
   tableName: 'answers',
+  underscored: true,
   timestamps: false,
   indexes: [
     {

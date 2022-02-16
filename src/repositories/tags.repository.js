@@ -23,7 +23,7 @@ exports.retrieveAll = (result) => {
       if (err || results.length === 0) {
         console.log('error: ', err);
         result(
-          helperFunction.responseHandler(
+          responseHandler(
             false,
             err ? err.statusCode : 404,
             err ? err.message : 'There are no tags',
@@ -72,7 +72,7 @@ exports.retrieveOne = (tagName, result) => {
       if (err || results.length === 0) {
         console.log('error: ', err);
         result(
-          helperFunction.responseHandler(
+          responseHandler(
             false,
             err ? err.statusCode : 404,
             err ? err.message : 'This tag doesn\'t exists',

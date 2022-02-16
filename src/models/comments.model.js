@@ -12,7 +12,7 @@ const CommentsModelSequelize = db.define('comments', {
   id: {
     autoIncrement: true,
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
     primaryKey: true,
   },
   body: {
@@ -26,7 +26,7 @@ const CommentsModelSequelize = db.define('comments', {
   },
   post_id: {
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
     references: {
       model: 'posts',
       key: 'id',
@@ -34,7 +34,7 @@ const CommentsModelSequelize = db.define('comments', {
   },
   user_id: {
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
     references: {
       model: 'users',
       key: 'id',
@@ -43,6 +43,7 @@ const CommentsModelSequelize = db.define('comments', {
 }, {
   db,
   tableName: 'comments',
+  underscored: true,
   timestamps: false,
   indexes: [
     {

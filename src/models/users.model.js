@@ -15,12 +15,12 @@ const UsersModelSequelize = db.define('users', {
   id: {
     autoIncrement: true,
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
     primaryKey: true,
   },
   username: {
     type: Sequelize.STRING(255),
-    allowNull: false,
+    allowNull: true,
     unique: 'username',
   },
   password: {
@@ -39,6 +39,7 @@ const UsersModelSequelize = db.define('users', {
   },
 }, {
   db,
+  underscored: true,
   tableName: 'users',
   timestamps: false,
   indexes: [
@@ -61,19 +62,19 @@ const UsersModelSequelize = db.define('users', {
   ],
 });
 
-UsersModelSequelize.hasMany(CommentsModelSequelize, {
-  foreignKey: 'user_id',
-});
-CommentsModelSequelize.belongsTo(UsersModelSequelize);
+// UsersModelSequelize.hasMany(CommentsModelSequelize, {
+//   foreignKey: 'user_id',
+// });
+// CommentsModelSequelize.belongsTo(UsersModelSequelize);
 
-UsersModelSequelize.hasMany(AnswersModelSequelize, {
-  foreignKey: 'user_id',
-});
-AnswersModelSequelize.belongsTo(UsersModelSequelize);
+// UsersModelSequelize.hasMany(AnswersModelSequelize, {
+//   foreignKey: 'user_id',
+// });
+// AnswersModelSequelize.belongsTo(UsersModelSequelize);
 
-UsersModelSequelize.hasMany(PostsModelSequelize, {
-  foreignKey: 'user_id',
-});
-PostsModelSequelize.belongsTo(UsersModelSequelize);
+// UsersModelSequelize.hasMany(PostsModelSequelize, {
+//   foreignKey: 'user_id',
+// });
+// PostsModelSequelize.belongsTo(UsersModelSequelize);
 
 module.exports = { User, UsersModelSequelize };

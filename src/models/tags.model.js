@@ -11,7 +11,7 @@ const TagsModelSequelize = db.define('tags', {
   id: {
     autoIncrement: true,
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
     primaryKey: true,
   },
   tagname: {
@@ -31,6 +31,7 @@ const TagsModelSequelize = db.define('tags', {
 }, {
   db,
   tableName: 'tags',
+  underscored: true,
   timestamps: false,
   indexes: [
     {
@@ -53,7 +54,9 @@ const TagsModelSequelize = db.define('tags', {
 });
 
 // eslint-disable-next-line object-curly-newline
-TagsModelSequelize.belongsToMany(PostsModelSequelize, { through: PostTagModelSequelize, foreignKey: 'tag_id' });
-PostsModelSequelize.belongsToMany(TagsModelSequelize, { through: PostTagModelSequelize, foreignKey: 'post_id' });
+// TagsModelSequelize.belongsToMany(PostsModelSequelize,
+// { through: PostTagModelSequelize, foreignKey: 'tag_id' });
+// PostsModelSequelize.belongsToMany(TagsModelSequelize,
+// { through: PostTagModelSequelize, foreignKey: 'post_id' });
 
 module.exports = { Tag, TagsModelSequelize };
