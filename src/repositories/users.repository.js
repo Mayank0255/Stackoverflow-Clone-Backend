@@ -1,39 +1,35 @@
 const bcrypt = require('bcryptjs');
 const util = require('util');
+const getJwtToken = require('../services/jwt');
 const responseHandler = require('../helpers/responseHandler');
 const { UsersModelSequelize } = require('../models/sequelize');
 
 exports.register = async (newUser, result) => {
   const salt = await bcrypt.genSalt(10);
   newUser.password = await bcrypt.hash(newUser.password, salt);
-  const query = `INSERT INTO users(username,password) VALUES(?,?);`;
 
-  const queryResult = util.promisify(pool.query).bind(pool);
-  const rows = await queryResult(query, [newUser.username, newUser.password]);
+  await UsersModelSequelize.create({
+    username: newUser.username,
+    password: newUser.password,
+  })
+    .then((response) => {
+      console.log(response);
+      const payload = {
+        user: {
+          id: response.id,
+        },
+      };
+      console.log(payload);
 
-  if (rows === null || rows.length === 0) {
-    if (err) {
-      console.log('error: ', err);
-      result(
-        responseHandler(
-          false,
-          err.statusCode,
-          err.message,
-          null,
-        ),
-        null,
-      );
+      getJwtToken(payload, 'User registered', result);
+
+      return payload;
+    })
+    .catch((error) => {
+      console.log(error.message);
+      result(responseHandler(false, 500, 'Some error occurred while registering the user.', null), null);
       return null;
-    }
-  }
-
-  const payload = {
-    user: {
-      id: rows.insertId,
-    },
-  };
-
-  return payload;
+    });
 };
 
 exports.login = async (newUser, result) => {

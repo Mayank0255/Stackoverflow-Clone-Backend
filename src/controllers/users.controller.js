@@ -44,7 +44,7 @@ exports.getAllUsers = (req, res) => {
   }
 };
 
-exports.register = async (req, res) => {
+exports.register = (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res
@@ -53,7 +53,7 @@ exports.register = async (req, res) => {
   }
   try {
     // Register user in the database
-    await service.register(new User(req.body), (err, data) => {
+    service.register(new User(req.body), (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
