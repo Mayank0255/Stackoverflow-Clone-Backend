@@ -1,5 +1,4 @@
 const bcrypt = require('bcryptjs');
-const util = require('util');
 const getJwtToken = require('../services/jwt');
 const responseHandler = require('../helpers/responseHandler');
 const { UsersModelSequelize } = require('../models/sequelize');
@@ -13,13 +12,11 @@ exports.register = async (newUser, result) => {
     password: newUser.password,
   })
     .then((response) => {
-      console.log(response);
       const payload = {
         user: {
           id: response.id,
         },
       };
-      console.log(payload);
 
       getJwtToken(payload, 'User registered', result);
 
@@ -33,44 +30,52 @@ exports.register = async (newUser, result) => {
 };
 
 exports.login = async (newUser, result) => {
-  const query = `SELECT * FROM users WHERE username = ?;`;
-  const queryResult = util.promisify(pool.query).bind(pool);
-  const rows = await queryResult(query, [newUser.username, newUser.password]);
+  const user = await UsersModelSequelize.findOne({
+    where: {
+      username: newUser.username,
+    },
+  }).catch((error) => {
+    console.log(error.message);
+    result(
+      responseHandler(false, code, 'Some error occurred while logging in the user.', null),
+      null,
+    );
+    return null;
+  });
 
-  if (rows === null || rows.length === 0) {
-    if (!results[0]) {
-      const code = 404;
-      result(
-        responseHandler(
-          false,
-          code,
-          'User does not exists',
-          null,
-        ),
+  console.log('[QUERYRESULT]', user);
+
+  if (user === null) {
+    result(
+      responseHandler(
+        false,
+        404,
+        'User does not exists',
         null,
-      );
-      return null;
-    }
+      ),
+      null,
+    );
+    return null;
+  }
 
-    const user = results[0];
+  const isMatch = await bcrypt.compare(newUser.password, user.password);
 
-    const isMatch = await bcrypt.compare(newUser.password, user.password);
+  if (!isMatch) {
+    result(
+      responseHandler(false, 400, 'Incorrect password', null),
+      null,
+    );
 
-    if (!isMatch) {
-      result(
-        responseHandler(false, 400, 'Incorrect password', null),
-        null,
-      );
-
-      return null;
-    }
+    return null;
   }
 
   const payload = {
     user: {
-      id: rows[0].id,
+      id: user.id,
     },
   };
+
+  getJwtToken(payload, 'User logged in', result);
 
   return payload;
 };
