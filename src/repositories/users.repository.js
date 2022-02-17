@@ -34,14 +34,15 @@ exports.login = async (newUser, result) => {
     where: {
       username: newUser.username,
     },
-  }).catch((error) => {
-    console.log(error.message);
-    result(
-      responseHandler(false, code, 'Some error occurred while logging in the user.', null),
-      null,
-    );
-    return null;
-  });
+  })
+    .catch((error) => {
+      console.log(error.message);
+      result(
+        responseHandler(false, code, 'Some error occurred while logging in the user.', null),
+        null,
+      );
+      return null;
+    });
 
   console.log('[QUERYRESULT]', user);
 
