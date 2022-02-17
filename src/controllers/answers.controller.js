@@ -49,7 +49,7 @@ exports.addAnswer = (req, res) => {
   }
 };
 
-exports.deleteAnswer = async (req, res) => {
+exports.deleteAnswer = (req, res) => {
   try {
     service.remove(req.params.id, (err, data) => {
       if (err) {

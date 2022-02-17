@@ -44,8 +44,6 @@ exports.login = async (newUser, result) => {
       return null;
     });
 
-  console.log('[QUERYRESULT]', user);
-
   if (user === null) {
     result(
       responseHandler(

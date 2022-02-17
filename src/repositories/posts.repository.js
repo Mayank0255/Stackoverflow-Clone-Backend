@@ -1,43 +1,63 @@
+const db = require('../../config/db.sequelize');
 const responseHandler = require('../helpers/responseHandler');
-const { PostsModelSequelize } = require('../models/sequelize');
+const {
+  PostsModelSequelize, PostTagModelSequelize, TagsModelSequelize,
+} = require('../models/sequelize');
 
-exports.create = (newPost, result, tagDescription) => {
-  const query = ` INSERT INTO posts(title,body,user_id) VALUES (?,?,?);
-                  SET @v1 := (SELECT LAST_INSERT_ID());
-                  INSERT IGNORE INTO tags(tagname, description) VALUES (?, ?);
-                  SET @v2 := (SELECT id FROM tags WHERE tagname = ?);
-                  INSERT INTO posttag(post_id,tag_id) VALUES(@v1,@v2);`;
+exports.create = async (newPost, result, tagDescription) => {
+  let transaction;
+  try {
+    transaction = await db.transaction();
 
-  pool.query(
-    query,
-    [
-      newPost.title,
-      newPost.body,
-      newPost.user_id,
-      newPost.tagname,
-      tagDescription,
-      newPost.tagname,
-    ],
-    (err, res) => {
-      if (err) {
-        console.log('error: ', err);
-        result(
-          responseHandler(
-            false,
-            err.statusCode,
-            err.message,
-            null,
-          ),
-          null,
-        );
-        return;
-      }
-      result(
-        null,
-        responseHandler(true, 200, 'Post Created', res.insertId),
-      );
-    },
-  );
+    const post = await PostsModelSequelize.create({
+      title: newPost.title,
+      body: newPost.body,
+      user_id: newPost.user_id,
+    })
+      .catch((error) => {
+        console.log(error);
+        result(responseHandler(false, 500, 'Something went wrong', null), null);
+        return null;
+      });
+
+    const [tag] = await TagsModelSequelize.findOrCreate({
+      where: {
+        tagname: newPost.tagname,
+      },
+      defaults: {
+        tagname: newPost.tagname,
+        description: tagDescription,
+      },
+    })
+      .catch((error) => {
+        console.log(error);
+        result(responseHandler(false, 500, 'Something went wrong', null), null);
+        return null;
+      });
+
+    await PostTagModelSequelize.create({
+      post_id: post.id,
+      tag_id: tag.id,
+    })
+      .catch((error) => {
+        console.log(error);
+        result(responseHandler(false, 500, 'Something went wrong', null), null);
+        return null;
+      });
+
+    result(
+      null,
+      responseHandler(true, 200, 'Post Created', post.id),
+    );
+
+    await transaction.commit();
+  } catch (error) {
+    console.log(error);
+    result(responseHandler(false, 500, 'Something went wrong', null), null);
+    if (transaction) {
+      await transaction.rollback();
+    }
+  }
 };
 
 exports.remove = (id, result) => {
