@@ -10,10 +10,10 @@ const User = function (user) {
 
 const UsersModelSequelize = db.define('users', {
   id: {
-    autoIncrement: true,
-    type: DataTypes.INTEGER,
+    type: DataTypes.UUID,
     allowNull: false,
     primaryKey: true,
+    defaultValue: DataTypes.UUIDV4,
   },
   username: {
     type: DataTypes.STRING(255),
