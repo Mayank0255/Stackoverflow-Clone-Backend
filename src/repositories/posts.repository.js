@@ -1,8 +1,6 @@
 const db = require('../../config/db.sequelize');
 const responseHandler = require('../helpers/responseHandler');
-const {
-  PostsModelSequelize, PostTagModelSequelize, TagsModelSequelize,
-} = require('../models/sequelize');
+const { PostsModelSequelize, PostTagModelSequelize, TagsModelSequelize, AnswersModelSequelize, CommentsModelSequelize } = require('../models/sequelize');
 
 exports.create = async (newPost, result, tagDescription) => {
   let transaction;
@@ -60,31 +58,33 @@ exports.create = async (newPost, result, tagDescription) => {
   }
 };
 
-exports.remove = (id, result) => {
-  const query = ` DELETE FROM posttag WHERE post_id = ?;
-                  DELETE FROM comments WHERE post_id = ?; 
-                  DELETE FROM answers WHERE post_id = ?; 
-                  DELETE FROM posts WHERE id = ? ;`;
+exports.remove = async (id, result) => {
+  let transaction;
 
-  pool.query(query, [id, id, id, id], (err) => {
-    if (err) {
-      console.log('error: ', err);
-      result(
-        responseHandler(
-          false,
-          err.statusCode,
-          err.message,
-          null,
-        ),
-        null,
-      );
-      return;
-    }
+  try {
+    transaction = await db.transaction();
+
+    await PostTagModelSequelize.destroy({ where: { post_id: id } });
+
+    await AnswersModelSequelize.destroy({ where: { post_id: id } });
+
+    await CommentsModelSequelize.destroy({ where: { post_id: id } });
+
+    await PostsModelSequelize.destroy({ where: { id } });
+
     result(
       null,
       responseHandler(true, 200, 'Post Removed', null),
     );
-  });
+
+    await transaction.commit();
+  } catch (error) {
+    console.log(error);
+    result(responseHandler(false, 500, 'Something went wrong', null), null);
+    if (transaction) {
+      await transaction.rollback();
+    }
+  }
 };
 
 exports.retrieveOne = async (postId, result) => {
