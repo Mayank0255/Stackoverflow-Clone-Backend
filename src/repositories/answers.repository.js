@@ -14,7 +14,7 @@ exports.create = async (newAnswer, result) => {
       );
     })
     .catch((error) => {
-      console.log(error.message);
+      console.log(error);
       result(responseHandler(false, 500, 'Some error occurred while adding the answer.', null), null);
     });
 };

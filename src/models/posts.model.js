@@ -30,16 +30,11 @@ const PostsModelSequelize = db.define('posts', {
     allowNull: false,
     defaultValue: 0,
   },
-  created_at: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
-  },
 }, {
   db,
   tableName: 'posts',
   underscored: true,
-  timestamps: false,
+  timestamps: true,
   indexes: [
     {
       name: 'PRIMARY',

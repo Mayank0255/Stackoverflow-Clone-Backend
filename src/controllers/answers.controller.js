@@ -31,7 +31,7 @@ exports.addAnswer = (req, res) => {
     const answer = new Answer({
       body: req.body.text,
       user_id: req.user.id,
-      post_id: +req.params.id,
+      post_id: req.params.id,
     });
     // Save Answer in the database
     service.create(answer, (err, data) => {

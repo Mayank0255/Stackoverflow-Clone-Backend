@@ -17,16 +17,11 @@ const TagsModelSequelize = db.define('tags', {
     type: DataTypes.TEXT,
     allowNull: false,
   },
-  created_at: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
-  },
 }, {
   db,
   tableName: 'tags',
   underscored: true,
-  timestamps: false,
+  timestamps: true,
   indexes: [
     {
       name: 'PRIMARY',

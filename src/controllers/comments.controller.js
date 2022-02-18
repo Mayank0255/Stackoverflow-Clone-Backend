@@ -32,7 +32,7 @@ exports.addComment = (req, res) => {
     const comment = new Comment({
       body: req.body.body,
       user_id: req.user.id,
-      post_id: +req.params.id,
+      post_id: req.params.id,
     });
     // Save Comment in the database
     service.create(comment, (err, data) => {

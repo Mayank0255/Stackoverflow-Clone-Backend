@@ -29,16 +29,11 @@ const UsersModelSequelize = db.define('users', {
     allowNull: false,
     defaultValue: 0,
   },
-  created_at: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
-  },
 }, {
   db,
   underscored: true,
   tableName: 'users',
-  timestamps: false,
+  timestamps: true,
   indexes: [
     {
       name: 'PRIMARY',
