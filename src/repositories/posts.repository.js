@@ -1,6 +1,12 @@
 const db = require('../../config/db.sequelize');
 const responseHandler = require('../helpers/responseHandler');
-const { PostsModelSequelize, PostTagModelSequelize, TagsModelSequelize, AnswersModelSequelize, CommentsModelSequelize } = require('../models/sequelize');
+const {
+  PostsModelSequelize,
+  PostTagModelSequelize,
+  TagsModelSequelize,
+  AnswersModelSequelize,
+  CommentsModelSequelize,
+} = require('../models/sequelize');
 
 exports.create = async (newPost, result, tagDescription) => {
   let transaction;
