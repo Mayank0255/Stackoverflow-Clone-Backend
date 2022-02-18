@@ -1,4 +1,6 @@
 const bcrypt = require('bcryptjs');
+
+const constantsHolder = require('../constants');
 const getJwtToken = require('../services/jwt');
 const responseHandler = require('../helpers/responseHandler');
 const calcHelper = require('../helpers/calcHelper');
@@ -11,7 +13,7 @@ exports.register = async (newUser, result) => {
   await UsersModelSequelize.create({
     username: newUser.username,
     password: newUser.password,
-    gravatar: calcHelper.getRandomInt(),
+    gravatar: constantsHolder.GRAVATAR_URL(calcHelper.getRandomInt()),
   })
     .then((response) => {
       const payload = {

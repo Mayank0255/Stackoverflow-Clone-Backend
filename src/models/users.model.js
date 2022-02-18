@@ -25,7 +25,7 @@ const UsersModelSequelize = db.define('users', {
     allowNull: false,
   },
   gravatar: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING(255),
     allowNull: false,
   },
   views: {
