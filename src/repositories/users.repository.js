@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const getJwtToken = require('../services/jwt');
 const responseHandler = require('../helpers/responseHandler');
+const calcHelper = require('../helpers/calcHelper');
 const { UsersModelSequelize } = require('../models/sequelize');
 
 exports.register = async (newUser, result) => {
@@ -10,6 +11,7 @@ exports.register = async (newUser, result) => {
   await UsersModelSequelize.create({
     username: newUser.username,
     password: newUser.password,
+    gravatar: calcHelper.getRandomInt(),
   })
     .then((response) => {
       const payload = {
@@ -83,9 +85,10 @@ exports.retrieveAll = (result) => {
   const selectQuery = `
   SELECT 
     users.id, 
-    username, 
-    users.created_at, 
-    users.views, 
+    username,
+    gravatar,
+    users.views,
+    users.created_at,  
     COUNT(DISTINCT posts.id) as posts_count, 
     COUNT(DISTINCT tagname) as tags_count 
   FROM 
@@ -151,9 +154,10 @@ exports.retrieveOne = async (id, result) => {
   const selectQuery = `
   SELECT 
     users.id, 
-    username, 
-    users.created_at, 
-    users.views, 
+    username,
+    gravatar,
+    users.views,
+    users.created_at,  
     COUNT(DISTINCT posts.id) as post_count, 
     COUNT(DISTINCT tagname) as tag_count, 
     COUNT(DISTINCT answers.id) as answer_count, 
@@ -204,7 +208,7 @@ exports.retrieveOne = async (id, result) => {
 exports.loadUser = async (user_id, result) => {
   await UsersModelSequelize.findOne({
     where: { id: user_id },
-    attributes: ['id', 'username', 'created_at'],
+    attributes: ['id', 'username', 'gravatar', 'views', 'created_at'],
   })
     .then((response) => {
       result(null, responseHandler(true, 200, 'Success', response));

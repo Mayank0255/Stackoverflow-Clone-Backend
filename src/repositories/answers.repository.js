@@ -34,13 +34,14 @@ exports.remove = async (id, result) => {
 
 exports.retrieveAll = (postId, result) => {
   const query = ` 
-  SELECT 
-    answers.id, 
-    post_id, 
-    answers.user_id, 
-    username, 
-    answers.body, 
-    answers.created_at 
+  SELECT
+    answers.id,
+    post_id,
+    answers.user_id,
+    users.gravatar,
+    username,
+    answers.body,
+    answers.created_at
   FROM 
     answers 
     JOIN posts ON posts.id = post_id 

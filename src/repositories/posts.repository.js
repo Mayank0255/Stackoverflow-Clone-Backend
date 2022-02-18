@@ -120,13 +120,14 @@ exports.retrieveOne = async (postId, result) => {
     posts.user_id, 
     tag_id, 
     COUNT(DISTINCT answers.id) as answer_count, 
-    COUNT(DISTINCT comments.id) as comment_count, 
+    COUNT(DISTINCT comments.id) as comment_count,
+    users.gravatar,
     username, 
     title, 
     posts.body as post_body, 
     tagname, 
     posts.created_at, 
-    posts.views as views 
+    posts.views
   FROM 
     posts 
     JOIN posttag ON posts.id = post_id 
@@ -161,18 +162,19 @@ exports.retrieveOne = async (postId, result) => {
 exports.retrieveAll = (result) => {
   const query = `
   SELECT 
-    posts.id, 
-    posts.user_id, 
-    username, 
+    posts.id,
+    posts.user_id,
+    tag_id,
+    username,
+    users.gravatar,
+    posts.views,
     COUNT(DISTINCT answers.id) as answer_count, 
     COUNT(DISTINCT comments.id) as comment_count, 
-    tag_id, 
-    title, 
-    posts.body, 
-    tagname, 
-    description, 
-    posts.created_at, 
-    posts.views 
+    tagname,
+    posts.created_at,
+    title,
+    description,
+    posts.body 
   FROM 
     posts 
     JOIN posttag ON posts.id = post_id 
@@ -206,18 +208,19 @@ exports.retrieveAll = (result) => {
 exports.retrieveAllTop = (result) => {
   const query = `
   SELECT 
-    posts.id, 
-    posts.user_id, 
-    username, 
+    posts.id,
+    posts.user_id,
+    tag_id,
+    username,
+    users.gravatar,
+    posts.views,
     COUNT(DISTINCT answers.id) as answer_count, 
     COUNT(DISTINCT comments.id) as comment_count, 
-    tag_id, 
-    title, 
-    posts.body, 
-    tagname, 
-    description, 
-    posts.created_at, 
-    posts.views 
+    tagname,
+    posts.created_at,
+    title,
+    description,
+    posts.body  
   FROM 
     posts 
     JOIN posttag ON posts.id = post_id 
