@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 
 const constantsHolder = require('../constants');
 const getJwtToken = require('../services/jwt');
-const responseHandler = require('../helpers/responseHandler');
+const { responseHandler } = require('../helpers/responseHelpers');
 const calcHelper = require('../helpers/calcHelper');
 const { UsersModelSequelize } = require('../models/sequelize');
 

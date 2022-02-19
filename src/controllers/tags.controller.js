@@ -1,4 +1,4 @@
-const responseHandler = require('../helpers/responseHandler');
+const { responseHandler } = require('../helpers/responseHelpers');
 const service = require('../services/tags.service');
 
 exports.getTags = (req, res) => {

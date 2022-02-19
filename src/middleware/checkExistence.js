@@ -1,4 +1,4 @@
-const responseHandler = require('../helpers/responseHandler');
+const { responseHandler } = require('../helpers/responseHelpers');
 const { UsersModelSequelize } = require('../models/sequelize');
 
 module.exports = async (req, res, next) => {

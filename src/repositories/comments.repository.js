@@ -1,5 +1,6 @@
-const responseHandler = require('../helpers/responseHandler');
-const { CommentsModelSequelize } = require('../models/sequelize');
+const { responseHandler } = require('../helpers/responseHelpers');
+const { CommentsModelSequelize, UsersModelSequelize } = require('../models/sequelize');
+const conditionalHelper = require('../helpers/conditionalHelper');
 
 exports.create = async (newComment, result) => {
   await CommentsModelSequelize.create({
@@ -32,35 +33,30 @@ exports.remove = async (id, result) => {
     });
 };
 
-exports.retrieveAll = (postId, result) => {
-  const query = `
-  SELECT 
-    comments.id, 
-    post_id, 
-    comments.user_id, 
-    username, 
-    comments.body, 
-    comments.created_at 
-  FROM 
-    comments 
-    INNER JOIN users ON users.id = comments.user_id 
-  WHERE 
-    post_id = ?;`;
-
-  pool.query(query, postId, (err, results) => {
-    if (err || results.length === 0) {
-      console.log('error: ', err);
-      result(
-        responseHandler(
-          false,
-          err ? err.statusCode : 404,
-          err ? err.message : 'There are no comments',
-          null,
-        ),
-        null,
-      );
-      return;
-    }
-    result(null, responseHandler(true, 200, 'Success', results));
+exports.retrieveAll = async (postId, result) => {
+  const queryResult = await CommentsModelSequelize.findAll({
+    where: {
+      post_id: postId,
+    },
+    attributes: ['id', 'user_id', 'post_id', 'body', 'created_at'],
+    include: {
+      model: UsersModelSequelize,
+      attributes: ['username'],
+    },
+  }).catch((error) => {
+    console.log(error);
+    return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
+
+  if (conditionalHelper.isArrayEmpty(queryResult)) {
+    console.log('error: ', 'There are no comments');
+    return result(responseHandler(false, 404, 'There are no comments', null), null);
+  }
+
+  // eslint-disable-next-line arrow-body-style
+  const formattedArray = queryResult.map(({ dataValues: { user, ...obj } }) => {
+    return ({ ...obj, username: user.username });
+  });
+
+  return result(null, responseHandler(true, 200, 'Success', formattedArray));
 };

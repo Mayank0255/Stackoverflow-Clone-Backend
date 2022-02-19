@@ -1,4 +1,4 @@
-const responseHandler = require('../helpers/responseHandler');
+const { responseHandler } = require('../helpers/responseHelpers');
 
 exports.retrieveAll = (result) => {
   try {

@@ -1,5 +1,5 @@
 const db = require('../../config/db.sequelize');
-const responseHandler = require('../helpers/responseHandler');
+const { responseHandler } = require('../helpers/responseHelpers');
 const {
   PostsModelSequelize,
   PostTagModelSequelize,

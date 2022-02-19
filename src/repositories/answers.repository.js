@@ -1,4 +1,4 @@
-const responseHandler = require('../helpers/responseHandler');
+const { responseHandler } = require('../helpers/responseHelpers');
 const conditionalHelper = require('../helpers/conditionalHelper');
 const { UsersModelSequelize, AnswersModelSequelize } = require('../models/sequelize');
 
@@ -53,5 +53,10 @@ exports.retrieveAll = async (postId, result) => {
     return result(responseHandler(false, 404, 'There are no answers', null), null);
   }
 
-  return result(null, responseHandler(true, 200, 'Success', queryResult));
+  // eslint-disable-next-line arrow-body-style
+  const formattedArray = queryResult.map(({ dataValues: { user, ...obj } }) => {
+    return ({ ...obj, username: user.username, gravatar: user.gravatar });
+  });
+
+  return result(null, responseHandler(true, 200, 'Success', formattedArray));
 };
