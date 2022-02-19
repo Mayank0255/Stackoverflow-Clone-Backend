@@ -44,8 +44,7 @@ exports.retrieveAll = (postId, result) => {
     answers.created_at
   FROM 
     answers 
-    JOIN posts ON posts.id = post_id 
-    JOIN users ON users.id = answers.user_id 
+    INNER JOIN users ON users.id = answers.user_id 
   WHERE 
     post_id = ?;`;
 

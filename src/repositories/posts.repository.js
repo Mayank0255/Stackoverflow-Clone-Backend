@@ -177,9 +177,9 @@ exports.retrieveAll = (result) => {
     posts.body 
   FROM 
     posts 
-    JOIN posttag ON posts.id = post_id 
-    JOIN tags ON tag_id = tags.id 
-    JOIN users ON user_id = users.id 
+    INNER JOIN posttag ON posts.id = post_id 
+    INNER JOIN tags ON tag_id = tags.id 
+    INNER JOIN users ON user_id = users.id 
     LEFT JOIN answers ON answers.post_id = posts.id 
     LEFT JOIN comments ON posts.id = comments.post_id 
   GROUP BY 
@@ -223,9 +223,9 @@ exports.retrieveAllTop = (result) => {
     posts.body  
   FROM 
     posts 
-    JOIN posttag ON posts.id = post_id 
-    JOIN tags ON tag_id = tags.id 
-    JOIN users ON user_id = users.id 
+    INNER JOIN posttag ON posts.id = post_id 
+    INNER JOIN tags ON tag_id = tags.id 
+    INNER JOIN users ON user_id = users.id 
     LEFT JOIN answers ON answers.post_id = posts.id 
     LEFT JOIN comments ON posts.id = comments.post_id 
   GROUP BY 
@@ -269,9 +269,9 @@ exports.retrieveAllTag = (tagName, result) => {
     posts.views 
   FROM 
     posts 
-    JOIN posttag ON posts.id = post_id 
-    JOIN tags ON tag_id = tags.id 
-    JOIN users ON user_id = users.id 
+    INNER JOIN posttag ON posts.id = post_id 
+    INNER JOIN tags ON tag_id = tags.id 
+    INNER JOIN users ON user_id = users.id 
     LEFT JOIN answers ON answers.post_id = posts.id 
     LEFT JOIN comments ON posts.id = comments.post_id 
   WHERE 

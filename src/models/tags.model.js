@@ -1,12 +1,12 @@
-const { Sequelize, DataTypes } = require('sequelize');
+const { DataTypes } = require('sequelize');
 const db = require('../../config/db.sequelize');
 
 const TagsModelSequelize = db.define('tags', {
   id: {
-    autoIncrement: true,
-    type: DataTypes.INTEGER,
+    type: DataTypes.UUID,
     allowNull: false,
     primaryKey: true,
+    defaultValue: DataTypes.UUIDV4,
   },
   tagname: {
     type: DataTypes.STRING(255),

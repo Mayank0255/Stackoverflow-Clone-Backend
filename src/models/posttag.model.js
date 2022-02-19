@@ -1,4 +1,3 @@
-const { Sequelize, DataTypes } = require('sequelize');
 const db = require('../../config/db.sequelize');
 
 const PostTagModelSequelize = db.define('posttag', {}, {

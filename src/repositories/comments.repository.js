@@ -43,8 +43,7 @@ exports.retrieveAll = (postId, result) => {
     comments.created_at 
   FROM 
     comments 
-    JOIN posts ON posts.id = comments.post_id 
-    JOIN users ON users.id = comments.user_id 
+    INNER JOIN users ON users.id = comments.user_id 
   WHERE 
     post_id = ?;`;
 

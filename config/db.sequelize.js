@@ -13,6 +13,6 @@ const sequelize = new Sequelize(process.env.DATABASE, process.env.USER, process.
     },
   });
 
-(async () => await sequelize.sync({ force: true, alter: true }))();
+(async () => await sequelize.sync({ alter: true }))();
 
 module.exports = sequelize;
