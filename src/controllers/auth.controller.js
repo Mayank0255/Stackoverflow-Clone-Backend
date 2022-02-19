@@ -1,11 +1,11 @@
 const { validationResult } = require('express-validator');
-const { responseHandler } = require('../helpers/responseHelpers');
+const { responseHandler, asyncHandler } = require('../helpers/responseHelpers');
 const { User } = require('../models/users.model');
 const service = require('../services/users.service');
 
-exports.loadUser = (req, res) => {
+exports.loadUser = asyncHandler(async (req, res) => {
   try {
-    service.loadUser(req.user.id, (err, data) => {
+    await service.loadUser(req.user.id, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -18,9 +18,9 @@ exports.loadUser = (req, res) => {
       .status(500)
       .json(responseHandler(false, 500, 'Server Error', null));
   }
-};
+});
 
-exports.login = (req, res) => {
+exports.login = asyncHandler(async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res
@@ -29,7 +29,7 @@ exports.login = (req, res) => {
   }
   try {
     // Login the user
-    service.login(new User(req.body), (err, data) => {
+    await service.login(new User(req.body), (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -42,4 +42,4 @@ exports.login = (req, res) => {
       .status(500)
       .json(responseHandler(true, 500, 'Server Error', null));
   }
-};
+});

@@ -1,5 +1,5 @@
 const { validationResult } = require('express-validator');
-const { responseHandler } = require('../helpers/responseHelpers');
+const { responseHandler, asyncHandler} = require('../helpers/responseHelpers');
 const { Post } = require('../models/posts.model');
 const service = require('../services/posts.service');
 
@@ -62,9 +62,9 @@ exports.getTagPosts = (req, res) => {
   }
 };
 
-exports.getSinglePost = (req, res) => {
+exports.getSinglePost = asyncHandler(async (req, res) => {
   try {
-    service.retrieveOne(req.params.id, (err, data) => {
+    await service.retrieveOne(req.params.id, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -77,9 +77,9 @@ exports.getSinglePost = (req, res) => {
       .status(500)
       .json(responseHandler(false, 500, 'Server Error', null));
   }
-};
+});
 
-exports.addPost = (req, res) => {
+exports.addPost = asyncHandler(async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res
@@ -94,7 +94,7 @@ exports.addPost = (req, res) => {
       tagname: req.body.tagname,
     });
     // Save Post in the database
-    service.create(post, (err, data) => {
+    await service.create(post, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -107,11 +107,11 @@ exports.addPost = (req, res) => {
       .status(500)
       .json(responseHandler(false, 500, 'Server Error', null));
   }
-};
+});
 
-exports.deletePost = (req, res) => {
+exports.deletePost = asyncHandler(async (req, res) => {
   try {
-    service.remove(req.params.id, (err, data) => {
+    await service.remove(req.params.id, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -124,4 +124,4 @@ exports.deletePost = (req, res) => {
       .status(500)
       .json(responseHandler(false, 500, 'Server Error', null));
   }
-};
+});

@@ -1,11 +1,11 @@
 const { validationResult } = require('express-validator');
-const { responseHandler } = require('../helpers/responseHelpers');
+const { responseHandler, asyncHandler } = require('../helpers/responseHelpers');
 const { Answer } = require('../models/answers.model');
 const service = require('../services/answers.service');
 
-exports.getAnswers = (req, res) => {
+exports.getAnswers = asyncHandler(async (req, res) => {
   try {
-    service.retrieveAll(req.params.id, (err, data) => {
+    await service.retrieveAll(req.params.id, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -18,9 +18,9 @@ exports.getAnswers = (req, res) => {
       .status(500)
       .json(responseHandler(false, 500, 'Server Error', null));
   }
-};
+});
 
-exports.addAnswer = (req, res) => {
+exports.addAnswer = asyncHandler(async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res
@@ -34,7 +34,7 @@ exports.addAnswer = (req, res) => {
       post_id: req.params.id,
     });
     // Save Answer in the database
-    service.create(answer, (err, data) => {
+    await service.create(answer, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -47,11 +47,11 @@ exports.addAnswer = (req, res) => {
       .status(500)
       .json(responseHandler(false, 500, 'Server Error', null));
   }
-};
+});
 
-exports.deleteAnswer = (req, res) => {
+exports.deleteAnswer = asyncHandler(async (req, res) => {
   try {
-    service.remove(req.params.id, (err, data) => {
+    await service.remove(req.params.id, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -64,4 +64,4 @@ exports.deleteAnswer = (req, res) => {
       .status(500)
       .json(responseHandler(false, 500, 'Server Error', null));
   }
-};
+});

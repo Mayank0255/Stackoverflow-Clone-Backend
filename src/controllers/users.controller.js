@@ -1,13 +1,13 @@
 const { validationResult } = require('express-validator');
-const { responseHandler } = require('../helpers/responseHelpers');
+const { responseHandler, asyncHandler} = require('../helpers/responseHelpers');
 const { User } = require('../models/users.model');
 const service = require('../services/users.service');
 
-exports.getOneUser = (req, res) => {
+exports.getOneUser = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
 
-    service.retrieveOne(
+    await service.retrieveOne(
       id,
       (err, data) => {
         if (err) {
@@ -23,7 +23,7 @@ exports.getOneUser = (req, res) => {
       .status(500)
       .json(responseHandler(false, 500, 'Server Error', null));
   }
-};
+});
 
 exports.getAllUsers = (req, res) => {
   try {
@@ -44,7 +44,7 @@ exports.getAllUsers = (req, res) => {
   }
 };
 
-exports.register = (req, res) => {
+exports.register = asyncHandler(async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res
@@ -53,7 +53,7 @@ exports.register = (req, res) => {
   }
   try {
     // Register user in the database
-    service.register(new User(req.body), (err, data) => {
+    await service.register(new User(req.body), (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -66,4 +66,4 @@ exports.register = (req, res) => {
       .status(500)
       .json(responseHandler(true, 500, 'Server Error', null));
   }
-};
+});
