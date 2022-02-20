@@ -53,9 +53,9 @@ exports.retrieveAll = async (postId, result) => {
     return result(responseHandler(false, 404, 'There are no answers', null), null);
   }
 
-  // eslint-disable-next-line arrow-body-style
-  const formattedArray = queryResult.map(({ dataValues: { user, ...obj } }) => {
-    return ({ ...obj, username: user.username, gravatar: user.gravatar });
+  // eslint-disable-next-line arrow-body-style,max-len
+  const formattedArray = queryResult.map(({ dataValues: { user: { username, gravatar }, ...obj } }) => {
+    return ({ ...obj, username, gravatar });
   });
 
   return result(null, responseHandler(true, 200, 'Success', formattedArray));

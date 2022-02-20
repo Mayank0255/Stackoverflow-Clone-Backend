@@ -1,99 +1,55 @@
+const Sequelize = require('sequelize');
 const { responseHandler } = require('../helpers/responseHelpers');
+const { isArrayEmpty } = require('../helpers/conditionalHelper');
+const { TagsModelSequelize, PostsModelSequelize } = require('../models/sequelize');
 
-exports.retrieveAll = (result) => {
-  try {
-    const query = `
-    SELECT 
-      tags.id, 
-      posts.id, 
-      tagname, 
-      description, 
-      COUNT(DISTINCT posts.id) as posts_count, 
-      tags.created_at 
-    FROM 
-      tags 
-      LEFT JOIN posttag ON posttag.tag_id = tags.id 
-      LEFT JOIN posts ON posts.id = posttag.post_id 
-    GROUP BY 
-      tags.id 
-    ORDER BY 
-      posts_count DESC;`;
-
-    pool.query(query, (err, results) => {
-      if (err || results.length === 0) {
-        console.log('error: ', err);
-        result(
-          responseHandler(
-            false,
-            err ? err.statusCode : 404,
-            err ? err.message : 'There are no tags',
-            null,
-          ),
-          null,
-        );
-        return;
-      }
-      result(null, responseHandler(true, 200, 'Success', results));
+exports.retrieveAll = async (result) => {
+  const queryResult = await TagsModelSequelize.findAll({
+    require: false,
+    distinct: true,
+    col: 'posts.id',
+    include: PostsModelSequelize,
+    attributes: ['id',
+      'tagname',
+      'description',
+      [Sequelize.fn('COUNT', Sequelize.col('posts.id')), 'posts_count'],
+      'created_at'],
+    group: ['tags.id'],
+    order: [[Sequelize.col('posts_count'), 'DESC']],
+    raw: true,
+  })
+    .catch((error) => {
+      console.log(error);
+      return result(responseHandler(false, 500, 'Something went wrong', null), null);
     });
-  } catch (error) {
-    console.log('error: ', error);
-    result(
-      responseHandler(
-        false,
-        error ? error.statusCode : 500,
-        error ? error.message : 'Internal error',
-        null,
-      ),
-      null,
-    );
+
+  if (isArrayEmpty(queryResult)) {
+    return result(responseHandler(false, 404, 'There are no tags', null), null);
   }
+
+  result(null, responseHandler(true, 200, 'Success', queryResult));
 };
 
-exports.retrieveOne = (tagName, result) => {
-  try {
-    const query = `
-    SELECT 
-      tags.id, 
-      posts.id, 
-      description, 
-      tagname, 
-      COUNT(DISTINCT posts.id) as posts_count, 
-      tags.created_at 
-    FROM 
-      tags 
-      LEFT JOIN posttag ON posttag.tag_id = tags.id 
-      LEFT JOIN posts ON posts.id = posttag.post_id 
-    WHERE 
-      tagname = ? 
-    GROUP BY 
-      tags.id;`;
-
-    pool.query(query, tagName, (err, results) => {
-      if (err || results.length === 0) {
-        console.log('error: ', err);
-        result(
-          responseHandler(
-            false,
-            err ? err.statusCode : 404,
-            err ? err.message : 'This tag doesn\'t exists',
-            null,
-          ),
-          null,
-        );
-        return;
-      }
-      result(null, responseHandler(true, 200, 'Success', results[0]));
+exports.retrieveOne = async (tagName, result) => {
+  const queryResult = await TagsModelSequelize.findOne({
+    require: false,
+    include: PostsModelSequelize,
+    attributes: ['id',
+      'tagname',
+      'description',
+      [Sequelize.fn('COUNT', Sequelize.col('posts.id')), 'posts_count'],
+      'created_at'],
+    where: { tagname: tagName },
+    group: ['tags.id'],
+  })
+    .catch((error) => {
+      console.log(error);
+      return result(responseHandler(false, 500, 'Something went wrong', null), null);
     });
-  } catch (error) {
-    console.log('error: ', error);
-    result(
-      responseHandler(
-        false,
-        error ? error.statusCode : 500,
-        error ? error.message : 'Internal error',
-        null,
-      ),
-      null,
-    );
+
+  if (!queryResult) {
+    return result(responseHandler(false, 404, 'This tag doesn\'t exists', null), null);
   }
+
+  result(null, responseHandler(true, 200, 'Success', queryResult));
 };

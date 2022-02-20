@@ -256,7 +256,8 @@ exports.retrieveAllTag = (tagName, result) => {
   const query = `
   SELECT 
     posts.id, 
-    posts.user_id, 
+    posts.user_id,
+    users.gravatar,
     username, 
     COUNT(DISTINCT answers.id) as answer_count, 
     COUNT(DISTINCT comments.id) as comment_count, 

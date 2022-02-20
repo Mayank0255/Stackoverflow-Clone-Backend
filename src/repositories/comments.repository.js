@@ -54,8 +54,8 @@ exports.retrieveAll = async (postId, result) => {
   }
 
   // eslint-disable-next-line arrow-body-style
-  const formattedArray = queryResult.map(({ dataValues: { user, ...obj } }) => {
-    return ({ ...obj, username: user.username });
+  const formattedArray = queryResult.map(({ dataValues: { user: { username }, ...obj } }) => {
+    return ({ ...obj, username });
   });
 
   return result(null, responseHandler(true, 200, 'Success', formattedArray));
