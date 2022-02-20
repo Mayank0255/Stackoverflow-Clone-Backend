@@ -1,11 +1,13 @@
+const Sequelize = require('sequelize');
 const db = require('../../config/db.sequelize');
 const { responseHandler } = require('../helpers/responseHelpers');
+const { isArrayEmpty } = require('../helpers/conditionalHelper');
 const {
   PostsModelSequelize,
   PostTagModelSequelize,
   TagsModelSequelize,
   AnswersModelSequelize,
-  CommentsModelSequelize,
+  CommentsModelSequelize, UsersModelSequelize,
 } = require('../models/sequelize');
 
 exports.create = async (newPost, result, tagDescription) => {
@@ -101,7 +103,7 @@ exports.retrieveOne = async (postId, result) => {
     })
     .catch((error) => {
       console.log('error: ', error);
-      result(
+      return result(
         responseHandler(
           false,
           error ? error.statusCode : 404,
@@ -110,8 +112,6 @@ exports.retrieveOne = async (postId, result) => {
         ),
         null,
       );
-      // eslint-disable-next-line no-useless-return
-      return;
     });
 
   const query = `
@@ -159,143 +159,170 @@ exports.retrieveOne = async (postId, result) => {
   });
 };
 
-exports.retrieveAll = (result) => {
-  const query = `
-  SELECT 
-    posts.id,
-    posts.user_id,
-    tag_id,
-    username,
-    users.gravatar,
-    posts.views,
-    COUNT(DISTINCT answers.id) as answer_count, 
-    COUNT(DISTINCT comments.id) as comment_count, 
-    tagname,
-    posts.created_at,
-    title,
-    description,
-    posts.body 
-  FROM 
-    posts 
-    INNER JOIN posttag ON posts.id = post_id 
-    INNER JOIN tags ON tag_id = tags.id 
-    INNER JOIN users ON user_id = users.id 
-    LEFT JOIN answers ON answers.post_id = posts.id 
-    LEFT JOIN comments ON posts.id = comments.post_id 
-  GROUP BY 
-    posts.id 
-  ORDER BY 
-    posts.created_at DESC;`;
-
-  pool.query(query, (err, results) => {
-    if (err || results.length === 0) {
-      console.log('error: ', err);
-      result(
-        responseHandler(
-          false,
-          err ? err.statusCode : 404,
-          err ? err.message : 'There are no posts',
-          null,
-        ),
-        null,
-      );
-      return;
-    }
-    result(null, responseHandler(true, 200, 'Success', results));
+exports.retrieveAll = async (result) => {
+  const queryResult = await PostsModelSequelize.findAll({
+    distinct: true,
+    attributes: [
+      'id',
+      'user_id',
+      'views',
+      [Sequelize.literal('user.username'), 'username'],
+      [Sequelize.literal('user.gravatar'), 'gravatar'],
+      [Sequelize.literal('tags.id'), 'tag_id'],
+      [Sequelize.literal('tags.tagname'), 'tagname'],
+      'created_at',
+      'updated_at',
+      'title',
+      'body',
+      [Sequelize.literal('COUNT(DISTINCT(answers.id))'), 'answer_count'],
+      [Sequelize.literal('COUNT(DISTINCT(comments.id))'), 'comment_count'],
+    ],
+    include: [
+      {
+        model: TagsModelSequelize,
+        required: true,
+        attributes: [],
+      },
+      {
+        model: UsersModelSequelize,
+        required: true,
+        attributes: [],
+      },
+      {
+        model: AnswersModelSequelize,
+        required: false,
+        attributes: [],
+      },
+      {
+        model: CommentsModelSequelize,
+        required: false,
+        attributes: [],
+      },
+    ],
+    group: ['id'],
+    order: [['created_at', 'DESC']],
+  }).catch((error) => {
+    console.log(error);
+    return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
+
+  if (isArrayEmpty(queryResult)) {
+    return result(responseHandler(false, 404, 'There are no posts', null), null);
+  }
+
+  return result(null, responseHandler(true, 200, 'Success', queryResult));
 };
 
-exports.retrieveAllTop = (result) => {
-  const query = `
-  SELECT 
-    posts.id,
-    posts.user_id,
-    tag_id,
-    username,
-    users.gravatar,
-    posts.views,
-    COUNT(DISTINCT answers.id) as answer_count, 
-    COUNT(DISTINCT comments.id) as comment_count, 
-    tagname,
-    posts.created_at,
-    title,
-    description,
-    posts.body  
-  FROM 
-    posts 
-    INNER JOIN posttag ON posts.id = post_id 
-    INNER JOIN tags ON tag_id = tags.id 
-    INNER JOIN users ON user_id = users.id 
-    LEFT JOIN answers ON answers.post_id = posts.id 
-    LEFT JOIN comments ON posts.id = comments.post_id 
-  GROUP BY 
-    posts.id 
-  ORDER BY 
-    answer_count DESC, 
-    comment_count DESC;`;
-
-  pool.query(query, (err, results) => {
-    if (err || results.length === 0) {
-      console.log('error: ', err);
-      result(
-        responseHandler(
-          false,
-          err ? err.statusCode : 404,
-          err ? err.message : 'There are no posts',
-          null,
-        ),
-        null,
-      );
-      return;
-    }
-    result(null, responseHandler(true, 200, 'Success', results));
+exports.retrieveAllTop = async (result) => {
+  const queryResult = await PostsModelSequelize.findAll({
+    distinct: true,
+    attributes: [
+      'id',
+      'user_id',
+      'views',
+      [Sequelize.literal('user.username'), 'username'],
+      [Sequelize.literal('user.gravatar'), 'gravatar'],
+      [Sequelize.literal('tags.id'), 'tag_id'],
+      [Sequelize.literal('tags.tagname'), 'tagname'],
+      'created_at',
+      'updated_at',
+      'title',
+      'body',
+      [Sequelize.literal('COUNT(DISTINCT(answers.id))'), 'answer_count'],
+      [Sequelize.literal('COUNT(DISTINCT(comments.id))'), 'comment_count'],
+    ],
+    include: [
+      {
+        model: TagsModelSequelize,
+        required: true,
+        attributes: [],
+      },
+      {
+        model: UsersModelSequelize,
+        required: true,
+        attributes: [],
+      },
+      {
+        model: AnswersModelSequelize,
+        required: false,
+        attributes: [],
+      },
+      {
+        model: CommentsModelSequelize,
+        required: false,
+        attributes: [],
+      },
+    ],
+    group: ['id'],
+    order: [
+      [Sequelize.literal('answer_count DESC')],
+      [Sequelize.literal('comment_count DESC')],
+    ],
+  }).catch((error) => {
+    console.log(error);
+    return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
+
+  if (isArrayEmpty(queryResult)) {
+    return result(responseHandler(false, 404, 'There are no posts', null), null);
+  }
+
+  return result(null, responseHandler(true, 200, 'Success', queryResult));
 };
 
-exports.retrieveAllTag = (tagName, result) => {
-  const query = `
-  SELECT 
-    posts.id, 
-    posts.user_id,
-    users.gravatar,
-    username, 
-    COUNT(DISTINCT answers.id) as answer_count, 
-    COUNT(DISTINCT comments.id) as comment_count, 
-    tag_id, 
-    title, 
-    posts.body, 
-    tagname, 
-    description, 
-    posts.created_at, 
-    posts.views 
-  FROM 
-    posts 
-    INNER JOIN posttag ON posts.id = post_id 
-    INNER JOIN tags ON tag_id = tags.id 
-    INNER JOIN users ON user_id = users.id 
-    LEFT JOIN answers ON answers.post_id = posts.id 
-    LEFT JOIN comments ON posts.id = comments.post_id 
-  WHERE 
-    tags.tagname = ? 
-  GROUP BY 
-    posts.id 
-  ORDER BY 
-    posts.created_at DESC;`;
-
-  pool.query(query, tagName, (err, results) => {
-    if (err || results.length === 0) {
-      console.log('error: ', err);
-      result(
-        responseHandler(
-          false,
-          err ? err.statusCode : 404,
-          err ? err.message : 'There are no posts',
-          null,
-        ),
-        null,
-      );
-      return;
-    }
-    result(null, responseHandler(true, 200, 'Success', results));
+exports.retrieveAllTag = async (tagName, result) => {
+  const queryResult = await PostsModelSequelize.findAll({
+    where: {
+      '$tags.tagname$': tagName,
+    },
+    distinct: true,
+    attributes: [
+      'id',
+      'user_id',
+      'views',
+      [Sequelize.literal('user.username'), 'username'],
+      [Sequelize.literal('user.gravatar'), 'gravatar'],
+      [Sequelize.literal('tags.id'), 'tag_id'],
+      [Sequelize.literal('tags.tagname'), 'tagname'],
+      'created_at',
+      'updated_at',
+      'title',
+      'body',
+      [Sequelize.literal('COUNT(DISTINCT(answers.id))'), 'answer_count'],
+      [Sequelize.literal('COUNT(DISTINCT(comments.id))'), 'comment_count'],
+    ],
+    include: [
+      {
+        model: TagsModelSequelize,
+        required: true,
+        attributes: [],
+      },
+      {
+        model: UsersModelSequelize,
+        required: true,
+        attributes: [],
+      },
+      {
+        model: AnswersModelSequelize,
+        required: false,
+        attributes: [],
+      },
+      {
+        model: CommentsModelSequelize,
+        required: false,
+        attributes: [],
+      },
+    ],
+    group: ['id'],
+    order: [['created_at', 'DESC']],
+  }).catch((error) => {
+    console.log(error);
+    return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
+
+  if (isArrayEmpty(queryResult)) {
+    return result(responseHandler(false, 404, 'There are no posts', null), null);
+  }
+
+  return result(null, responseHandler(true, 200, 'Success', queryResult));
 };

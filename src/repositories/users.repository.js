@@ -5,8 +5,14 @@ const constantsHolder = require('../constants');
 const getJwtToken = require('../services/jwt');
 const { responseHandler } = require('../helpers/responseHelpers');
 const calcHelper = require('../helpers/calcHelper');
-const { UsersModelSequelize, PostsModelSequelize, TagsModelSequelize, AnswersModelSequelize, CommentsModelSequelize } = require('../models/sequelize');
 const { isArrayEmpty, isNull } = require('../helpers/conditionalHelper');
+const {
+  UsersModelSequelize,
+  PostsModelSequelize,
+  TagsModelSequelize,
+  AnswersModelSequelize,
+  CommentsModelSequelize,
+} = require('../models/sequelize');
 
 exports.register = async (newUser, result) => {
   const salt = await bcrypt.genSalt(10);
@@ -44,7 +50,7 @@ exports.login = async (newUser, result) => {
     .catch((error) => {
       console.log(error.message);
       result(
-        responseHandler(false, code, 'Some error occurred while logging in the user.', null),
+        responseHandler(false, 500, 'Some error occurred while logging in the user.', null),
         null,
       );
       return null;

@@ -1,11 +1,11 @@
 const { validationResult } = require('express-validator');
-const { responseHandler, asyncHandler} = require('../helpers/responseHelpers');
+const { responseHandler, asyncHandler } = require('../helpers/responseHelpers');
 const { Post } = require('../models/posts.model');
 const service = require('../services/posts.service');
 
-exports.getPosts = (req, res) => {
+exports.getPosts = asyncHandler(async (req, res) => {
   try {
-    service.retrieveAll((err, data) => {
+    await service.retrieveAll((err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -19,11 +19,11 @@ exports.getPosts = (req, res) => {
       .status(500)
       .json(responseHandler(true, 500, 'Server Error', null));
   }
-};
+});
 
-exports.getTopPosts = (req, res) => {
+exports.getTopPosts = asyncHandler(async (req, res) => {
   try {
-    service.retrieveAllTop(
+    await service.retrieveAllTop(
       (err, data) => {
         if (err) {
           console.log(err);
@@ -38,13 +38,13 @@ exports.getTopPosts = (req, res) => {
       .status(500)
       .json(responseHandler(true, 500, 'Server Error', null));
   }
-};
+});
 
-exports.getTagPosts = (req, res) => {
+exports.getTagPosts = asyncHandler(async (req, res) => {
   const tagName = req.params.tagname;
 
   try {
-    service.retrieveAllTag(
+    await service.retrieveAllTag(
       tagName,
       (err, data) => {
         if (err) {
@@ -60,7 +60,7 @@ exports.getTagPosts = (req, res) => {
       .status(500)
       .json(responseHandler(true, 500, 'Server Error', null));
   }
-};
+});
 
 exports.getSinglePost = asyncHandler(async (req, res) => {
   try {
