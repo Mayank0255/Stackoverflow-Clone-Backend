@@ -5,8 +5,8 @@ const constantsHolder = require('../constants');
 const getJwtToken = require('../services/jwt');
 const { responseHandler } = require('../helpers/responseHelpers');
 const calcHelper = require('../helpers/calcHelper');
-const { UsersModelSequelize, PostsModelSequelize, TagsModelSequelize } = require('../models/sequelize');
-const { isArrayEmpty } = require('../helpers/conditionalHelper');
+const { UsersModelSequelize, PostsModelSequelize, TagsModelSequelize, AnswersModelSequelize, CommentsModelSequelize } = require('../models/sequelize');
+const { isArrayEmpty, isNull } = require('../helpers/conditionalHelper');
 
 exports.register = async (newUser, result) => {
   const salt = await bcrypt.genSalt(10);
@@ -94,8 +94,8 @@ exports.retrieveAll = async (result) => {
       'gravatar',
       'views',
       'created_at',
-      [Sequelize.fn('COUNT', Sequelize.col('posts.id')), 'posts_count'],
-      [Sequelize.fn('COUNT', Sequelize.col('tagname')), 'tags_count'],
+      [Sequelize.literal('COUNT(DISTINCT(posts.id))'), 'posts_count'],
+      [Sequelize.literal('COUNT(DISTINCT(tagname))'), 'tags_count'],
     ],
     include: [
       {
@@ -131,7 +131,7 @@ exports.retrieveOne = async (id, result) => {
     })
     .catch((error) => {
       console.log('error: ', error);
-      result(
+      return result(
         responseHandler(
           false,
           error ? error.statusCode : 404,
@@ -140,61 +140,55 @@ exports.retrieveOne = async (id, result) => {
         ),
         null,
       );
-      // eslint-disable-next-line no-useless-return
-      return;
     });
 
-  const selectQuery = `
-  SELECT 
-    users.id, 
-    username,
-    gravatar,
-    users.views,
-    users.created_at,  
-    COUNT(DISTINCT posts.id) as post_count, 
-    COUNT(DISTINCT tagname) as tag_count, 
-    COUNT(DISTINCT answers.id) as answer_count, 
-    COUNT(DISTINCT comments.id) as comment_count 
-  FROM 
-    users 
-    LEFT JOIN posts ON posts.user_id = users.id 
-    LEFT JOIN posttag ON posttag.post_id = posts.id 
-    LEFT JOIN tags ON posttag.tag_id = tags.id 
-    LEFT JOIN answers ON answers.user_id = users.id 
-    LEFT JOIN comments ON comments.user_id = users.id 
-  WHERE 
-    users.id = ? 
-  GROUP BY 
-    users.id;`;
+  const queryResult = await UsersModelSequelize.findOne({
+    where: { id },
+    attributes: [
+      'id',
+      'username',
+      'gravatar',
+      'views',
+      'created_at',
+      [Sequelize.literal('COUNT(DISTINCT(posts.id))'), 'posts_count'],
+      [Sequelize.literal('COUNT(DISTINCT(tagname))'), 'tags_count'],
+      [Sequelize.literal('COUNT(DISTINCT(answers.id))'), 'answers_count'],
+      [Sequelize.literal('COUNT(DISTINCT(comments.id))'), 'comments_count'],
+    ],
+    include: [
+      {
+        required: false,
+        model: PostsModelSequelize,
+        attributes: [],
+        include: {
+          attributes: [],
+          required: true,
+          model: TagsModelSequelize,
+        },
+      },
+      {
+        attributes: [],
+        required: false,
+        model: AnswersModelSequelize,
+      },
+      {
+        attributes: [],
+        required: false,
+        model: CommentsModelSequelize,
+      },
+    ],
+    group: ['users.id'],
+  })
+    .catch((error) => {
+      console.log(error);
+      return result(responseHandler(false, 500, 'Something went wrong', null), null);
+    });
 
-  pool.query(
-    selectQuery,
-    id,
-    (err, results) => {
-      if (err || results.length === 0) {
-        console.log('error: ', err);
-        result(
-          responseHandler(
-            false,
-            err ? err.statusCode : 404,
-            err ? err.message : 'There are no users',
-            null,
-          ),
-          null,
-        );
-        return;
-      }
-      result(
-        null,
-        responseHandler(
-          true,
-          200,
-          'Success',
-          results[0],
-        ),
-      );
-    },
-  );
+  if (isNull(queryResult)) {
+    return result(responseHandler(false, 404, 'This user doesn\'t exists', null), null);
+  }
+
+  return result(null, responseHandler(true, 200, 'Success', queryResult));
 };
 
 // eslint-disable-next-line camelcase
