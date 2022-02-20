@@ -1,10 +1,12 @@
+const Sequelize = require('sequelize');
 const bcrypt = require('bcryptjs');
 
 const constantsHolder = require('../constants');
 const getJwtToken = require('../services/jwt');
 const { responseHandler } = require('../helpers/responseHelpers');
 const calcHelper = require('../helpers/calcHelper');
-const { UsersModelSequelize } = require('../models/sequelize');
+const { UsersModelSequelize, PostsModelSequelize, TagsModelSequelize } = require('../models/sequelize');
+const { isArrayEmpty } = require('../helpers/conditionalHelper');
 
 exports.register = async (newUser, result) => {
   const salt = await bcrypt.genSalt(10);
@@ -83,53 +85,42 @@ exports.login = async (newUser, result) => {
   return payload;
 };
 
-exports.retrieveAll = (result) => {
-  const selectQuery = `
-  SELECT 
-    users.id, 
-    username,
-    gravatar,
-    users.views,
-    users.created_at,  
-    COUNT(DISTINCT posts.id) as posts_count, 
-    COUNT(DISTINCT tagname) as tags_count 
-  FROM 
-    users 
-    LEFT JOIN posts ON posts.user_id = users.id 
-    LEFT JOIN posttag ON posttag.post_id = posts.id 
-    LEFT JOIN tags ON posttag.tag_id = tags.id 
-  GROUP BY 
-    users.id 
-  ORDER BY 
-    posts_count DESC;`;
+exports.retrieveAll = async (result) => {
+  const queryResult = await UsersModelSequelize.findAll({
+    distinct: true,
+    attributes: [
+      'id',
+      'username',
+      'gravatar',
+      'views',
+      'created_at',
+      [Sequelize.fn('COUNT', Sequelize.col('posts.id')), 'posts_count'],
+      [Sequelize.fn('COUNT', Sequelize.col('tagname')), 'tags_count'],
+    ],
+    include: [
+      {
+        model: PostsModelSequelize,
+        attributes: [],
+        required: false,
+        include: {
+          model: TagsModelSequelize,
+          attributes: [],
+          required: false,
+        },
+      },
+    ],
+    group: ['users.id'],
+    order: [[Sequelize.col('posts_count'), 'DESC']],
+  }).catch((error) => {
+    console.log(error);
+    return result(responseHandler(false, 500, 'Something went wrong!', null), null);
+  });
 
-  pool.query(
-    selectQuery,
-    (err, results) => {
-      if (err || results.length === 0) {
-        console.log('error: ', err);
-        result(
-          responseHandler(
-            false,
-            err ? err.statusCode : 404,
-            err ? err.message : 'There are no users',
-            null,
-          ),
-          null,
-        );
-        return;
-      }
-      result(
-        null,
-        responseHandler(
-          true,
-          200,
-          'Success',
-          results,
-        ),
-      );
-    },
-  );
+  if (isArrayEmpty(queryResult)) {
+    return result(responseHandler(false, 404, 'There are no users', null), null);
+  }
+
+  return result(null, responseHandler(true, 200, 'Success', queryResult));
 };
 
 exports.retrieveOne = async (id, result) => {

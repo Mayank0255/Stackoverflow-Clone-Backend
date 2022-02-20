@@ -1,6 +1,7 @@
 const { responseHandler } = require('../helpers/responseHelpers');
 const conditionalHelper = require('../helpers/conditionalHelper');
 const { UsersModelSequelize, AnswersModelSequelize } = require('../models/sequelize');
+const sequelize = require("sequelize");
 
 exports.create = async (newAnswer, result) => {
   await AnswersModelSequelize.create({
@@ -38,10 +39,18 @@ exports.retrieveAll = async (postId, result) => {
     where: {
       post_id: postId,
     },
-    attributes: ['id', 'user_id', 'post_id', 'body', 'created_at'],
+    attributes: [
+      'id',
+      'user_id',
+      'post_id',
+      'body',
+      'created_at',
+      [sequelize.literal('user.username'), 'username'],
+      [sequelize.literal('user.gravatar'), 'gravatar'],
+    ],
     include: {
       model: UsersModelSequelize,
-      attributes: ['gravatar', 'username'],
+      attributes: [],
     },
   }).catch((error) => {
     console.log(error);
@@ -53,10 +62,5 @@ exports.retrieveAll = async (postId, result) => {
     return result(responseHandler(false, 404, 'There are no answers', null), null);
   }
 
-  // eslint-disable-next-line arrow-body-style,max-len
-  const formattedArray = queryResult.map(({ dataValues: { user: { username, gravatar }, ...obj } }) => {
-    return ({ ...obj, username, gravatar });
-  });
-
-  return result(null, responseHandler(true, 200, 'Success', formattedArray));
+  return result(null, responseHandler(true, 200, 'Success', queryResult));
 };

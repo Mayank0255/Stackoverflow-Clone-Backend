@@ -25,9 +25,9 @@ exports.getOneUser = asyncHandler(async (req, res) => {
   }
 });
 
-exports.getAllUsers = (req, res) => {
+exports.getAllUsers = asyncHandler(async (req, res) => {
   try {
-    service.retrieveAll(
+    await service.retrieveAll(
       (err, data) => {
         if (err) {
           console.log(err);
@@ -42,7 +42,7 @@ exports.getAllUsers = (req, res) => {
       .status(500)
       .json(responseHandler(false, 500, 'Server Error', null));
   }
-};
+});
 
 exports.register = asyncHandler(async (req, res) => {
   const errors = validationResult(req);

@@ -1,3 +1,4 @@
+const sequelize = require('sequelize');
 const { responseHandler } = require('../helpers/responseHelpers');
 const { CommentsModelSequelize, UsersModelSequelize } = require('../models/sequelize');
 const conditionalHelper = require('../helpers/conditionalHelper');
@@ -38,10 +39,10 @@ exports.retrieveAll = async (postId, result) => {
     where: {
       post_id: postId,
     },
-    attributes: ['id', 'user_id', 'post_id', 'body', 'created_at'],
+    attributes: ['id', 'user_id', 'post_id', 'body', 'created_at', [sequelize.literal('user.username'), 'username']],
     include: {
       model: UsersModelSequelize,
-      attributes: ['username'],
+      attributes: [],
     },
   }).catch((error) => {
     console.log(error);
@@ -53,10 +54,5 @@ exports.retrieveAll = async (postId, result) => {
     return result(responseHandler(false, 404, 'There are no comments', null), null);
   }
 
-  // eslint-disable-next-line arrow-body-style
-  const formattedArray = queryResult.map(({ dataValues: { user: { username }, ...obj } }) => {
-    return ({ ...obj, username });
-  });
-
-  return result(null, responseHandler(true, 200, 'Success', formattedArray));
+  return result(null, responseHandler(true, 200, 'Success', queryResult));
 };

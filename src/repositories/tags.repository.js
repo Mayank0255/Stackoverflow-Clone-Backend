@@ -5,10 +5,11 @@ const { TagsModelSequelize, PostsModelSequelize } = require('../models/sequelize
 
 exports.retrieveAll = async (result) => {
   const queryResult = await TagsModelSequelize.findAll({
-    require: false,
     distinct: true,
-    col: 'posts.id',
-    include: PostsModelSequelize,
+    include: {
+      model: PostsModelSequelize,
+      attributes: [],
+    },
     attributes: ['id',
       'tagname',
       'description',
@@ -16,7 +17,6 @@ exports.retrieveAll = async (result) => {
       'created_at'],
     group: ['tags.id'],
     order: [[Sequelize.col('posts_count'), 'DESC']],
-    raw: true,
   })
     .catch((error) => {
       console.log(error);
@@ -33,7 +33,10 @@ exports.retrieveAll = async (result) => {
 exports.retrieveOne = async (tagName, result) => {
   const queryResult = await TagsModelSequelize.findOne({
     require: false,
-    include: PostsModelSequelize,
+    include: {
+      model: PostsModelSequelize,
+      attributes: [],
+    },
     attributes: ['id',
       'tagname',
       'description',
