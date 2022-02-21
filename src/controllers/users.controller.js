@@ -1,5 +1,5 @@
 const { validationResult } = require('express-validator');
-const { responseHandler, asyncHandler} = require('../helpers/responseHelpers');
+const { responseHandler, asyncHandler } = require('../helpers/responseHelpers');
 const { User } = require('../models/users.model');
 const service = require('../services/users.service');
 

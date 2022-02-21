@@ -1,7 +1,7 @@
+const Sequelize = require('sequelize');
 const { responseHandler } = require('../helpers/responseHelpers');
 const conditionalHelper = require('../helpers/conditionalHelper');
 const { UsersModelSequelize, AnswersModelSequelize } = require('../models/sequelize');
-const sequelize = require("sequelize");
 
 exports.create = async (newAnswer, result) => {
   await AnswersModelSequelize.create({
@@ -45,8 +45,8 @@ exports.retrieveAll = async (postId, result) => {
       'post_id',
       'body',
       'created_at',
-      [sequelize.literal('user.username'), 'username'],
-      [sequelize.literal('user.gravatar'), 'gravatar'],
+      [Sequelize.literal('user.username'), 'username'],
+      [Sequelize.literal('user.gravatar'), 'gravatar'],
     ],
     include: {
       model: UsersModelSequelize,

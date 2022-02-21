@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const db = require('../../config/db.sequelize');
 const { responseHandler } = require('../helpers/responseHelpers');
-const { isArrayEmpty } = require('../helpers/conditionalHelper');
+const { isArrayEmpty, isNull } = require('../helpers/conditionalHelper');
 const {
   PostsModelSequelize,
   PostTagModelSequelize,
@@ -114,49 +114,58 @@ exports.retrieveOne = async (postId, result) => {
       );
     });
 
-  const query = `
-  SELECT 
-    posts.id, 
-    posts.user_id, 
-    tag_id, 
-    COUNT(DISTINCT answers.id) as answer_count, 
-    COUNT(DISTINCT comments.id) as comment_count,
-    users.gravatar,
-    username, 
-    title, 
-    posts.body as post_body, 
-    tagname, 
-    posts.created_at, 
-    posts.views
-  FROM 
-    posts 
-    JOIN posttag ON posts.id = post_id 
-    JOIN tags ON tag_id = tags.id 
-    JOIN users ON user_id = users.id 
-    LEFT JOIN answers ON answers.post_id = posts.id 
-    LEFT JOIN comments ON posts.id = comments.post_id 
-  WHERE 
-    posts.id = ?;`;
-
-  pool.query(query, postId, (err, results) => {
-    if (err || results.length === 0) {
-      console.log('error: ', err);
-      result(
-        responseHandler(
-          false,
-          err ? err.statusCode : 404,
-          err ? err.message : 'There isn\'t any post by this id',
-          null,
-        ),
-        null,
-      );
-      return;
-    }
-    result(
-      null,
-      responseHandler(true, 200, 'Success', results[0]),
-    );
+  const queryResult = await PostsModelSequelize.findOne({
+    distinct: true,
+    where: {
+      id: postId,
+    },
+    attributes: [
+      'id',
+      'user_id',
+      [Sequelize.literal('tags.id'), 'tag_id'],
+      [Sequelize.literal('COUNT(DISTINCT(answers.id))'), 'answer_count'],
+      [Sequelize.literal('COUNT(DISTINCT(comments.id))'), 'comment_count'],
+      [Sequelize.literal('user.gravatar'), 'gravatar'],
+      [Sequelize.literal('user.username'), 'username'],
+      'title',
+      ['body', 'post_body'],
+      [Sequelize.literal('tags.tagname'), 'tagname'],
+      'created_at',
+      'updated_at',
+      'views',
+    ],
+    include: [
+      {
+        model: TagsModelSequelize,
+        required: true,
+        attributes: [],
+      },
+      {
+        model: UsersModelSequelize,
+        required: true,
+        attributes: [],
+      },
+      {
+        model: AnswersModelSequelize,
+        required: false,
+        attributes: [],
+      },
+      {
+        model: CommentsModelSequelize,
+        required: false,
+        attributes: [],
+      },
+    ],
+  }).catch((error) => {
+    console.log(error);
+    return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
+
+  if (isNull(queryResult.dataValues.id)) {
+    return result(responseHandler(false, 404, 'There isn\'t any post by this id', null), null);
+  }
+
+  return result(null, responseHandler(true, 200, 'Success', queryResult));
 };
 
 exports.retrieveAll = async (result) => {

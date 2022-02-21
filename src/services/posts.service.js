@@ -4,7 +4,7 @@ const repository = require('../repositories/posts.repository');
 
 exports.create = async (newPost, result) => {
   const tagDescription = await investApi.fetchTagDesc(newPost.tagname);
-  repository.create(newPost, result, tagDescription);
+  await repository.create(newPost, result, tagDescription);
 };
 
 exports.remove = (id, result) => repository.remove(id, result);
