@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const db = require('../../config/db.sequelize');
+const db = require('../../config/db.config');
 
 // eslint-disable-next-line func-names
 const Comment = function (answer) {

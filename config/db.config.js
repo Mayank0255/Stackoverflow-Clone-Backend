@@ -1,38 +1,18 @@
-const mysql = require('mysql2');
-
-// environment variable config
+const Sequelize = require('sequelize');
 const dotenv = require('dotenv');
 
 dotenv.config();
 
-const pool = mysql.createPool({
-  connectionLimit: 10,
-  host: process.env.HOST,
-  user: process.env.USER,
-  password: process.env.PASSWORD,
-  database: process.env.DATABASE,
-  port: process.env.PORTDB || 3306,
-  multipleStatements: true,
-});
+const sequelize = new Sequelize(process.env.DATABASE, process.env.USER, process.env.PASSWORD,
+  {
+    dialect: 'mysql',
+    host: process.env.HOST,
+    port: process.env.PORTDB || 3306,
+    define: {
+      timestamps: false,
+    },
+  });
 
-// Ping database to check for common exception errors.
-pool.getConnection((err, connection) => {
-  if (err) {
-    if (err.code === 'PROTOCOL_CONNECTION_LOST') {
-      console.error('Database connection was closed.');
-    } else if (err.code === 'ER_CON_COUNT_ERROR') {
-      console.error('Database has too many connections.');
-    } else if (err.code === 'ECONNREFUSED') {
-      console.error('Database connection was refused.');
-    } else {
-      console.error(err.message);
-    }
-  }
+(async () => await sequelize.sync())();
 
-  if (connection) {
-    console.log('Connected to the MySQL server.');
-    connection.release();
-  }
-});
-
-module.exports = pool;
+module.exports = sequelize;

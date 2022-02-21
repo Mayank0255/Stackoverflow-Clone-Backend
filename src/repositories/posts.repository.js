@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const db = require('../../config/db.sequelize');
+const db = require('../../config/db.config');
 const { responseHandler } = require('../helpers/responseHelpers');
 const { isArrayEmpty, isNull } = require('../helpers/conditionalHelper');
 const {
