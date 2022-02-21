@@ -1,85 +1,66 @@
-const helperFunction = require('../helpers/helperFunction');
+const Sequelize = require('sequelize');
+const { responseHandler } = require('../helpers/responseHelpers');
+const conditionalHelper = require('../helpers/conditionalHelper');
+const { UsersModelSequelize, AnswersModelSequelize } = require('../models/sequelize');
 
-const create = (newAnswer, result) => {
-  const query = `INSERT INTO answers(body,user_id,post_id) VALUES(?,?,?);`;
-
-  pool.query(
-    query,
-    [newAnswer.body, newAnswer.user_id, newAnswer.post_id],
-    (err, res) => {
-      if (err) {
-        console.log('error: ', err);
-        result(
-          helperFunction.responseHandler(
-            false,
-            err.statusCode,
-            err.message,
-            null,
-          ),
-          null,
-        );
-        return;
-      }
+exports.create = async (newAnswer, result) => {
+  await AnswersModelSequelize.create({
+    body: newAnswer.body,
+    user_id: newAnswer.user_id,
+    post_id: newAnswer.post_id,
+  })
+    .then((response) => {
       result(
         null,
-        helperFunction.responseHandler(true, 200, 'Answer Added', res.insertId),
+        responseHandler(true, 200, 'Answer Added', response.id),
       );
+    })
+    .catch((error) => {
+      console.log(error);
+      result(responseHandler(false, 500, 'Some error occurred while adding the answer.', null), null);
+    });
+};
+
+exports.remove = async (id, result) => {
+  await AnswersModelSequelize.destroy({
+    where: { id },
+  })
+    .then(() => {
+      result(null, responseHandler(true, 200, 'Answer Removed', null));
+    })
+    .catch((error) => {
+      console.log(error.message);
+      result(responseHandler(false, 404, 'This answer doesn\'t exists', null), null);
+    });
+};
+
+exports.retrieveAll = async (postId, result) => {
+  const queryResult = await AnswersModelSequelize.findAll({
+    where: {
+      post_id: postId,
     },
-  );
-};
-
-const remove = (id, result) => {
-  const query = ` DELETE FROM answers WHERE id = ?;`;
-
-  pool.query(query, id, (err) => {
-    if (err) {
-      console.log('error: ', err);
-      result(
-        helperFunction.responseHandler(
-          false,
-          err.statusCode,
-          err.message,
-          null,
-        ),
-        null,
-      );
-      return;
-    }
-    result(
-      null,
-      helperFunction.responseHandler(true, 200, 'Answer Removed', null),
-    );
+    attributes: [
+      'id',
+      'user_id',
+      'post_id',
+      'body',
+      'created_at',
+      [Sequelize.literal('user.username'), 'username'],
+      [Sequelize.literal('user.gravatar'), 'gravatar'],
+    ],
+    include: {
+      model: UsersModelSequelize,
+      attributes: [],
+    },
+  }).catch((error) => {
+    console.log(error);
+    return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
-};
 
-const retrieveAll = (postId, result) => {
-  const query = ` SELECT
-                  answers.id, post_id, answers.user_id, username, answers.body, answers.created_at 
-                  FROM answers 
-                  JOIN posts ON posts.id = post_id 
-                  JOIN users ON users.id = answers.user_id 
-                  WHERE post_id = ?;`;
+  if (conditionalHelper.isArrayEmpty(queryResult)) {
+    console.log('error: ', 'There are no answers');
+    return result(responseHandler(false, 404, 'There are no answers', null), null);
+  }
 
-  pool.query(query, postId, (err, results) => {
-    if (err || results.length === 0) {
-      console.log('error: ', err);
-      result(
-        helperFunction.responseHandler(
-          false,
-          err ? err.statusCode : 404,
-          err ? err.message : 'There are no answers',
-          null,
-        ),
-        null,
-      );
-      return;
-    }
-    result(null, helperFunction.responseHandler(true, 200, 'Success', results));
-  });
-};
-
-module.exports = {
-  create,
-  remove,
-  retrieveAll,
+  return result(null, responseHandler(true, 200, 'Success', queryResult));
 };

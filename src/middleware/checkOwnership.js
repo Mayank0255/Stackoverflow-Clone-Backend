@@ -1,43 +1,49 @@
-const helperFunction = require('../helpers/helperFunction');
+const { responseHandler } = require('../helpers/responseHelpers');
+const { PostsModelSequelize, AnswersModelSequelize, CommentsModelSequelize } = require('../models/sequelize');
 
-module.exports = (req, res, next) => {
-  let action;
+module.exports = async (req, res, next) => {
+  let Model;
   if (req.originalUrl.includes('posts')) {
     if (req.originalUrl.includes('answers')) {
-      action = 'answers';
+      Model = AnswersModelSequelize;
     } else if (req.originalUrl.includes('comments')) {
-      action = 'comments';
+      Model = CommentsModelSequelize;
     } else {
-      action = 'posts';
+      Model = PostsModelSequelize;
     }
-  }
-  const query = ` SELECT user_id FROM ${action} WHERE id = ?;`;
-
-  pool.query(query, req.params.id, (err, results) => {
-    if (err) {
-      console.log('error: ', err);
-      return res
-        .status(err.statusCode)
-        .json(
-          helperFunction.responseHandler(
-            false,
-            err.statusCode,
-            err.message,
-            null,
-          ),
-        );
-    }
-    if (results[0].user_id !== req.user.id) {
-      console.log('error: User not authorized to delete');
-      return res.json(
-        helperFunction.responseHandler(
-          false,
-          401,
-          'User not authorized to delete',
-          null,
-        ),
-      );
-    }
+  } else {
     next();
-  });
+  }
+
+  const user = await Model
+    .findOne({
+      where: { id: req.params.id },
+      attributes: ['user_id'],
+    })
+    .catch((error) => {
+      console.log(error);
+      return res
+        .status(500)
+        .json(responseHandler(false, 500, 'Something went wrong', null));
+    });
+
+  if (user === null) {
+    return res
+      .status(404)
+      .json(responseHandler(false, 404, 'User doesn\'t exists', null));
+  }
+
+  if (user.user_id !== req.user.id) {
+    console.log('error: User not authorized to delete');
+    return res.json(
+      responseHandler(
+        false,
+        401,
+        'User not authorized to delete',
+        null,
+      ),
+    );
+  }
+
+  next();
 };

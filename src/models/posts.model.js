@@ -1,52 +1,40 @@
-const Sequelize = require('sequelize');
-const db = require('../../config/db.sequelize');
+const { DataTypes } = require('sequelize');
+const db = require('../../config/db.config');
 
 // constructor
 // eslint-disable-next-line func-names
 const Post = function (post) {
   this.title = post.title;
   this.body = post.body;
-  this.userId = post.userId;
+  this.user_id = post.user_id;
   this.tagname = post.tagname;
 };
 
 const PostsModelSequelize = db.define('posts', {
   id: {
-    autoIncrement: true,
-    type: Sequelize.INTEGER,
+    type: DataTypes.UUID,
     allowNull: false,
     primaryKey: true,
+    defaultValue: DataTypes.UUIDV4,
   },
   title: {
-    type: Sequelize.STRING(250),
-    allowNull: true,
+    type: DataTypes.STRING(250),
+    allowNull: false,
   },
   body: {
-    type: Sequelize.TEXT,
-    allowNull: true,
+    type: DataTypes.TEXT,
+    allowNull: false,
   },
   views: {
-    type: Sequelize.INTEGER,
-    allowNull: true,
-    defaultValue: 0,
-  },
-  created_at: {
-    type: Sequelize.DATE,
-    allowNull: true,
-    defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
-  },
-  user_id: {
-    type: Sequelize.INTEGER,
+    type: DataTypes.INTEGER,
     allowNull: false,
-    references: {
-      model: 'users',
-      key: 'id',
-    },
+    defaultValue: 0,
   },
 }, {
   db,
   tableName: 'posts',
-  timestamps: false,
+  underscored: true,
+  timestamps: true,
   indexes: [
     {
       name: 'PRIMARY',

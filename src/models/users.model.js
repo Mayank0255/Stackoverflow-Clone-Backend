@@ -1,5 +1,5 @@
-const Sequelize = require('sequelize');
-const db = require('../../config/db.sequelize');
+const { DataTypes } = require('sequelize');
+const db = require('../../config/db.config');
 
 // constructor
 // eslint-disable-next-line func-names
@@ -10,34 +10,34 @@ const User = function (user) {
 
 const UsersModelSequelize = db.define('users', {
   id: {
-    autoIncrement: true,
-    type: Sequelize.INTEGER,
+    type: DataTypes.UUID,
     allowNull: false,
     primaryKey: true,
+    defaultValue: DataTypes.UUIDV4,
   },
   username: {
-    type: Sequelize.STRING(255),
+    type: DataTypes.STRING(255),
     allowNull: false,
     unique: 'username',
   },
   password: {
-    type: Sequelize.STRING(100),
-    allowNull: true,
+    type: DataTypes.STRING(100),
+    allowNull: false,
+  },
+  gravatar: {
+    type: DataTypes.STRING(255),
+    allowNull: false,
   },
   views: {
-    type: Sequelize.INTEGER,
-    allowNull: true,
+    type: DataTypes.INTEGER,
+    allowNull: false,
     defaultValue: 0,
-  },
-  created_at: {
-    type: Sequelize.DATE,
-    allowNull: true,
-    defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
   },
 }, {
   db,
+  underscored: true,
   tableName: 'users',
-  timestamps: false,
+  timestamps: true,
   indexes: [
     {
       name: 'PRIMARY',

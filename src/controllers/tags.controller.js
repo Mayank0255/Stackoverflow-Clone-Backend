@@ -1,9 +1,9 @@
-const helperFunction = require('../helpers/helperFunction');
+const { responseHandler, asyncHandler } = require('../helpers/responseHelpers');
 const service = require('../services/tags.service');
 
-const getTags = (req, res) => {
+exports.getTags = asyncHandler(async (req, res) => {
   try {
-    service.retrieveAll((err, data) => {
+    await service.retrieveAll((err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -14,13 +14,13 @@ const getTags = (req, res) => {
     console.log(err);
     return res
       .status(500)
-      .json(helperFunction.responseHandler(false, 500, 'Server Error', null));
+      .json(responseHandler(false, 500, 'Server Error', null));
   }
-};
+});
 
-const getSingleTag = (req, res) => {
+exports.getSingleTag = asyncHandler(async (req, res) => {
   try {
-    service.retrieveOne(req.params.tagname, (err, data) => {
+    await service.retrieveOne(req.params.tagname, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -31,11 +31,6 @@ const getSingleTag = (req, res) => {
     console.log(err);
     return res
       .status(500)
-      .json(helperFunction.responseHandler(false, 500, 'Server Error', null));
+      .json(responseHandler(false, 500, 'Server Error', null));
   }
-};
-
-module.exports = tagsController = {
-  getTags,
-  getSingleTag,
-};
+});

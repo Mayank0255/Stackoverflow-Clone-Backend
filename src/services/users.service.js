@@ -1,54 +1,11 @@
-const jwt = require('jsonwebtoken');
-const config = require('config');
-const helperFunction = require('../helpers/helperFunction');
 const repository = require('../repositories/users.repository');
 
-const register = async (newUser, result) => {
-  const payload = await repository.register(newUser, result);
-  // eslint-disable-next-line no-use-before-define
-  getJwtToken(payload, 'User registered', result);
-};
+exports.register = (newUser, result) => repository.register(newUser, result);
 
-const login = async (newUser, result) => {
-  const payload = await repository.login(newUser, result);
-  // eslint-disable-next-line no-use-before-define
-  getJwtToken(payload, 'User logged in', result);
-};
+exports.login = async (newUser, result) => repository.login(newUser, result);
 
-const retrieve = ({ action, id }, result) => repository.retrieve(action, id, result);
+exports.retrieveAll = (result) => repository.retrieveAll(result);
+exports.retrieveOne = (id, result) => repository.retrieveOne(id, result);
 
-const loadUser = (userId, result) => repository.loadUser(userId, result);
-
-const getJwtToken = (payload, logMessage, result) => {
-  jwt.sign(
-    payload,
-    config.get('jwtSecret'),
-    { expiresIn: 3600 },
-    (error, token) => {
-      if (error) {
-        console.log('error: ', error);
-        result(
-          helperFunction.responseHandler(
-            false,
-            error.statusCode,
-            error.message,
-            null,
-          ),
-          null,
-        );
-        return;
-      }
-      result(
-        null,
-        helperFunction.responseHandler(true, 200, logMessage, { token }),
-      );
-    },
-  );
-};
-
-module.exports = {
-  register,
-  login,
-  retrieve,
-  loadUser,
-};
+// eslint-disable-next-line camelcase
+exports.loadUser = (user_id, result) => repository.loadUser(user_id, result);

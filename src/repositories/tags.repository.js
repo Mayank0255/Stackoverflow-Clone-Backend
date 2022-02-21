@@ -1,115 +1,58 @@
 const Sequelize = require('sequelize');
-const helperFunction = require('../helpers/helperFunction');
-const { TagsModelSequelize } = require('../models/tags.model');
-const { PostsModelSequelize } = require('../models/posts.model');
+const { responseHandler } = require('../helpers/responseHelpers');
+const { isArrayEmpty } = require('../helpers/conditionalHelper');
+const { TagsModelSequelize, PostsModelSequelize } = require('../models/sequelize');
 
-const retrieveAll = async (result) => {
-  try {
-    const queryResult = await TagsModelSequelize.findAll({
-      require: false,
-      distinct: true,
-      col: 'posts.id',
-      include: PostsModelSequelize,
-      attributes: ['id',
-        'tagname',
-        'description',
-        [Sequelize.fn('COUNT', Sequelize.col('posts.id')), 'posts_count'],
-        'created_at'],
-      group: ['tags.id'],
-      order: [[Sequelize.col('posts_count'), 'DESC']],
-      raw: true,
+exports.retrieveAll = async (result) => {
+  const queryResult = await TagsModelSequelize.findAll({
+    distinct: true,
+    include: {
+      model: PostsModelSequelize,
+      attributes: [],
+    },
+    attributes: ['id',
+      'tagname',
+      'description',
+      [Sequelize.fn('COUNT', Sequelize.col('posts.id')), 'posts_count'],
+      'created_at'],
+    group: ['tags.id'],
+    order: [[Sequelize.col('posts_count'), 'DESC']],
+  })
+    .catch((error) => {
+      console.log(error);
+      return result(responseHandler(false, 500, 'Something went wrong', null), null);
     });
 
-    const queryResultMap = queryResult.map((tag) => {
-      const {
-        // eslint-disable-next-line camelcase
-        id, tagname, description, posts_count, created_at,
-      } = tag;
-
-      return {
-        id, tagname, description, posts_count, created_at,
-      };
-    });
-
-    if (queryResultMap.length === 0) {
-      result(
-        helperFunction.responseHandler(
-          false,
-          404,
-          'There are no tags',
-          null,
-        ),
-        null,
-      );
-      return;
-    }
-    result(null, helperFunction.responseHandler(true, 200, 'Success', queryResultMap));
-  } catch (error) {
-    console.log('error: ', error);
-    result(
-      helperFunction.responseHandler(
-        false,
-        error ? error.statusCode : 500,
-        error ? error.message : 'Internal error',
-        null,
-      ),
-      null,
-    );
+  if (isArrayEmpty(queryResult)) {
+    return result(responseHandler(false, 404, 'There are no tags', null), null);
   }
+
+  result(null, responseHandler(true, 200, 'Success', queryResult));
 };
 
-const retrieveOne = async (tagName, result) => {
-  try {
-    const queryResult = await TagsModelSequelize.findOne({
-      require: false,
-      include: PostsModelSequelize,
-      attributes: ['id',
-        'tagname',
-        'description',
-        [Sequelize.fn('COUNT', Sequelize.col('posts.id')), 'posts_count'],
-        'created_at'],
-      where: { tagname: tagName },
-      group: ['tags.id'],
+exports.retrieveOne = async (tagName, result) => {
+  const queryResult = await TagsModelSequelize.findOne({
+    require: false,
+    include: {
+      model: PostsModelSequelize,
+      attributes: [],
+    },
+    attributes: ['id',
+      'tagname',
+      'description',
+      [Sequelize.fn('COUNT', Sequelize.col('posts.id')), 'posts_count'],
+      'created_at'],
+    where: { tagname: tagName },
+    group: ['tags.id'],
+  })
+    .catch((error) => {
+      console.log(error);
+      return result(responseHandler(false, 500, 'Something went wrong', null), null);
     });
 
-    if (!queryResult) {
-      result(
-        helperFunction.responseHandler(
-          false,
-          404,
-          'This tag doesn\'t exists',
-          null,
-        ),
-        null,
-      );
-      return;
-    }
-
-    const {
-      // eslint-disable-next-line camelcase
-      id, tagname, description, posts_count, created_at,
-    } = queryResult.dataValues;
-
-    const tagResult = {
-      id, tagname, description, posts_count, created_at,
-    };
-
-    result(null, helperFunction.responseHandler(true, 200, 'Success', tagResult));
-  } catch (error) {
-    console.log('error: ', error);
-    result(
-      helperFunction.responseHandler(
-        false,
-        error ? error.statusCode : 500,
-        error ? error.message : 'Internal error',
-        null,
-      ),
-      null,
-    );
+  if (!queryResult) {
+    return result(responseHandler(false, 404, 'This tag doesn\'t exists', null), null);
   }
-};
 
-module.exports = {
-  retrieveAll,
-  retrieveOne,
+  result(null, responseHandler(true, 200, 'Success', queryResult));
 };

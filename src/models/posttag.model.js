@@ -1,16 +1,10 @@
-const Sequelize = require('sequelize');
-const db = require('../../config/db.sequelize');
+const db = require('../../config/db.config');
 
-const PostTagModelSequelize = db.define('posttag', {
-  created_at: {
-    type: Sequelize.DATE,
-    allowNull: true,
-    defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
-  },
-}, {
+const PostTagModelSequelize = db.define('posttag', {}, {
   db,
   tableName: 'posttag',
-  timestamps: false,
+  underscored: true,
+  timestamps: true,
   indexes: [
     {
       name: 'PRIMARY',

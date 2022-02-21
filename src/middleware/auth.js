@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const config = require('config');
-const helperFunction = require('../helpers/helperFunction');
+const { responseHandler } = require('../helpers/responseHelpers');
 
 module.exports = (req, res, next) => {
   const token = req.header('x-auth-token');
@@ -9,7 +9,7 @@ module.exports = (req, res, next) => {
   if (!token) {
     return res
       .status(401)
-      .json(helperFunction.responseHandler(false, 401, 'Sign-in required', null));
+      .json(responseHandler(false, 401, 'Sign-in required', null));
   }
 
   // Verify token
@@ -18,7 +18,7 @@ module.exports = (req, res, next) => {
       if (error) {
         return res
           .status(400)
-          .json(helperFunction.responseHandler(false, 400, 'Try again', null));
+          .json(responseHandler(false, 400, 'Try again', null));
       }
       req.user = decoded.user;
       next();
@@ -27,6 +27,6 @@ module.exports = (req, res, next) => {
     console.error(`error: ${err}`);
     return res
       .status(500)
-      .json(helperFunction.responseHandler(false, 500, 'Server Error', null));
+      .json(responseHandler(false, 500, 'Server Error', null));
   }
 };

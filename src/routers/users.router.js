@@ -1,7 +1,7 @@
 const express = require('express');
 const { check } = require('express-validator');
 const checkExistence = require('../middleware/checkExistence');
-const usersController = require('../controllers/users');
+const usersController = require('../controllers/users.controller');
 
 const router = express.Router();
 
@@ -9,13 +9,13 @@ const router = express.Router();
  *  @desc       fetch all the users
  *  @access     Private
  */
-router.get('/', usersController.getUsers);
+router.get('/', usersController.getAllUsers);
 
 /** @route      GET /api/users/:id
  *  @desc       fetch single user
  *  @access     Private
  */
-router.get('/:id', usersController.getUsers);
+router.get('/:id', usersController.getOneUser);
 
 /** @route      POST /api/users/:id
  *  @desc       register a new user

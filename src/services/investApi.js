@@ -1,7 +1,7 @@
 const axios = require('axios');
 const constantsHolder = require('../constants');
 
-const fetchTagDesc = async (tag) => {
+exports.fetchTagDesc = async (tag) => {
   const url = `${constantsHolder.API_BASE_URL}/tags/${tag}/wikis?site=stackoverflow`;
 
   const options = {
@@ -19,8 +19,4 @@ const fetchTagDesc = async (tag) => {
       console.log('error:', err);
       return '';
     });
-};
-
-module.exports = investApi = {
-  fetchTagDesc,
 };

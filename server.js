@@ -6,8 +6,7 @@ const compression = require('compression');
 const path = require('path');
 const http = require('http');
 const express = require('express');
-const pool = require('./config/db.config');
-const index = require('./src/routes/index.route');
+const index = require('./src/routers/index');
 
 const app = express();
 
@@ -29,8 +28,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // database connection
-pool.query(`USE ${process.env.DATABASE}`);
-global.pool = pool;
+// pool.query(`USE ${process.env.DATABASE}`);
+// global.pool = pool;
 
 // connection with client setup
 if (process.env.NODE_ENV === 'production') {
@@ -41,7 +40,7 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-// all the api routes
+// all the api routers
 app.use('/api', index);
 
 // port initialized

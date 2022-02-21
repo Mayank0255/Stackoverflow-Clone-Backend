@@ -1,10 +1,10 @@
 const express = require('express');
-const auth = require('./auth');
-const users = require('./users');
-const posts = require('./posts');
-const tags = require('./tags');
-const answers = require('./answers');
-const comments = require('./comments');
+const auth = require('./auth.router');
+const users = require('./users.router');
+const posts = require('./posts.router');
+const tags = require('./tags.router');
+const answers = require('./answers.router');
+const comments = require('./comments.router');
 
 const router = express.Router();
 

@@ -1,5 +1,5 @@
-const Sequelize = require('sequelize');
-const db = require('../../config/db.sequelize');
+const { DataTypes } = require('sequelize');
+const db = require('../../config/db.config');
 
 // eslint-disable-next-line func-names
 const Comment = function (answer) {
@@ -10,40 +10,20 @@ const Comment = function (answer) {
 
 const CommentsModelSequelize = db.define('comments', {
   id: {
-    autoIncrement: true,
-    type: Sequelize.INTEGER,
+    type: DataTypes.UUID,
     allowNull: false,
     primaryKey: true,
+    defaultValue: DataTypes.UUIDV4,
   },
   body: {
-    type: Sequelize.TEXT,
-    allowNull: true,
-  },
-  created_at: {
-    type: Sequelize.DATE,
-    allowNull: true,
-    defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
-  },
-  post_id: {
-    type: Sequelize.INTEGER,
+    type: DataTypes.TEXT,
     allowNull: false,
-    references: {
-      model: 'posts',
-      key: 'id',
-    },
-  },
-  user_id: {
-    type: Sequelize.INTEGER,
-    allowNull: false,
-    references: {
-      model: 'users',
-      key: 'id',
-    },
   },
 }, {
   db,
   tableName: 'comments',
-  timestamps: false,
+  underscored: true,
+  timestamps: true,
   indexes: [
     {
       name: 'PRIMARY',

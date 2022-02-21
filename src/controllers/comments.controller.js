@@ -1,11 +1,11 @@
 const { validationResult } = require('express-validator');
-const helperFunction = require('../helpers/helperFunction');
+const { responseHandler, asyncHandler } = require('../helpers/responseHelpers');
 const { Comment } = require('../models/comments.model');
 const service = require('../services/comments.service');
 
-const getComments = (req, res) => {
+exports.getComments = asyncHandler(async (req, res) => {
   try {
-    service.retrieveAll(req.params.id, (err, data) => {
+    await service.retrieveAll(req.params.id, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -16,16 +16,16 @@ const getComments = (req, res) => {
     console.log(err);
     return res
       .status(500)
-      .json(helperFunction.responseHandler(false, 500, 'Server Error', null));
+      .json(responseHandler(false, 500, 'Server Error', null));
   }
-};
+});
 
-const addComment = (req, res) => {
+exports.addComment = asyncHandler(async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res
       .status(400)
-      .json(helperFunction.responseHandler(false, 400, errors.array()[0].msg, null));
+      .json(responseHandler(false, 400, errors.array()[0].msg, null));
   }
 
   try {
@@ -35,7 +35,7 @@ const addComment = (req, res) => {
       post_id: req.params.id,
     });
     // Save Comment in the database
-    service.create(comment, (err, data) => {
+    await service.create(comment, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -46,13 +46,13 @@ const addComment = (req, res) => {
     console.log(err);
     return res
       .status(500)
-      .json(helperFunction.responseHandler(false, 500, 'Server Error', null));
+      .json(responseHandler(false, 500, 'Server Error', null));
   }
-};
+});
 
-const deleteComment = (req, res) => {
+exports.deleteComment = asyncHandler(async (req, res) => {
   try {
-    service.remove(req.params.id, (err, data) => {
+    await service.remove(req.params.id, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -63,12 +63,6 @@ const deleteComment = (req, res) => {
     console.log(err);
     return res
       .status(500)
-      .json(helperFunction.responseHandler(false, 500, 'Server Error', null));
+      .json(responseHandler(false, 500, 'Server Error', null));
   }
-};
-
-module.exports = commentsController = {
-  getComments,
-  addComment,
-  deleteComment,
-};
+});

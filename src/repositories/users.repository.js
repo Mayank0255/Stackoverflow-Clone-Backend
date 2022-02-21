@@ -1,178 +1,212 @@
+const Sequelize = require('sequelize');
 const bcrypt = require('bcryptjs');
-const util = require('util');
-const helperFunction = require('../helpers/helperFunction');
 
-const register = async (newUser, result) => {
+const constantsHolder = require('../constants');
+const getJwtToken = require('../services/jwt');
+const { responseHandler } = require('../helpers/responseHelpers');
+const calcHelper = require('../helpers/calcHelper');
+const { isArrayEmpty, isNull } = require('../helpers/conditionalHelper');
+const {
+  UsersModelSequelize,
+  PostsModelSequelize,
+  TagsModelSequelize,
+  AnswersModelSequelize,
+  CommentsModelSequelize,
+} = require('../models/sequelize');
+
+exports.register = async (newUser, result) => {
   const salt = await bcrypt.genSalt(10);
   newUser.password = await bcrypt.hash(newUser.password, salt);
-  const query = `INSERT INTO users(username,password) VALUES(?,?);`;
 
-  const queryResult = util.promisify(pool.query).bind(pool);
-  const rows = await queryResult(query, [newUser.username, newUser.password]);
+  await UsersModelSequelize.create({
+    username: newUser.username,
+    password: newUser.password,
+    gravatar: constantsHolder.GRAVATAR_URL(calcHelper.getRandomInt()),
+  })
+    .then((response) => {
+      const payload = {
+        user: {
+          id: response.id,
+        },
+      };
 
-  if (rows === null || rows.length === 0) {
-    if (err) {
-      console.log('error: ', err);
-      result(
-        helperFunction.responseHandler(
-          false,
-          err.statusCode,
-          err.message,
-          null,
-        ),
-        null,
-      );
+      getJwtToken(payload, 'User registered', result);
+
+      return payload;
+    })
+    .catch((error) => {
+      console.log(error.message);
+      result(responseHandler(false, 500, 'Some error occurred while registering the user.', null), null);
       return null;
-    }
-  }
-
-  const payload = {
-    user: {
-      id: rows.insertId,
-    },
-  };
-
-  return payload;
-};
-
-const login = async (newUser, result) => {
-  const query = `SELECT * FROM users WHERE username = ?;`;
-  const queryResult = util.promisify(pool.query).bind(pool);
-  const rows = await queryResult(query, [newUser.username, newUser.password]);
-
-  if (rows === null || rows.length === 0) {
-    if (err || !results[0]) {
-      console.log('error: ', err);
-      const code = !results[0] ? 404 : err.statusCode;
-      result(
-        helperFunction.responseHandler(
-          false,
-          code,
-          !results[0] ? 'User does not exists' : err.message,
-          null,
-        ),
-        null,
-      );
-      return null;
-    }
-
-    const user = results[0];
-
-    const isMatch = await bcrypt.compare(newUser.password, user.password);
-
-    if (!isMatch) {
-      result(
-        helperFunction.responseHandler(false, 400, 'Incorrect password', null),
-        null,
-      );
-
-      return null;
-    }
-  }
-
-  const payload = {
-    user: {
-      id: rows[0].id,
-    },
-  };
-
-  return payload;
-};
-
-const retrieve = (action, id, result) => {
-  action = action.toLowerCase();
-  const updateQuery = `UPDATE users SET views = views + 1 WHERE users.id = ?;`;
-  const head = `SELECT users.id,username,users.created_at, users.views, COUNT(DISTINCT posts.id) `;
-  const middle = `FROM users 
-                  LEFT JOIN posts ON posts.user_id = users.id 
-                  LEFT JOIN posttag ON posttag.post_id = posts.id 
-                  LEFT JOIN tags ON posttag.tag_id = tags.id`;
-
-  const q1 = `as posts_count,COUNT(DISTINCT tagname) as tags_count  
-              ${middle} GROUP BY users.id ORDER BY posts_count DESC;`;
-
-  const q2 = `as post_count,COUNT(DISTINCT tagname) 
-              as tag_count, COUNT(DISTINCT answers.id) 
-              as answer_count, COUNT(DISTINCT comments.id) 
-              as comment_count 
-                ${middle} LEFT JOIN answers ON answers.user_id = users.id 
-              LEFT JOIN comments ON comments.user_id = users.id 
-              WHERE users.id = ? GROUP BY users.id;`;
-
-  if (action === 'one') {
-    pool.query(updateQuery, id, (err) => {
-      if (err) {
-        console.log('error: ', err);
-        result(
-          helperFunction.responseHandler(
-            false,
-            err ? err.statusCode : 404,
-            err ? err.message : 'There isn\'t any user by this id',
-            null,
-          ),
-          null,
-        );
-      }
     });
+};
+
+exports.login = async (newUser, result) => {
+  const user = await UsersModelSequelize.findOne({
+    where: {
+      username: newUser.username,
+    },
+  })
+    .catch((error) => {
+      console.log(error.message);
+      result(
+        responseHandler(false, 500, 'Some error occurred while logging in the user.', null),
+        null,
+      );
+      return null;
+    });
+
+  if (user === null) {
+    result(
+      responseHandler(
+        false,
+        404,
+        'User does not exists',
+        null,
+      ),
+      null,
+    );
+    return null;
   }
 
-  pool.query(
-    action === 'one' ? head + q2 : head + q1,
-    action === 'one' ? id : null,
-    (err, results) => {
-      if (err || results.length === 0) {
-        console.log('error: ', err);
-        result(
-          helperFunction.responseHandler(
-            false,
-            err ? err.statusCode : 404,
-            err ? err.message : 'There are no users',
-            null,
-          ),
-          null,
-        );
-        return;
-      }
-      result(
-        null,
-        helperFunction.responseHandler(
-          true,
-          200,
-          'Success',
-          action === 'one' ? results[0] : results,
-        ),
-      );
-    },
-  );
-};
+  const isMatch = await bcrypt.compare(newUser.password, user.password);
 
-const loadUser = (userId, result) => {  
-  const query = `SELECT id,username,created_at FROM users WHERE id = ?;`;
-
-  pool.query(query, userId, (err, results) => {
-    if (err) {
-      console.log('error: ', err);
-      result(
-        helperFunction.responseHandler(
-          false,
-          err.statusCode,
-          err.message,
-          null,
-        ),
-        null,
-      );
-      return;
-    }
+  if (!isMatch) {
     result(
+      responseHandler(false, 400, 'Incorrect password', null),
       null,
-      helperFunction.responseHandler(true, 200, 'Success', results[0]),
     );
-  });
+
+    return null;
+  }
+
+  const payload = {
+    user: {
+      id: user.id,
+    },
+  };
+
+  getJwtToken(payload, 'User logged in', result);
+
+  return payload;
 };
 
-module.exports = {
-  register,
-  login,
-  retrieve,
-  loadUser,
+exports.retrieveAll = async (result) => {
+  const queryResult = await UsersModelSequelize.findAll({
+    distinct: true,
+    attributes: [
+      'id',
+      'username',
+      'gravatar',
+      'views',
+      'created_at',
+      [Sequelize.literal('COUNT(DISTINCT(posts.id))'), 'posts_count'],
+      [Sequelize.literal('COUNT(DISTINCT(tagname))'), 'tags_count'],
+    ],
+    include: [
+      {
+        model: PostsModelSequelize,
+        attributes: [],
+        required: false,
+        include: {
+          model: TagsModelSequelize,
+          attributes: [],
+          required: false,
+        },
+      },
+    ],
+    group: ['users.id'],
+    order: [[Sequelize.col('posts_count'), 'DESC']],
+  }).catch((error) => {
+    console.log(error);
+    return result(responseHandler(false, 500, 'Something went wrong!', null), null);
+  });
+
+  if (isArrayEmpty(queryResult)) {
+    return result(responseHandler(false, 404, 'There are no users', null), null);
+  }
+
+  return result(null, responseHandler(true, 200, 'Success', queryResult));
+};
+
+exports.retrieveOne = async (id, result) => {
+  await UsersModelSequelize.increment('views',
+    {
+      by: 1,
+      where: { id },
+    })
+    .catch((error) => {
+      console.log('error: ', error);
+      return result(
+        responseHandler(
+          false,
+          error ? error.statusCode : 404,
+          error ? error.message : 'There isn\'t any user by this id',
+          null,
+        ),
+        null,
+      );
+    });
+
+  const queryResult = await UsersModelSequelize.findOne({
+    where: { id },
+    attributes: [
+      'id',
+      'username',
+      'gravatar',
+      'views',
+      'created_at',
+      [Sequelize.literal('COUNT(DISTINCT(posts.id))'), 'posts_count'],
+      [Sequelize.literal('COUNT(DISTINCT(tagname))'), 'tags_count'],
+      [Sequelize.literal('COUNT(DISTINCT(answers.id))'), 'answers_count'],
+      [Sequelize.literal('COUNT(DISTINCT(comments.id))'), 'comments_count'],
+    ],
+    include: [
+      {
+        required: false,
+        model: PostsModelSequelize,
+        attributes: [],
+        include: {
+          attributes: [],
+          required: true,
+          model: TagsModelSequelize,
+        },
+      },
+      {
+        attributes: [],
+        required: false,
+        model: AnswersModelSequelize,
+      },
+      {
+        attributes: [],
+        required: false,
+        model: CommentsModelSequelize,
+      },
+    ],
+    group: ['users.id'],
+  })
+    .catch((error) => {
+      console.log(error);
+      return result(responseHandler(false, 500, 'Something went wrong', null), null);
+    });
+
+  if (isNull(queryResult)) {
+    return result(responseHandler(false, 404, 'This user doesn\'t exists', null), null);
+  }
+
+  return result(null, responseHandler(true, 200, 'Success', queryResult));
+};
+
+// eslint-disable-next-line camelcase
+exports.loadUser = async (user_id, result) => {
+  await UsersModelSequelize.findOne({
+    where: { id: user_id },
+    attributes: ['id', 'username', 'gravatar', 'views', 'created_at'],
+  })
+    .then((response) => {
+      result(null, responseHandler(true, 200, 'Success', response));
+    }).catch((error) => {
+      console.log('error: ', error);
+      result(responseHandler(false, error.statusCode, 'User not found', null), null);
+    });
 };
