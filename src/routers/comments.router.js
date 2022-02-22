@@ -8,24 +8,28 @@ const router = express.Router();
 
 /** @route      GET /api/posts/comments/:id
  *  @desc       fetch all comments of a post
- *  @access     Private
  */
-router.get('/:id', commentsController.getComments);
+router.route(':id')
+  .get(commentsController.getComments);
 
 /** @route      POST /api/posts/comments/:id
  *  @desc       add a comment to a post
- *  @access     Private
  */
-router.post(
-  '/:id',
-  [auth, [check('body', 'Comment is required').not().isEmpty()]],
-  commentsController.addComment,
-);
+router.route('/:id')
+  .post(
+    auth,
+    check('body', 'Comment is required').not().isEmpty(),
+    commentsController.addComment,
+  );
 
 /** @route      DELETE /api/posts/comments/:id
  *  @desc       delete a comment to a post
- *  @access     Private
  */
-router.delete('/:id', [auth, checkOwnership], commentsController.deleteComment);
+router.route(':id')
+  .delete(
+    auth,
+    checkOwnership,
+    commentsController.deleteComment
+  );
 
 module.exports = router;

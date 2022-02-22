@@ -6,22 +6,22 @@ const authController = require('../controllers/auth.controller');
 const router = express.Router();
 
 /** @route      GET /api/auth
- *  @desc       fetch logged in user details
- *  @access     Private
+ *  @desc       fetch logged-in user details
  */
-router.get('/', auth, authController.loadUser);
+router.route('/')
+  .get(
+    auth,
+    authController.loadUser,
+  );
 
 /** @route      POST /api/auth
  *  @desc       log in user
- *  @access     Private
  */
-router.post(
-  '/',
-  [
+router.route('/')
+  .post(
     check('username', 'Please include a valid username').isLength({ min: 5 }),
     check('password', 'Password is required').not().isEmpty(),
-  ],
-  authController.login,
-);
+    authController.login,
+  );
 
 module.exports = router;
