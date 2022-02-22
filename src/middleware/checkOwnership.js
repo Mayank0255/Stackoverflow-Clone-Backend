@@ -1,5 +1,5 @@
 const { responseHandler } = require('../helpers/responseHelpers');
-const { PostsModelSequelize, AnswersModelSequelize, CommentsModelSequelize } = require('../models/sequelize');
+const { PostsModelSequelize, AnswersModelSequelize, CommentsModelSequelize } = require('../models');
 
 module.exports = async (req, res, next) => {
   let Model;

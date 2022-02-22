@@ -1,11 +1,11 @@
 const { validationResult } = require('express-validator');
 const { responseHandler, asyncHandler } = require('../helpers/responseHelpers');
 const { Comment } = require('../models/comments.model');
-const service = require('../services/comments.service');
+const { commentsService } = require('../services');
 
 exports.getComments = asyncHandler(async (req, res) => {
   try {
-    await service.retrieveAll(req.params.id, (err, data) => {
+    await commentsService.retrieveAll(req.params.id, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -35,7 +35,7 @@ exports.addComment = asyncHandler(async (req, res) => {
       post_id: req.params.id,
     });
     // Save Comment in the database
-    await service.create(comment, (err, data) => {
+    await commentsService.create(comment, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -52,7 +52,7 @@ exports.addComment = asyncHandler(async (req, res) => {
 
 exports.deleteComment = asyncHandler(async (req, res) => {
   try {
-    await service.remove(req.params.id, (err, data) => {
+    await commentsService.remove(req.params.id, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);

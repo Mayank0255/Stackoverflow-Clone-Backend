@@ -1,11 +1,11 @@
 const { validationResult } = require('express-validator');
 const { responseHandler, asyncHandler } = require('../helpers/responseHelpers');
 const { Post } = require('../models/posts.model');
-const service = require('../services/posts.service');
+const { postsService } = require('../services');
 
 exports.getPosts = asyncHandler(async (req, res) => {
   try {
-    await service.retrieveAll((err, data) => {
+    await postsService.retrieveAll((err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -23,7 +23,7 @@ exports.getPosts = asyncHandler(async (req, res) => {
 
 exports.getTopPosts = asyncHandler(async (req, res) => {
   try {
-    await service.retrieveAllTop(
+    await postsService.retrieveAllTop(
       (err, data) => {
         if (err) {
           console.log(err);
@@ -44,7 +44,7 @@ exports.getTagPosts = asyncHandler(async (req, res) => {
   const tagName = req.params.tagname;
 
   try {
-    await service.retrieveAllTag(
+    await postsService.retrieveAllTag(
       tagName,
       (err, data) => {
         if (err) {
@@ -64,7 +64,7 @@ exports.getTagPosts = asyncHandler(async (req, res) => {
 
 exports.getSinglePost = asyncHandler(async (req, res) => {
   try {
-    await service.retrieveOne(req.params.id, (err, data) => {
+    await postsService.retrieveOne(req.params.id, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -94,7 +94,7 @@ exports.addPost = asyncHandler(async (req, res) => {
       tagname: req.body.tagname,
     });
     // Save Post in the database
-    await service.create(post, (err, data) => {
+    await postsService.create(post, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -111,7 +111,7 @@ exports.addPost = asyncHandler(async (req, res) => {
 
 exports.deletePost = asyncHandler(async (req, res) => {
   try {
-    await service.remove(req.params.id, (err, data) => {
+    await postsService.remove(req.params.id, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);

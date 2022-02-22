@@ -1,18 +1,18 @@
 /* eslint-disable max-len */
 const investApi = require('./investApi');
-const repository = require('../repositories/posts.repository');
+const { postsRepository } = require('../repositories');
 
 exports.create = async (newPost, result) => {
   const tagDescription = await investApi.fetchTagDesc(newPost.tagname);
-  await repository.create(newPost, result, tagDescription);
+  await postsRepository.create(newPost, result, tagDescription);
 };
 
-exports.remove = (id, result) => repository.remove(id, result);
+exports.remove = (id, result) => postsRepository.remove(id, result);
 
-exports.retrieveOne = (postId, result) => repository.retrieveOne(postId, result);
+exports.retrieveOne = (postId, result) => postsRepository.retrieveOne(postId, result);
 
-exports.retrieveAll = (result) => repository.retrieveAll(result);
+exports.retrieveAll = (result) => postsRepository.retrieveAll(result);
 
-exports.retrieveAllTop = (result) => repository.retrieveAllTop(result);
+exports.retrieveAllTop = (result) => postsRepository.retrieveAllTop(result);
 
-exports.retrieveAllTag = (tagName, result) => repository.retrieveAllTag(tagName, result);
+exports.retrieveAllTag = (tagName, result) => postsRepository.retrieveAllTag(tagName, result);

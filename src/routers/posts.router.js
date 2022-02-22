@@ -2,7 +2,7 @@ const express = require('express');
 const { check } = require('express-validator');
 const auth = require('../middleware/auth');
 const checkOwnership = require('../middleware/checkOwnership');
-const postsController = require('../controllers/posts.controller');
+const { postsController } = require('../controllers');
 
 const router = express.Router();
 

@@ -1,9 +1,9 @@
 const { responseHandler, asyncHandler } = require('../helpers/responseHelpers');
-const service = require('../services/tags.service');
+const { tagsService } = require('../services');
 
 exports.getTags = asyncHandler(async (req, res) => {
   try {
-    await service.retrieveAll((err, data) => {
+    await tagsService.retrieveAll((err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -20,7 +20,7 @@ exports.getTags = asyncHandler(async (req, res) => {
 
 exports.getSingleTag = asyncHandler(async (req, res) => {
   try {
-    await service.retrieveOne(req.params.tagname, (err, data) => {
+    await tagsService.retrieveOne(req.params.tagname, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);

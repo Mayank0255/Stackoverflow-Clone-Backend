@@ -8,7 +8,7 @@ const {
   TagsModelSequelize,
   AnswersModelSequelize,
   CommentsModelSequelize, UsersModelSequelize,
-} = require('../models/sequelize');
+} = require('../models');
 
 exports.create = async (newPost, result, tagDescription) => {
   let transaction;

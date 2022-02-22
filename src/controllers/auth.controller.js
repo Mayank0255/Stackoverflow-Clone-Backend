@@ -1,11 +1,11 @@
 const { validationResult } = require('express-validator');
 const { responseHandler, asyncHandler } = require('../helpers/responseHelpers');
 const { User } = require('../models/users.model');
-const service = require('../services/users.service');
+const { authService } = require('../services');
 
 exports.loadUser = asyncHandler(async (req, res) => {
   try {
-    await service.loadUser(req.user.id, (err, data) => {
+    await authService.loadUser(req.user.id, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -29,7 +29,7 @@ exports.login = asyncHandler(async (req, res) => {
   }
   try {
     // Login the user
-    await service.login(new User(req.body), (err, data) => {
+    await authService.login(new User(req.body), (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);

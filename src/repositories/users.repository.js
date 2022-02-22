@@ -12,7 +12,7 @@ const {
   TagsModelSequelize,
   AnswersModelSequelize,
   CommentsModelSequelize,
-} = require('../models/sequelize');
+} = require('../models');
 
 exports.register = async (newUser, result) => {
   const salt = await bcrypt.genSalt(10);

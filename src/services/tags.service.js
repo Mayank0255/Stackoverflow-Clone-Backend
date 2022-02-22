@@ -1,5 +1,5 @@
-const repository = require('../repositories/tags.repository');
+const { tagsRepository } = require('../repositories');
 
-exports.retrieveAll = (result) => repository.retrieveAll(result);
+exports.retrieveAll = (result) => tagsRepository.retrieveAll(result);
 
-exports.retrieveOne = (tagName, result) => repository.retrieveOne(tagName, result);
+exports.retrieveOne = (tagName, result) => tagsRepository.retrieveOne(tagName, result);

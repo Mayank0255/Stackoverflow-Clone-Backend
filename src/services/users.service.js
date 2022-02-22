@@ -1,11 +1,11 @@
-const repository = require('../repositories/users.repository');
+const { usersRepository } = require('../repositories');
 
-exports.register = (newUser, result) => repository.register(newUser, result);
+exports.register = (newUser, result) => usersRepository.register(newUser, result);
 
-exports.login = async (newUser, result) => repository.login(newUser, result);
+exports.login = async (newUser, result) => usersRepository.login(newUser, result);
 
-exports.retrieveAll = (result) => repository.retrieveAll(result);
-exports.retrieveOne = (id, result) => repository.retrieveOne(id, result);
+exports.retrieveAll = (result) => usersRepository.retrieveAll(result);
+exports.retrieveOne = (id, result) => usersRepository.retrieveOne(id, result);
 
 // eslint-disable-next-line camelcase
-exports.loadUser = (user_id, result) => repository.loadUser(user_id, result);
+exports.loadUser = (user_id, result) => usersRepository.loadUser(user_id, result);

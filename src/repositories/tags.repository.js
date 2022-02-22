@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const { responseHandler } = require('../helpers/responseHelpers');
 const { isArrayEmpty } = require('../helpers/conditionalHelper');
-const { TagsModelSequelize, PostsModelSequelize } = require('../models/sequelize');
+const { TagsModelSequelize, PostsModelSequelize } = require('../models');
 
 exports.retrieveAll = async (result) => {
   const queryResult = await TagsModelSequelize.findAll({
