@@ -1,12 +1,16 @@
-const bodyParser = require('body-parser');
+const express = require('express');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const cors = require('cors');
 const compression = require('compression');
 const path = require('path');
 const http = require('http');
-const express = require('express');
+const xss = require('xss-clean');
+const cookieParser = require('cookie-parser');
+const debug = require('debug')('backend:server');
+
 const index = require('./src/routers/index');
+const portUtils = require('./src/config/port');
 
 const app = express();
 
@@ -20,12 +24,15 @@ app.use(morgan('dev'));
 app.options('*', cors());
 app.use(cors({ origin: 'http://localhost:5000' }));
 
+// data sanitization against xss
+app.use(xss());
+
 // security config
 app.use(helmet());
 
-// body-parser
-app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // connection with client setup
 if (process.env.NODE_ENV === 'production') {
@@ -39,12 +46,22 @@ if (process.env.NODE_ENV === 'production') {
 // all the api routers
 app.use('/api', index);
 
-// port initialized
-const PORT = process.env.PORT || 5000;
+// Get port from environment and store in Express.
+const PORT = portUtils.normalizePort(process.env.PORT || '5000');
+app.set('port', PORT);
 
 // index setup
 const server = http.createServer(app);
 
-server.listen(PORT, () => {
-  console.log(`Server started on port ${PORT}`);
-});
+// Event listener for HTTP server "listening" event.
+const onListening = () => {
+  const address = server.address();
+  const bind = typeof address === 'string' ? `pipe ${address}` : `port ${address.port}`;
+  debug(`Server running on ${bind}, http://localhost:${address.port}`);
+  console.log(`Server running on ${bind}, http://localhost:${address.port}`);
+};
+
+// Listen on provided port, on all network interfaces.
+server.listen(PORT);
+server.on('error', portUtils.onError);
+server.on('listening', onListening);
