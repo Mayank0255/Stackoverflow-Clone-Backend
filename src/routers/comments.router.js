@@ -9,7 +9,7 @@ const router = express.Router();
 /** @route      GET /api/posts/comments/:id
  *  @desc       fetch all comments of a post
  */
-router.route(':id')
+router.route('/:id')
   .get(commentsController.getComments);
 
 /** @route      POST /api/posts/comments/:id
@@ -25,7 +25,7 @@ router.route('/:id')
 /** @route      DELETE /api/posts/comments/:id
  *  @desc       delete a comment to a post
  */
-router.route(':id')
+router.route('/:id')
   .delete(
     auth,
     checkOwnership,

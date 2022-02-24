@@ -15,7 +15,7 @@ exports.create = async (newComment, result) => {
       );
     })
     .catch((error) => {
-      console.log(error.message);
+      console.log(error);
       result(responseHandler(false, 500, 'Some error occurred while adding the comment.', null), null);
     });
 };

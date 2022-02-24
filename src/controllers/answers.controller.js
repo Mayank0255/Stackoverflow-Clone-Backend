@@ -1,6 +1,6 @@
 const { validationResult } = require('express-validator');
 const { responseHandler, asyncHandler } = require('../helpers');
-const { Answer } = require('../models/answers.model');
+const { Answer } = require('../models');
 const { answersService } = require('../services');
 
 exports.getAnswers = asyncHandler(async (req, res) => {

@@ -1,9 +1,9 @@
-const { UsersModelSequelize } = require('./users.model');
-const { PostsModelSequelize } = require('./posts.model');
+const { User, UsersModelSequelize } = require('./users.model');
+const { Post, PostsModelSequelize } = require('./posts.model');
 const { TagsModelSequelize } = require('./tags.model');
 const { PostTagModelSequelize } = require('./posttag.model');
-const { AnswersModelSequelize } = require('./answers.model');
-const { CommentsModelSequelize } = require('./comments.model');
+const { Answer, AnswersModelSequelize } = require('./answers.model');
+const { Comment, CommentsModelSequelize } = require('./comments.model');
 
 UsersModelSequelize.hasMany(PostsModelSequelize, {
   foreignKey: { name: 'user_id', allowNull: false },
@@ -34,6 +34,10 @@ PostsModelSequelize.belongsToMany(TagsModelSequelize, { through: PostTagModelSeq
 TagsModelSequelize.belongsToMany(PostsModelSequelize, { through: PostTagModelSequelize, foreignKey: { name: 'tag_id', allowNull: false } });
 
 module.exports = {
+  User,
+  Post,
+  Answer,
+  Comment,
   UsersModelSequelize,
   PostsModelSequelize,
   TagsModelSequelize,
