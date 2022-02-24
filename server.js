@@ -6,7 +6,7 @@ const compression = require('compression');
 const path = require('path');
 const http = require('http');
 const express = require('express');
-const config = require('./config');
+const config = require('./src/config');
 const index = require('./src/routers/index');
 
 const app = express();
