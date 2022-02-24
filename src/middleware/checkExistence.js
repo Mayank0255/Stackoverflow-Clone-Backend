@@ -1,7 +1,7 @@
 const { responseHandler } = require('../helpers');
 const { UsersModelSequelize } = require('../models');
 
-module.exports = async (req, res, next) => {
+const checkExistence = async (req, res, next) => {
   const { username } = req.body;
 
   const user = await UsersModelSequelize
@@ -21,3 +21,5 @@ module.exports = async (req, res, next) => {
 
   next();
 };
+
+module.exports = checkExistence;

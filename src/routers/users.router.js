@@ -1,6 +1,6 @@
 const express = require('express');
 const { check } = require('express-validator');
-const checkExistence = require('../middleware/checkExistence');
+const { checkExistence } = require('../middleware');
 const { usersController } = require('../controllers');
 
 const router = express.Router();

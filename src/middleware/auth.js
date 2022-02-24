@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const config = require('config');
 const { responseHandler } = require('../helpers');
 
-module.exports = (req, res, next) => {
+const auth = (req, res, next) => {
   const token = req.header('x-auth-token');
 
   // Check if no token
@@ -30,3 +30,5 @@ module.exports = (req, res, next) => {
       .json(responseHandler(false, 500, 'Server Error', null));
   }
 };
+
+module.exports = auth;
