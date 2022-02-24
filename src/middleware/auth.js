@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const config = require('config');
+const config = require('../../config');
 const { responseHandler } = require('../helpers');
 
 const auth = (req, res, next) => {
@@ -14,7 +14,7 @@ const auth = (req, res, next) => {
 
   // Verify token
   try {
-    jwt.verify(token, config.get('jwtSecret'), (error, decoded) => {
+    jwt.verify(token, config.JWT.SECRET, (error, decoded) => {
       if (error) {
         return res
           .status(400)

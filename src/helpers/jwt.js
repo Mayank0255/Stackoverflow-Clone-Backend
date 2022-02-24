@@ -1,11 +1,11 @@
 const jwt = require('jsonwebtoken');
-const config = require('config');
+const config = require('../../config');
 const { responseHandler } = require('./handlers');
 
 const getJwtToken = (payload, logMessage, result) => {
   jwt.sign(
     payload,
-    config.get('jwtSecret'),
+    config.JWT.SECRET,
     { expiresIn: 3600 },
     (error, token) => {
       if (error) {
