@@ -1,4 +1,4 @@
-const { responseHandler, asyncHandler } = require('../helpers/responseHelpers');
+const { responseHandler, asyncHandler } = require('../helpers');
 const { tagsService } = require('../services');
 
 exports.getTags = asyncHandler(async (req, res) => {

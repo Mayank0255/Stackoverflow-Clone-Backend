@@ -1,7 +1,6 @@
 const Sequelize = require('sequelize');
 const db = require('../../config/db.config');
-const { responseHandler } = require('../helpers/responseHelpers');
-const { isArrayEmpty, isNull } = require('../helpers/conditionalHelper');
+const { responseHandler, conditionalHelper } = require('../helpers');
 const {
   PostsModelSequelize,
   PostTagModelSequelize,
@@ -161,7 +160,7 @@ exports.retrieveOne = async (postId, result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  if (isNull(queryResult.dataValues.id)) {
+  if (conditionalHelper.isNull(queryResult.dataValues.id)) {
     return result(responseHandler(false, 404, 'There isn\'t any post by this id', null), null);
   }
 
@@ -215,7 +214,7 @@ exports.retrieveAll = async (result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  if (isArrayEmpty(queryResult)) {
+  if (conditionalHelper.isArrayEmpty(queryResult)) {
     return result(responseHandler(false, 404, 'There are no posts', null), null);
   }
 
@@ -272,7 +271,7 @@ exports.retrieveAllTop = async (result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  if (isArrayEmpty(queryResult)) {
+  if (conditionalHelper.isArrayEmpty(queryResult)) {
     return result(responseHandler(false, 404, 'There are no posts', null), null);
   }
 
@@ -329,7 +328,7 @@ exports.retrieveAllTag = async (tagName, result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  if (isArrayEmpty(queryResult)) {
+  if (conditionalHelper.isArrayEmpty(queryResult)) {
     return result(responseHandler(false, 404, 'There are no posts', null), null);
   }
 

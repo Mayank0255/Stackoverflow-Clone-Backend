@@ -1,6 +1,5 @@
 const Sequelize = require('sequelize');
-const { responseHandler } = require('../helpers/responseHelpers');
-const conditionalHelper = require('../helpers/conditionalHelper');
+const { responseHandler, conditionalHelper } = require('../helpers');
 const { UsersModelSequelize, AnswersModelSequelize } = require('../models');
 
 exports.create = async (newAnswer, result) => {

@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-const investApi = require('../helpers/investApi');
+const { investApi } = require('../helpers');
 const { postsRepository } = require('../repositories');
 
 exports.create = async (newPost, result) => {

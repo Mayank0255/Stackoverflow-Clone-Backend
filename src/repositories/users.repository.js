@@ -2,10 +2,12 @@ const Sequelize = require('sequelize');
 const bcrypt = require('bcryptjs');
 
 const constantsHolder = require('../constants');
-const getJwtToken = require('../helpers/jwt');
-const { responseHandler } = require('../helpers/responseHelpers');
-const calcHelper = require('../helpers/calcHelper');
-const { isArrayEmpty, isNull } = require('../helpers/conditionalHelper');
+const {
+  responseHandler,
+  calcHelper,
+  conditionalHelper,
+  getJwtToken,
+} = require('../helpers');
 const {
   UsersModelSequelize,
   PostsModelSequelize,
@@ -122,7 +124,7 @@ exports.retrieveAll = async (result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  if (isArrayEmpty(queryResult)) {
+  if (conditionalHelper.isArrayEmpty(queryResult)) {
     return result(responseHandler(false, 404, 'There are no users', null), null);
   }
 
@@ -190,7 +192,7 @@ exports.retrieveOne = async (id, result) => {
       return result(responseHandler(false, 500, 'Something went wrong', null), null);
     });
 
-  if (isNull(queryResult)) {
+  if (conditionalHelper.isNull(queryResult)) {
     return result(responseHandler(false, 404, 'This user doesn\'t exists', null), null);
   }
 
