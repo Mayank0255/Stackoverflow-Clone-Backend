@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const config = require('config');
-const { responseHandler } = require('../helpers/responseHelpers');
+const { responseHandler } = require('./responseHelpers');
 
 const getJwtToken = (payload, logMessage, result) => {
   jwt.sign(
