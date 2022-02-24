@@ -31,8 +31,8 @@ exports.addComment = asyncHandler(async (req, res) => {
   try {
     const comment = new Comment({
       body: req.body.body,
-      user_id: req.user.id,
-      post_id: req.params.id,
+      userId: req.user.id,
+      postId: req.params.id,
     });
     // Save Comment in the database
     await commentsService.create(comment, (err, data) => {

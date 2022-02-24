@@ -6,8 +6,8 @@ const db = require('../../config/db.config');
 const Post = function (post) {
   this.title = post.title;
   this.body = post.body;
-  this.user_id = post.user_id;
-  this.tagname = post.tagname;
+  this.userId = post.userId;
+  this.tagName = post.tagName;
 };
 
 const PostsModelSequelize = db.define('posts', {

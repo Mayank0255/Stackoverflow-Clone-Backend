@@ -5,8 +5,8 @@ const { CommentsModelSequelize, UsersModelSequelize } = require('../models');
 exports.create = async (newComment, result) => {
   await CommentsModelSequelize.create({
     body: newComment.body,
-    user_id: newComment.user_id,
-    post_id: newComment.post_id,
+    user_id: newComment.userId,
+    post_id: newComment.postId,
   })
     .then((response) => {
       result(

@@ -5,8 +5,8 @@ const { UsersModelSequelize, AnswersModelSequelize } = require('../models');
 exports.create = async (newAnswer, result) => {
   await AnswersModelSequelize.create({
     body: newAnswer.body,
-    user_id: newAnswer.user_id,
-    post_id: newAnswer.post_id,
+    user_id: newAnswer.userId,
+    post_id: newAnswer.postId,
   })
     .then((response) => {
       result(

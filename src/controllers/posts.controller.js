@@ -90,8 +90,8 @@ exports.addPost = asyncHandler(async (req, res) => {
     const post = new Post({
       title: req.body.title,
       body: req.body.body,
-      user_id: req.user.id,
-      tagname: req.body.tagname,
+      userId: req.user.id,
+      tagName: req.body.tagname,
     });
     // Save Post in the database
     await postsService.create(post, (err, data) => {

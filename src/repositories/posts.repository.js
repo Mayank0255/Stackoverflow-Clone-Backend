@@ -17,7 +17,7 @@ exports.create = async (newPost, result, tagDescription) => {
     const post = await PostsModelSequelize.create({
       title: newPost.title,
       body: newPost.body,
-      user_id: newPost.user_id,
+      user_id: newPost.userId,
     })
       .catch((error) => {
         console.log(error);
@@ -27,10 +27,10 @@ exports.create = async (newPost, result, tagDescription) => {
 
     const [tag] = await TagsModelSequelize.findOrCreate({
       where: {
-        tagname: newPost.tagname,
+        tagname: newPost.tagName,
       },
       defaults: {
-        tagname: newPost.tagname,
+        tagname: newPost.tagName,
         description: tagDescription,
       },
     })

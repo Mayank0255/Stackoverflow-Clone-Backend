@@ -30,8 +30,8 @@ exports.addAnswer = asyncHandler(async (req, res) => {
   try {
     const answer = new Answer({
       body: req.body.text,
-      user_id: req.user.id,
-      post_id: req.params.id,
+      userId: req.user.id,
+      postId: req.params.id,
     });
     // Save Answer in the database
     await answersService.create(answer, (err, data) => {
