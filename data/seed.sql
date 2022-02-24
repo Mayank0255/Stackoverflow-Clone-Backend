@@ -10,7 +10,7 @@ VALUES
 ("8404f9f6-cc20-478c-9ff8-1170f0e367b0", "hritik", "$2a$10$u9xQmmo6ejTv/ex021wq9eKZVpIpfwdpE6RrRqp5M6P/qOzDBXh22"),
 ("ec4789e5-e382-4985-85b4-31c0c4bbe745", "shadowsaver", "$2a$10$.qGwjVv/39t.nLEg5DFpkO3oz72MCNsOF6a6ijuMKBmluaH5qAfIq");
 
-INSERT INTO posts(id, title, body, user_id) VALUES ("904b7e6e-0f20-4020-af7b-4bb775c02189", "LocalDate and LocalDateTime in a server which runs in EST vs UTC", "I am trying to understand LocalDate and LocalDateTime. Since they do not carry zone info, how does it work for now() on two different time zone.", "53e1deae-31da-4244-99e6-c0777da311b0");
+INSERT INTO posts(id, title, body, user_id) VALUES ("904b7e6e-0f20-4020-af7b-4bb775c02189", "LocalDate and LocalDateTime in a index which runs in EST vs UTC", "I am trying to understand LocalDate and LocalDateTime. Since they do not carry zone info, how does it work for now() on two different time zone.", "53e1deae-31da-4244-99e6-c0777da311b0");
 SET @v1 := (SELECT LAST_INSERT_ID());
 INSERT IGNORE INTO tags(tagname, description) VALUES ("java", "Java is a popular high-level programming language. Use this tag when you&#39;re having problems using or understanding the language itself. This tag is rarely used alone and is most often used in conjunction with [spring], [spring-boot], [jakarta-ee], [android], [javafx], [gradle] and [maven].");
 SET @v2 := (SELECT id FROM tags WHERE tagname = "java");

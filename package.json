@@ -2,10 +2,10 @@
   "name": "stackoverflowclone",
   "version": "1.0.0",
   "description": "StackOverflow clone with it's main functionalities",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "nodemon server",
-    "server": "node server"
+    "start": "nodemon index",
+    "server": "node index"
   },
   "author": "Mayank Aggarwal",
   "license": "MIT",
