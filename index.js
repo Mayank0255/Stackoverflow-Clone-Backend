@@ -53,7 +53,7 @@ app.use('/api', index);
 // index setup
 const server = http.createServer(app);
 
-// Event listener for HTTP server "listening" event.
+// Event listener for HTTP server 'listening' event.
 const onListening = () => {
   const address = server.address();
   const bind = typeof address === 'string' ? `pipe ${address}` : `port ${address.port}`;
