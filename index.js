@@ -22,7 +22,6 @@ app.use(morgan('dev'));
 
 // Get port from environment and store in Express.
 const PORT = portUtils.normalizePort(process.env.PORT || '5000');
-// const PORT = process.env.PORT || '5000';
 app.set('port', PORT);
 
 // cors enable
@@ -63,10 +62,6 @@ const onListening = () => {
 };
 
 // Listen on provided port, on all network interfaces.
-
-// server.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT}.`);
-// });
 server.listen(PORT);
 server.on('error', portUtils.onError);
 server.on('listening', onListening);
