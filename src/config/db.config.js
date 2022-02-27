@@ -13,6 +13,12 @@ const sequelize = new Sequelize(config.DB.DATABASE, config.DB.USER, config.DB.PA
     define: {
       timestamps: false,
     },
+    pool: {
+      max: 5,
+      min: 0,
+      acquire: 30000,
+      idle: 10000,
+    },
   });
 
 (async () => await sequelize.sync())();

@@ -10,7 +10,7 @@ const cookieParser = require('cookie-parser');
 const debug = require('debug')('backend:server');
 
 const index = require('./src/routers/index');
-const portUtils = require('./src/config/port');
+// const portUtils = require('./src/config/port');
 
 const app = express();
 
@@ -21,7 +21,8 @@ app.use(compression());
 app.use(morgan('dev'));
 
 // Get port from environment and store in Express.
-const PORT = portUtils.normalizePort(process.env.PORT || '5000');
+// const PORT = portUtils.normalizePort(process.env.PORT || '5000');
+const PORT = process.env.PORT || '5000';
 app.set('port', PORT);
 
 // cors enable
@@ -54,14 +55,18 @@ app.use('/api', index);
 const server = http.createServer(app);
 
 // Event listener for HTTP server "listening" event.
-const onListening = () => {
-  const address = server.address();
-  const bind = typeof address === 'string' ? `pipe ${address}` : `port ${address.port}`;
-  debug(`Server running on ${bind}, http://localhost:${address.port}`);
-  console.log(`Server running on ${bind}, http://localhost:${address.port}`);
-};
+// const onListening = () => {
+//   const address = server.address();
+//   const bind = typeof address === 'string' ? `pipe ${address}` : `port ${address.port}`;
+//   debug(`Server running on ${bind}, http://localhost:${address.port}`);
+//   console.log(`Server running on ${bind}, http://localhost:${address.port}`);
+// };
 
 // Listen on provided port, on all network interfaces.
-server.listen(PORT);
-server.on('error', portUtils.onError);
-server.on('listening', onListening);
+
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}.`);
+});
+// server.listen(PORT);
+// server.on('error', portUtils.onError);
+// server.on('listening', onListening);
