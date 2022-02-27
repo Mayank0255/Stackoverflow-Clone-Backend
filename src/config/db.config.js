@@ -9,7 +9,6 @@ const sequelize = new Sequelize(config.DB.DATABASE, config.DB.USER, config.DB.PA
   {
     dialect: 'mysql',
     host: config.DB.HOST,
-    // port: config.DB.PORT || 3306,
     define: {
       timestamps: false,
     },

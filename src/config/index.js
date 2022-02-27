@@ -20,7 +20,6 @@ const config = {
     USER: getEnvVariable('USER'),
     DATABASE: getEnvVariable('DATABASE'),
     PASSWORD: getEnvVariable('PASSWORD'),
-    // PORT: +getEnvVariable('PORTDB'),
   },
   JWT: {
     SECRET: getEnvVariable('JWT_SECRET'),
