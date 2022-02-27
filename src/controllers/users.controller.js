@@ -1,13 +1,13 @@
 const { validationResult } = require('express-validator');
-const { responseHandler, asyncHandler } = require('../helpers/responseHelpers');
-const { User } = require('../models/users.model');
-const service = require('../services/users.service');
+const { responseHandler, asyncHandler } = require('../helpers');
+const { User } = require('../models');
+const { usersService } = require('../services');
 
 exports.getOneUser = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
 
-    await service.retrieveOne(
+    await usersService.retrieveOne(
       id,
       (err, data) => {
         if (err) {
@@ -27,7 +27,7 @@ exports.getOneUser = asyncHandler(async (req, res) => {
 
 exports.getAllUsers = asyncHandler(async (req, res) => {
   try {
-    await service.retrieveAll(
+    await usersService.retrieveAll(
       (err, data) => {
         if (err) {
           console.log(err);
@@ -53,7 +53,7 @@ exports.register = asyncHandler(async (req, res) => {
   }
   try {
     // Register user in the database
-    await service.register(new User(req.body), (err, data) => {
+    await usersService.register(new User(req.body), (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);

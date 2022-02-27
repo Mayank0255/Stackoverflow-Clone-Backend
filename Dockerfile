@@ -5,4 +5,4 @@ COPY .env /home/node/src/.env
 WORKDIR /home/node/src
 RUN npm install
 EXPOSE 5000
-ENTRYPOINT [ "node", "server.js" ]
+ENTRYPOINT [ "node", "index.js" ]

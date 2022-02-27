@@ -1,18 +1,18 @@
 const express = require('express');
-const tagsController = require('../controllers/tags.controller');
+const { tagsController } = require('../controllers');
 
 const router = express.Router();
 
 /** @route      GET /api/tags
  *  @desc       fetch all tags
- *  @access     Private
  */
-router.get('/', tagsController.getTags);
+router.route('/')
+  .get(tagsController.getTags);
 
 /** @route      GET /api/posts/:id
  *  @desc       fetch a single post
- *  @access     Private
  */
-router.get('/:tagname', tagsController.getSingleTag);
+router.route('/:tagname')
+  .get(tagsController.getSingleTag);
 
 module.exports = router;

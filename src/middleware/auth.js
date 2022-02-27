@@ -1,8 +1,8 @@
-const jwt = require('jsonwebtoken');
-const config = require('config');
-const { responseHandler } = require('../helpers/responseHelpers');
+const JWT = require('jsonwebtoken');
+const config = require('../config');
+const { responseHandler } = require('../helpers');
 
-module.exports = (req, res, next) => {
+const auth = (req, res, next) => {
   const token = req.header('x-auth-token');
 
   // Check if no token
@@ -14,7 +14,7 @@ module.exports = (req, res, next) => {
 
   // Verify token
   try {
-    jwt.verify(token, config.get('jwtSecret'), (error, decoded) => {
+    JWT.verify(token, config.JWT.SECRET, (error, decoded) => {
       if (error) {
         return res
           .status(400)
@@ -30,3 +30,5 @@ module.exports = (req, res, next) => {
       .json(responseHandler(false, 500, 'Server Error', null));
   }
 };
+
+module.exports = auth;

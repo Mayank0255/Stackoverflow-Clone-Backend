@@ -1,7 +1,7 @@
-const repository = require('../repositories/answers.repository');
+const { answersRepository } = require('../repositories');
 
-exports.create = (newAnswer, result) => repository.create(newAnswer, result);
+exports.create = (newAnswer, result) => answersRepository.create(newAnswer, result);
 
-exports.remove = (id, result) => repository.remove(id, result);
+exports.remove = (id, result) => answersRepository.remove(id, result);
 
-exports.retrieveAll = (postId, result) => repository.retrieveAll(postId, result);
+exports.retrieveAll = (postId, result) => answersRepository.retrieveAll(postId, result);

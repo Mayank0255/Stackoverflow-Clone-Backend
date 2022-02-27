@@ -1,13 +1,12 @@
 const sequelize = require('sequelize');
-const { responseHandler } = require('../helpers/responseHelpers');
-const { CommentsModelSequelize, UsersModelSequelize } = require('../models/sequelize');
-const conditionalHelper = require('../helpers/conditionalHelper');
+const { responseHandler, conditionalHelper } = require('../helpers');
+const { CommentsModelSequelize, UsersModelSequelize } = require('../models');
 
 exports.create = async (newComment, result) => {
   await CommentsModelSequelize.create({
     body: newComment.body,
-    user_id: newComment.user_id,
-    post_id: newComment.post_id,
+    user_id: newComment.userId,
+    post_id: newComment.postId,
   })
     .then((response) => {
       result(
@@ -16,7 +15,7 @@ exports.create = async (newComment, result) => {
       );
     })
     .catch((error) => {
-      console.log(error.message);
+      console.log(error);
       result(responseHandler(false, 500, 'Some error occurred while adding the comment.', null), null);
     });
 };

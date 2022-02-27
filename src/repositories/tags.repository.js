@@ -1,7 +1,6 @@
 const Sequelize = require('sequelize');
-const { responseHandler } = require('../helpers/responseHelpers');
-const { isArrayEmpty } = require('../helpers/conditionalHelper');
-const { TagsModelSequelize, PostsModelSequelize } = require('../models/sequelize');
+const { conditionalHelper, responseHandler } = require('../helpers');
+const { TagsModelSequelize, PostsModelSequelize } = require('../models');
 
 exports.retrieveAll = async (result) => {
   const queryResult = await TagsModelSequelize.findAll({
@@ -23,7 +22,7 @@ exports.retrieveAll = async (result) => {
       return result(responseHandler(false, 500, 'Something went wrong', null), null);
     });
 
-  if (isArrayEmpty(queryResult)) {
+  if (conditionalHelper.isArrayEmpty(queryResult)) {
     return result(responseHandler(false, 404, 'There are no tags', null), null);
   }
 

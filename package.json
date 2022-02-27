@@ -2,10 +2,10 @@
   "name": "stackoverflowclone",
   "version": "1.0.0",
   "description": "StackOverflow clone with it's main functionalities",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "nodemon server",
-    "server": "node server"
+    "start": "nodemon index",
+    "server": "node index"
   },
   "author": "Mayank Aggarwal",
   "license": "MIT",
@@ -15,7 +15,9 @@
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",
     "config": "^3.3.1",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "debug": "^4.3.3",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-session": "^1.17.0",
@@ -24,7 +26,8 @@
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.10.0",
     "mysql2": "^2.3.2",
-    "sequelize": "^6.6.4"
+    "sequelize": "^6.6.4",
+    "xss-clean": "^0.1.1"
   },
   "devDependencies": {
     "eslint": "^7.32.0",

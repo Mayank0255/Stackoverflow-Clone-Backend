@@ -1,14 +1,13 @@
 const Sequelize = require('sequelize');
-const db = require('../../config/db.config');
-const { responseHandler } = require('../helpers/responseHelpers');
-const { isArrayEmpty, isNull } = require('../helpers/conditionalHelper');
+const db = require('../config/db.config');
+const { responseHandler, conditionalHelper } = require('../helpers');
 const {
   PostsModelSequelize,
   PostTagModelSequelize,
   TagsModelSequelize,
   AnswersModelSequelize,
   CommentsModelSequelize, UsersModelSequelize,
-} = require('../models/sequelize');
+} = require('../models');
 
 exports.create = async (newPost, result, tagDescription) => {
   let transaction;
@@ -18,7 +17,7 @@ exports.create = async (newPost, result, tagDescription) => {
     const post = await PostsModelSequelize.create({
       title: newPost.title,
       body: newPost.body,
-      user_id: newPost.user_id,
+      user_id: newPost.userId,
     })
       .catch((error) => {
         console.log(error);
@@ -28,10 +27,10 @@ exports.create = async (newPost, result, tagDescription) => {
 
     const [tag] = await TagsModelSequelize.findOrCreate({
       where: {
-        tagname: newPost.tagname,
+        tagname: newPost.tagName,
       },
       defaults: {
-        tagname: newPost.tagname,
+        tagname: newPost.tagName,
         description: tagDescription,
       },
     })
@@ -161,7 +160,7 @@ exports.retrieveOne = async (postId, result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  if (isNull(queryResult.dataValues.id)) {
+  if (conditionalHelper.isNull(queryResult.dataValues.id)) {
     return result(responseHandler(false, 404, 'There isn\'t any post by this id', null), null);
   }
 
@@ -215,7 +214,7 @@ exports.retrieveAll = async (result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  if (isArrayEmpty(queryResult)) {
+  if (conditionalHelper.isArrayEmpty(queryResult)) {
     return result(responseHandler(false, 404, 'There are no posts', null), null);
   }
 
@@ -272,7 +271,7 @@ exports.retrieveAllTop = async (result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  if (isArrayEmpty(queryResult)) {
+  if (conditionalHelper.isArrayEmpty(queryResult)) {
     return result(responseHandler(false, 404, 'There are no posts', null), null);
   }
 
@@ -329,7 +328,7 @@ exports.retrieveAllTag = async (tagName, result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  if (isArrayEmpty(queryResult)) {
+  if (conditionalHelper.isArrayEmpty(queryResult)) {
     return result(responseHandler(false, 404, 'There are no posts', null), null);
   }
 

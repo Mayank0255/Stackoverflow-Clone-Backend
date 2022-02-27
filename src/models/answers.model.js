@@ -1,11 +1,11 @@
 const { DataTypes } = require('sequelize');
-const db = require('../../config/db.config');
+const db = require('../config/db.config');
 
 // eslint-disable-next-line func-names
 const Answer = function (answer) {
   this.body = answer.body;
-  this.user_id = answer.user_id;
-  this.post_id = answer.post_id;
+  this.userId = answer.userId;
+  this.postId = answer.postId;
 };
 
 const AnswersModelSequelize = db.define('answers', {

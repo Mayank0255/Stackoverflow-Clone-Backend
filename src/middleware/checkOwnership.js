@@ -1,7 +1,7 @@
-const { responseHandler } = require('../helpers/responseHelpers');
-const { PostsModelSequelize, AnswersModelSequelize, CommentsModelSequelize } = require('../models/sequelize');
+const { responseHandler } = require('../helpers');
+const { PostsModelSequelize, AnswersModelSequelize, CommentsModelSequelize } = require('../models');
 
-module.exports = async (req, res, next) => {
+const checkOwnership = async (req, res, next) => {
   let Model;
   if (req.originalUrl.includes('posts')) {
     if (req.originalUrl.includes('answers')) {
@@ -47,3 +47,5 @@ module.exports = async (req, res, next) => {
 
   next();
 };
+
+module.exports = checkOwnership;

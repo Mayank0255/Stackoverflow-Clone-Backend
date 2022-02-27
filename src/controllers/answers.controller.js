@@ -1,11 +1,11 @@
 const { validationResult } = require('express-validator');
-const { responseHandler, asyncHandler } = require('../helpers/responseHelpers');
-const { Answer } = require('../models/answers.model');
-const service = require('../services/answers.service');
+const { responseHandler, asyncHandler } = require('../helpers');
+const { Answer } = require('../models');
+const { answersService } = require('../services');
 
 exports.getAnswers = asyncHandler(async (req, res) => {
   try {
-    await service.retrieveAll(req.params.id, (err, data) => {
+    await answersService.retrieveAll(req.params.id, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -30,11 +30,11 @@ exports.addAnswer = asyncHandler(async (req, res) => {
   try {
     const answer = new Answer({
       body: req.body.text,
-      user_id: req.user.id,
-      post_id: req.params.id,
+      userId: req.user.id,
+      postId: req.params.id,
     });
     // Save Answer in the database
-    await service.create(answer, (err, data) => {
+    await answersService.create(answer, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
@@ -51,7 +51,7 @@ exports.addAnswer = asyncHandler(async (req, res) => {
 
 exports.deleteAnswer = asyncHandler(async (req, res) => {
   try {
-    await service.remove(req.params.id, (err, data) => {
+    await answersService.remove(req.params.id, (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);

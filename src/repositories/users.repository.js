@@ -2,17 +2,19 @@ const Sequelize = require('sequelize');
 const bcrypt = require('bcryptjs');
 
 const constantsHolder = require('../constants');
-const getJwtToken = require('../services/jwt');
-const { responseHandler } = require('../helpers/responseHelpers');
-const calcHelper = require('../helpers/calcHelper');
-const { isArrayEmpty, isNull } = require('../helpers/conditionalHelper');
+const {
+  responseHandler,
+  calcHelper,
+  conditionalHelper,
+  getJwtToken,
+} = require('../helpers');
 const {
   UsersModelSequelize,
   PostsModelSequelize,
   TagsModelSequelize,
   AnswersModelSequelize,
   CommentsModelSequelize,
-} = require('../models/sequelize');
+} = require('../models');
 
 exports.register = async (newUser, result) => {
   const salt = await bcrypt.genSalt(10);
@@ -122,7 +124,7 @@ exports.retrieveAll = async (result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  if (isArrayEmpty(queryResult)) {
+  if (conditionalHelper.isArrayEmpty(queryResult)) {
     return result(responseHandler(false, 404, 'There are no users', null), null);
   }
 
@@ -190,7 +192,7 @@ exports.retrieveOne = async (id, result) => {
       return result(responseHandler(false, 500, 'Something went wrong', null), null);
     });
 
-  if (isNull(queryResult)) {
+  if (conditionalHelper.isNull(queryResult)) {
     return result(responseHandler(false, 404, 'This user doesn\'t exists', null), null);
   }
 
@@ -198,9 +200,9 @@ exports.retrieveOne = async (id, result) => {
 };
 
 // eslint-disable-next-line camelcase
-exports.loadUser = async (user_id, result) => {
+exports.loadUser = async (userId, result) => {
   await UsersModelSequelize.findOne({
-    where: { id: user_id },
+    where: { id: userId },
     attributes: ['id', 'username', 'gravatar', 'views', 'created_at'],
   })
     .then((response) => {

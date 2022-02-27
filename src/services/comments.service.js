@@ -1,7 +1,7 @@
-const repository = require('../repositories/comments.repository');
+const { commentsRepository } = require('../repositories');
 
-exports.create = (newComment, result) => repository.create(newComment, result);
+exports.create = (newComment, result) => commentsRepository.create(newComment, result);
 
-exports.remove = (id, result) => repository.remove(id, result);
+exports.remove = (id, result) => commentsRepository.remove(id, result);
 
-exports.retrieveAll = (postId, result) => repository.retrieveAll(postId, result);
+exports.retrieveAll = (postId, result) => commentsRepository.retrieveAll(postId, result);
