@@ -2,56 +2,78 @@ CREATE DATABASE stack_overflow;
 
 USE stack_overflow;
 
-CREATE TABLE users(
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  username VARCHAR(255) UNIQUE NULL,
-  password VARCHAR(100),
-  views INT DEFAULT 0,
-  created_at TIMESTAMP DEFAULT NOW()
-);
+CREATE TABLE `users` (
+    `id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+    `username` varchar(190) NOT NULL,
+    `password` varchar(100) NOT NULL,
+    `gravatar` varchar(190) NOT NULL,
+    `views` int NOT NULL DEFAULT '0',
+    `created_at` datetime NOT NULL,
+    `updated_at` datetime NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `username` (`username`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
-CREATE TABLE posts(
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  title VARCHAR(250),
-  body MEDIUMTEXT,
-  views INT DEFAULT 0,
-  created_at TIMESTAMP DEFAULT NOW(),
-  user_id INT NULL,
-  FOREIGN KEY(user_id) REFERENCES users(id)
-);
+CREATE TABLE `posts` (
+    `id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+    `title` varchar(190) NOT NULL,
+    `body` text NOT NULL,
+    `views` int NOT NULL DEFAULT '0',
+    `created_at` datetime NOT NULL,
+    `updated_at` datetime NOT NULL,
+    `user_id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    KEY `user_id` (`user_id`),
+    CONSTRAINT `posts_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE
+    SET
+    NULL ON UPDATE CASCADE
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
-CREATE TABLE answers(
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  body MEDIUMTEXT,
-  created_at TIMESTAMP DEFAULT NOW(),
-  post_id INT NULL,
-  FOREIGN KEY(post_id) REFERENCES posts(id),
-  user_id INT NULL,
-  FOREIGN KEY(user_id) REFERENCES users(id)
-);
+CREATE TABLE `answers` (
+    `id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+    `body` text NOT NULL,
+    `created_at` datetime NOT NULL,
+    `updated_at` datetime NOT NULL,
+    `user_id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+    `post_id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    KEY `user_id` (`user_id`),
+    KEY `post_id` (`post_id`),
+    CONSTRAINT `answers_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT `answers_ibfk_2` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE comments(
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  body MEDIUMTEXT,
-  created_at TIMESTAMP DEFAULT NOW(),
-  post_id INT NULL,
-  FOREIGN KEY(post_id) REFERENCES posts(id),
-  user_id INT NULL,
-  FOREIGN KEY(user_id) REFERENCES users(id)
-);
+CREATE TABLE `comments` (
+    `id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+    `body` text NOT NULL,
+    `created_at` datetime NOT NULL,
+    `updated_at` datetime NOT NULL,
+    `user_id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+    `post_id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    KEY `user_id` (`user_id`),
+    KEY `post_id` (`post_id`),
+    CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE tags(
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  tagname VARCHAR(255) UNIQUE,
-  description MEDIUMTEXT,
-  created_at TIMESTAMP DEFAULT NOW()
-);
+CREATE TABLE `tags` (
+    `id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+    `tagname` varchar(190) NOT NULL,
+    `description` text NOT NULL,
+    `created_at` datetime NOT NULL,
+    `updated_at` datetime NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `tagname` (`tagname`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE posttag(
-  post_id INT NOT NULL,
-  FOREIGN KEY(post_id) REFERENCES posts(id),
-  tag_id INT NOT NULL,
-  FOREIGN KEY(tag_id) REFERENCES tags(id),
-  created_at TIMESTAMP DEFAULT NOW(),
-  PRIMARY KEY(post_id, tag_id)
-);
+CREATE TABLE `posttag` (
+    `created_at` datetime NOT NULL,
+    `updated_at` datetime NOT NULL,
+    `post_id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+    `tag_id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+    PRIMARY KEY (`post_id`,`tag_id`),
+    KEY `tag_id` (`tag_id`),
+    CONSTRAINT `posttag_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `posttag_ibfk_2` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
