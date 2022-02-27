@@ -20,9 +20,13 @@ app.use(compression());
 // logger
 app.use(morgan('dev'));
 
+// Get port from environment and store in Express.
+const PORT = portUtils.normalizePort(process.env.PORT || '5000');
+app.set('port', PORT);
+
 // cors enable
 app.options('*', cors());
-app.use(cors({ origin: 'http://localhost:5000' }));
+app.use(cors({ origin: `http://localhost:${PORT}` }));
 
 // data sanitization against xss
 app.use(xss());
@@ -45,10 +49,6 @@ if (process.env.NODE_ENV === 'production') {
 
 // all the api routers
 app.use('/api', index);
-
-// Get port from environment and store in Express.
-const PORT = portUtils.normalizePort(process.env.PORT || '5000');
-app.set('port', PORT);
 
 // index setup
 const server = http.createServer(app);
