@@ -4,15 +4,12 @@ const { Post } = require('../models');
 const { postsService } = require('../services');
 
 exports.getPosts = asyncHandler(async (req, res) => {
-  console.log('REACHING POSTS 1');
   try {
-    console.log('REACHING POSTS 2');
     await postsService.retrieveAll((err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);
       }
-      console.log('REACHING POSTS 3');
 
       return res.status(data.code).json(data);
     });
