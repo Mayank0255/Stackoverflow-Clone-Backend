@@ -22,7 +22,7 @@ This repo consists of the Backend code of the project, the backend code is in [S
 #### Back-end
 
 - For handling index requests: `Node.js with Express.js Framework`
-- As Database: `MySQL`
+- As Database: `MySQL with Sequelize`
 - API tested using: `POSTMAN`
 
 ### Original Tech Stack
@@ -63,9 +63,9 @@ There are two ways to setup the project: manually or using the Dockerfile. Read 
    - Open your MySQL Client -
 
      ```
-     source ./data/databaseConfig.sql
-     source ./data/seed.sql
+     CREATE DATABASE stack_overflow;
      ```
+     NOTE: Don't forget to keep the database name same in the `.env` and here.
 
    - Run the index `npm start`.
 
