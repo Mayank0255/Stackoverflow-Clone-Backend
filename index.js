@@ -25,8 +25,7 @@ const PORT = portUtils.normalizePort(process.env.PORT || '5000');
 app.set('port', PORT);
 
 // cors enable
-app.options('*', cors());
-app.use(cors({ origin: `http://localhost:${PORT}` }));
+app.use(cors());
 
 // data sanitization against xss
 app.use(xss());
