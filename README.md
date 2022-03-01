@@ -6,11 +6,17 @@
 [![MYSQL](https://img.shields.io/static/v1?label=mysql&message=8.0.10&color=blueviolet)](https://shields.io/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://shields.io/)
 
-**[Demo Video](https://www.youtube.com/watch?v=3jDIEf5vNp8)**
+### [🌐 Website](https://stackoverflow-clone-client.vercel.app)  |  [📹 Demo Video](https://www.youtube.com/watch?v=3jDIEf5vNp8)
+
+### API Hosted On
+- __[stackoverflow-clone-api.onrender.com](https://stackoverflow-clone-api.onrender.com) (Primary)__
+- __[stackoverflow-clone-backend.herokuapp.com](https://stackoverflow-clone-backend.herokuapp.com)__
+
+
 
 As the name suggests, this project is a clone of a famous Q/A website for professional and enthusiast programmers built solely by me using a completely different stack.
 
-This repo consists of the Backend code of the project, the backend code is in [Stackoverflow-Clone-Frontend](https://github.com/Mayank0255/Stackoverflow-Clone-Frontend)
+This repo consists of the Backend code of the project, the backend code is in __[Stackoverflow-Clone-Frontend](https://github.com/Mayank0255/Stackoverflow-Clone-Frontend)__
 
 ## My Tech Stack (MERN)
 
@@ -30,10 +36,6 @@ This repo consists of the Backend code of the project, the backend code is in [S
 - For handling index requests: `C#`
 - As Database: `Microsoft SQL Server`
 - `.NET` as well
-
-## Contributing
-
-- Go to [Contributing.md](./CONTRIBUTING.md)
 
 ## Guidelines to setup
 
@@ -106,17 +108,19 @@ _Follow the steps properly (manual or Docker) and you are good to go._
 
 ## API Endpoints
 
+API is currently hosted on __[stackoverflow-clone-api.onrender.com](https://stackoverflow-clone-api.onrender.com)__ and __[stackoverflow-clone-backend.herokuapp.com](https://stackoverflow-clone-backend.herokuapp.com)__.
+
 You can view and read the API endpoints samples [here](https://documenter.getpostman.com/view/10053385/UVC3kTiG#f02c9fce-5737-4cd6-9d8e-ad48233102c7). This is API documentation for the back-end.
 
 But, if you want use Postman to test the API in local machine, you need to follow the steps below:
 
 - Get the Postman app from [here](https://www.getpostman.com/downloads/).
-- Download the Postman collection file in folder "postman_collection"
+- Download the Postman collection file in folder "/data/postman_collection"
 - Import the collection file in Postman
 - **Important:** will be necessary to setup the enviroment with the "VARIABLE"=urlAPI and "INITIAL VALUE"=http://localhost:5000, for example.
 - **Remember**: keep the Postman collection updated with the latest API endpoints.
 
-#### Base Url - `http://localhost:5000/api`
+#### Base Url - `{API_URL}/api`
 
 #### Users
 
@@ -152,10 +156,9 @@ But, if you want use Postman to test the API in local machine, you need to follo
 - `GET /tags`
 - `GET /tags/:tag_name`
 
-## Future Scope
+## Contributing
 
-- Setup `Sequelize` with `MySQL` in the `API`.
-- Deploy the database to cloud, API, and client-side.
+- Go to [Contributing.md](./CONTRIBUTING.md)
 
 ## DEMO
 
