@@ -8,6 +8,7 @@ exports.fetchTagDesc = async (tag) => {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
+      Accept: 'application/json',
     },
     json: true,
   };
@@ -17,6 +18,6 @@ exports.fetchTagDesc = async (tag) => {
     .then((response) => response.data.items[0].excerpt)
     .catch((err) => {
       console.log('error:', err);
-      return '';
+      return `A ${tag} is a keyword or term assigned to a piece of information`;
     });
 };

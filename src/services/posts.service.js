@@ -3,7 +3,7 @@ const { investApi } = require('../helpers');
 const { postsRepository } = require('../repositories');
 
 exports.create = async (newPost, result) => {
-  const tagDescription = await investApi.fetchTagDesc(newPost.tagname);
+  const tagDescription = await investApi.fetchTagDesc(newPost.tagName);
   await postsRepository.create(newPost, result, tagDescription);
 };
 
