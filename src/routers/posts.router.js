@@ -43,7 +43,7 @@ router.route('/')
 /** @route      DELETE /api/posts/:id
  *  @desc       delete a post
  */
-router.route(':id')
+router.route('/:id')
   .delete(
     auth,
     checkOwnership,

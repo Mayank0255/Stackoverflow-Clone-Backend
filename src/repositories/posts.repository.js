@@ -71,13 +71,13 @@ exports.remove = async (id, result) => {
   try {
     transaction = await db.transaction();
 
-    await PostTagModelSequelize.destroy({ where: { post_id: id } });
+    await PostTagModelSequelize.destroy({ where: { post_id: id } }).catch((error) => console.log(error));
 
-    await AnswersModelSequelize.destroy({ where: { post_id: id } });
+    await AnswersModelSequelize.destroy({ where: { post_id: id } }).catch((error) => console.log(error));
 
-    await CommentsModelSequelize.destroy({ where: { post_id: id } });
+    await CommentsModelSequelize.destroy({ where: { post_id: id } }).catch((error) => console.log(error));
 
-    await PostsModelSequelize.destroy({ where: { id } });
+    await PostsModelSequelize.destroy({ where: { id } }).catch((error) => console.log(error));
 
     result(
       null,

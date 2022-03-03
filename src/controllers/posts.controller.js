@@ -111,6 +111,7 @@ exports.addPost = asyncHandler(async (req, res) => {
 
 exports.deletePost = asyncHandler(async (req, res) => {
   try {
+    console.log("[114] got into the deletepost controller");
     await postsService.remove(req.params.id, (err, data) => {
       if (err) {
         console.log(err);
