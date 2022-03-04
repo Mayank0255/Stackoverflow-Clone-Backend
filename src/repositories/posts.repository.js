@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const db = require('../config/db.config');
-const { responseHandler, conditionalHelper } = require('../helpers');
+const { responseHandler, conditionalHelper, investApi } = require('../helpers');
 const {
   PostsModelSequelize,
   PostTagModelSequelize,
@@ -9,7 +9,7 @@ const {
   CommentsModelSequelize, UsersModelSequelize,
 } = require('../models');
 
-exports.create = async (newPost, result, tagDescription) => {
+exports.create = async (newPost, result) => {
   let transaction;
   try {
     transaction = await db.transaction();
@@ -25,30 +25,40 @@ exports.create = async (newPost, result, tagDescription) => {
         return null;
       });
 
-    const [tag] = await TagsModelSequelize.findOrCreate({
-      where: {
-        tagname: newPost.tagName,
-      },
-      defaults: {
-        tagname: newPost.tagName,
-        description: tagDescription,
-      },
-    })
-      .catch((error) => {
-        console.log(error);
-        result(responseHandler(false, 500, 'Something went wrong', null), null);
-        return null;
-      });
+    const tags = newPost.tagName.split(',').map((item) => item.trim());
 
-    await PostTagModelSequelize.create({
-      post_id: post.id,
-      tag_id: tag.id,
-    })
-      .catch((error) => {
-        console.log(error);
-        result(responseHandler(false, 500, 'Something went wrong', null), null);
-        return null;
-      });
+    // eslint-disable-next-line no-restricted-syntax
+    for (const item of tags) {
+      // eslint-disable-next-line no-await-in-loop
+      const tagDescription = await investApi.fetchTagDesc(item);
+
+      // eslint-disable-next-line no-await-in-loop
+      const [tag] = await TagsModelSequelize.findOrCreate({
+        where: {
+          tagname: item,
+        },
+        defaults: {
+          tagname: item,
+          description: tagDescription,
+        },
+      })
+        .catch((error) => {
+          console.log(error);
+          result(responseHandler(false, 500, 'Something went wrong', null), null);
+          return null;
+        });
+
+      // eslint-disable-next-line no-await-in-loop
+      await PostTagModelSequelize.create({
+        post_id: post.id,
+        tag_id: tag.id,
+      })
+        .catch((error) => {
+          console.log(error);
+          result(responseHandler(false, 500, 'Something went wrong', null), null);
+          return null;
+        });
+    }
 
     result(
       null,
@@ -71,13 +81,13 @@ exports.remove = async (id, result) => {
   try {
     transaction = await db.transaction();
 
-    await PostTagModelSequelize.destroy({ where: { post_id: id } }).catch((error) => console.log(error));
+    await PostTagModelSequelize.destroy({ where: { post_id: id } });
 
-    await AnswersModelSequelize.destroy({ where: { post_id: id } }).catch((error) => console.log(error));
+    await AnswersModelSequelize.destroy({ where: { post_id: id } });
 
-    await CommentsModelSequelize.destroy({ where: { post_id: id } }).catch((error) => console.log(error));
+    await CommentsModelSequelize.destroy({ where: { post_id: id } });
 
-    await PostsModelSequelize.destroy({ where: { id } }).catch((error) => console.log(error));
+    await PostsModelSequelize.destroy({ where: { id } });
 
     result(
       null,
@@ -121,14 +131,14 @@ exports.retrieveOne = async (postId, result) => {
     attributes: [
       'id',
       'user_id',
-      [Sequelize.literal('tags.id'), 'tag_id'],
-      [Sequelize.literal('COUNT(DISTINCT(answers.id))'), 'answer_count'],
-      [Sequelize.literal('COUNT(DISTINCT(comments.id))'), 'comment_count'],
+      // [Sequelize.literal('tags.id'), 'tag_id'],
+      // [Sequelize.literal('COUNT(DISTINCT(answers.id))'), 'answer_count'],
+      // [Sequelize.literal('COUNT(DISTINCT(comments.id))'), 'comment_count'],
       [Sequelize.literal('user.gravatar'), 'gravatar'],
       [Sequelize.literal('user.username'), 'username'],
       'title',
       ['body', 'post_body'],
-      [Sequelize.literal('tags.tagname'), 'tagname'],
+      // [Sequelize.literal('tags.tagname'), 'tagname'],
       'created_at',
       'updated_at',
       'views',
@@ -137,21 +147,11 @@ exports.retrieveOne = async (postId, result) => {
       {
         model: TagsModelSequelize,
         required: true,
-        attributes: [],
+        attributes: ['id', 'tagname'],
       },
       {
         model: UsersModelSequelize,
         required: true,
-        attributes: [],
-      },
-      {
-        model: AnswersModelSequelize,
-        required: false,
-        attributes: [],
-      },
-      {
-        model: CommentsModelSequelize,
-        required: false,
         attributes: [],
       },
     ],
@@ -160,11 +160,45 @@ exports.retrieveOne = async (postId, result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  if (conditionalHelper.isNull(queryResult.dataValues.id)) {
+  const answersCount = await PostsModelSequelize.count({
+    where: {
+      id: postId,
+    },
+    include: {
+      model: AnswersModelSequelize,
+      required: true,
+      attributes: [],
+    },
+  }).catch((error) => {
+    console.log(error);
+    return result(responseHandler(false, 500, 'Something went wrong!', null), null);
+  });
+
+  const commentsCount = await PostsModelSequelize.count({
+    where: {
+      id: postId,
+    },
+    include: {
+      model: CommentsModelSequelize,
+      required: true,
+      attributes: [],
+    },
+  }).catch((error) => {
+    console.log(error);
+    return result(responseHandler(false, 500, 'Something went wrong!', null), null);
+  });
+
+  if (conditionalHelper.isNull(queryResult)) {
     return result(responseHandler(false, 404, 'There isn\'t any post by this id', null), null);
   }
 
-  return result(null, responseHandler(true, 200, 'Success', queryResult));
+  const response = {
+    answer_count: answersCount,
+    comment_count: commentsCount,
+    ...queryResult.dataValues,
+  };
+
+  return result(null, responseHandler(true, 200, 'Success', response));
 };
 
 exports.retrieveAll = async (result) => {
@@ -189,7 +223,7 @@ exports.retrieveAll = async (result) => {
       {
         model: TagsModelSequelize,
         required: true,
-        attributes: [],
+        // attributes: [],
       },
       {
         model: UsersModelSequelize,

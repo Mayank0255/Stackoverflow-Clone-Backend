@@ -80,12 +80,12 @@ exports.getSinglePost = asyncHandler(async (req, res) => {
 });
 
 exports.addPost = asyncHandler(async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res
-      .status(400)
-      .json(responseHandler(false, 400, errors.array()[0].msg, null));
-  }
+  // const errors = validationResult(req);
+  // if (!errors.isEmpty()) {
+  //   return res
+  //     .status(400)
+  //     .json(responseHandler(false, 400, errors.array()[0].msg, null));
+  // }
   try {
     const post = new Post({
       title: req.body.title,
@@ -111,7 +111,6 @@ exports.addPost = asyncHandler(async (req, res) => {
 
 exports.deletePost = asyncHandler(async (req, res) => {
   try {
-    console.log("[114] got into the deletepost controller");
     await postsService.remove(req.params.id, (err, data) => {
       if (err) {
         console.log(err);
