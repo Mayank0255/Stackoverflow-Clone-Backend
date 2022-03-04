@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+const Serializer = require('sequelize-to-json');
 const db = require('../config/db.config');
 const { responseHandler, conditionalHelper, investApi } = require('../helpers');
 const {
@@ -131,14 +132,10 @@ exports.retrieveOne = async (postId, result) => {
     attributes: [
       'id',
       'user_id',
-      // [Sequelize.literal('tags.id'), 'tag_id'],
-      // [Sequelize.literal('COUNT(DISTINCT(answers.id))'), 'answer_count'],
-      // [Sequelize.literal('COUNT(DISTINCT(comments.id))'), 'comment_count'],
       [Sequelize.literal('user.gravatar'), 'gravatar'],
       [Sequelize.literal('user.username'), 'username'],
       'title',
       ['body', 'post_body'],
-      // [Sequelize.literal('tags.tagname'), 'tagname'],
       'created_at',
       'updated_at',
       'views',
@@ -202,7 +199,7 @@ exports.retrieveOne = async (postId, result) => {
 };
 
 exports.retrieveAll = async (result) => {
-  const queryResult = await PostsModelSequelize.findAll({
+  const posts = await PostsModelSequelize.findAll({
     distinct: true,
     attributes: [
       'id',
@@ -210,26 +207,36 @@ exports.retrieveAll = async (result) => {
       'views',
       [Sequelize.literal('user.username'), 'username'],
       [Sequelize.literal('user.gravatar'), 'gravatar'],
-      [Sequelize.literal('tags.id'), 'tag_id'],
-      [Sequelize.literal('tags.tagname'), 'tagname'],
       'created_at',
       'updated_at',
       'title',
       'body',
-      [Sequelize.literal('COUNT(DISTINCT(answers.id))'), 'answer_count'],
-      [Sequelize.literal('COUNT(DISTINCT(comments.id))'), 'comment_count'],
     ],
     include: [
       {
         model: TagsModelSequelize,
         required: true,
-        // attributes: [],
+        attributes: ['id', 'tagname'],
       },
       {
         model: UsersModelSequelize,
         required: true,
         attributes: [],
       },
+    ],
+    order: [['created_at', 'DESC']],
+  }).catch((error) => {
+    console.log(error);
+    return result(responseHandler(false, 500, 'Something went wrong!', null), null);
+  });
+
+  const postCounts = await PostsModelSequelize.findAll({
+    distinct: true,
+    attributes: [
+      [Sequelize.literal('COUNT(DISTINCT(answers.id))'), 'answer_count'],
+      [Sequelize.literal('COUNT(DISTINCT(comments.id))'), 'comment_count'],
+    ],
+    include: [
       {
         model: AnswersModelSequelize,
         required: false,
@@ -248,11 +255,24 @@ exports.retrieveAll = async (result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  if (conditionalHelper.isArrayEmpty(queryResult)) {
+  if (conditionalHelper.isArrayEmpty(posts)) {
     return result(responseHandler(false, 404, 'There are no posts', null), null);
   }
 
-  return result(null, responseHandler(true, 200, 'Success', queryResult));
+  const response = [];
+  posts.forEach((post, index) => {
+    const counts = postCounts[index].dataValues;
+    const postFormatted = post.dataValues;
+
+    const destructuredItem = {
+      ...counts,
+      ...postFormatted,
+    };
+
+    response.push(destructuredItem);
+  });
+
+  return result(null, responseHandler(true, 200, 'Success', response));
 };
 
 exports.retrieveAllTop = async (result) => {

@@ -28,6 +28,7 @@
     "mysql2": "^2.3.2",
     "nodemon": "^2.0.15",
     "sequelize": "^6.6.4",
+    "sequelize-to-json": "^0.10.4",
     "xss-clean": "^0.1.1"
   },
   "devDependencies": {
