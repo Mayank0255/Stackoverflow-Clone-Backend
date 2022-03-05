@@ -29,6 +29,7 @@ exports.create = async (newPost, result) => {
 
     const mapAllTags = [];
     const mapAllTagsWithoutDesc = [];
+    const mapNewTags = [];
 
     for (const item of tags) {
       const tag = await TagsModelSequelize.findOne({
@@ -51,8 +52,6 @@ exports.create = async (newPost, result) => {
         mapAllTagsWithoutDesc.push(item);
       }
     }
-
-    const mapNewTags = [];
 
     for (const item of mapAllTagsWithoutDesc) {
       const tagDescription = await investApi.fetchTagDesc(item);
@@ -84,10 +83,7 @@ exports.create = async (newPost, result) => {
         return null;
       });
 
-    result(
-      null,
-      responseHandler(true, 200, 'Post Created', post.id),
-    );
+    result(null, responseHandler(true, 200, 'Post Created', post.id));
 
     await transaction.commit();
   } catch (error) {

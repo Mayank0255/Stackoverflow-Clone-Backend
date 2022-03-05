@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const { responseHandler, conditionalHelper } = require('../helpers');
+const { responseHandler, conditionalHelper, format } = require('../helpers');
 const { UsersModelSequelize, AnswersModelSequelize } = require('../models');
 
 exports.create = async (newAnswer, result) => {
@@ -61,5 +61,16 @@ exports.retrieveAll = async (postId, result) => {
     return result(responseHandler(false, 404, 'There are no answers', null), null);
   }
 
-  return result(null, responseHandler(true, 200, 'Success', queryResult));
+  const queryResultMap = queryResult.map((answer) => format.sequelizeResponse(
+    answer,
+    'id',
+    'user_id',
+    'post_id',
+    'body',
+    'created_at',
+    'username',
+    'gravatar',
+  ));
+
+  return result(null, responseHandler(true, 200, 'Success', queryResultMap));
 };
