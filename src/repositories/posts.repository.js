@@ -296,65 +296,8 @@ exports.retrieveAll = async (result) => {
   return result(null, responseHandler(true, 200, 'Success', final));
 };
 
-exports.retrieveAllTop = async (result) => {
-  const queryResult = await PostsModelSequelize.findAll({
-    distinct: true,
-    attributes: [
-      'id',
-      'user_id',
-      'views',
-      [Sequelize.literal('user.username'), 'username'],
-      [Sequelize.literal('user.gravatar'), 'gravatar'],
-      [Sequelize.literal('tags.id'), 'tag_id'],
-      [Sequelize.literal('tags.tagname'), 'tagname'],
-      'created_at',
-      'updated_at',
-      'title',
-      'body',
-      [Sequelize.literal('COUNT(DISTINCT(answers.id))'), 'answer_count'],
-      [Sequelize.literal('COUNT(DISTINCT(comments.id))'), 'comment_count'],
-    ],
-    include: [
-      {
-        model: TagsModelSequelize,
-        required: true,
-        attributes: [],
-      },
-      {
-        model: UsersModelSequelize,
-        required: true,
-        attributes: [],
-      },
-      {
-        model: AnswersModelSequelize,
-        required: false,
-        attributes: [],
-      },
-      {
-        model: CommentsModelSequelize,
-        required: false,
-        attributes: [],
-      },
-    ],
-    group: ['id'],
-    order: [
-      [Sequelize.literal('answer_count DESC')],
-      [Sequelize.literal('comment_count DESC')],
-    ],
-  }).catch((error) => {
-    console.log(error);
-    return result(responseHandler(false, 500, 'Something went wrong!', null), null);
-  });
-
-  if (conditionalHelper.isArrayEmpty(queryResult)) {
-    return result(responseHandler(false, 404, 'There are no posts', null), null);
-  }
-
-  return result(null, responseHandler(true, 200, 'Success', queryResult));
-};
-
 exports.retrieveAllTag = async (tagName, result) => {
-  const queryResult = await PostsModelSequelize.findAll({
+  const posts = await PostsModelSequelize.findAll({
     where: {
       '$tags.tagname$': tagName,
     },
@@ -365,23 +308,42 @@ exports.retrieveAllTag = async (tagName, result) => {
       'views',
       [Sequelize.literal('user.username'), 'username'],
       [Sequelize.literal('user.gravatar'), 'gravatar'],
-      [Sequelize.literal('tags.id'), 'tag_id'],
-      [Sequelize.literal('tags.tagname'), 'tagname'],
       'created_at',
       'updated_at',
       'title',
       'body',
+    ],
+    include: [
+      {
+        model: TagsModelSequelize,
+        required: true,
+        attributes: ['id', 'tagname'],
+      },
+      {
+        model: UsersModelSequelize,
+        required: true,
+        attributes: [],
+      },
+    ],
+    order: [['created_at', 'DESC']],
+  }).catch((error) => {
+    console.log(error);
+    return result(responseHandler(false, 500, 'Something went wrong!', null), null);
+  });
+
+  const postCounts = await PostsModelSequelize.findAll({
+    distinct: true,
+    where: {
+      '$tags.tagname$': tagName,
+    },
+    attributes: [
+      'id',
       [Sequelize.literal('COUNT(DISTINCT(answers.id))'), 'answer_count'],
       [Sequelize.literal('COUNT(DISTINCT(comments.id))'), 'comment_count'],
     ],
     include: [
       {
         model: TagsModelSequelize,
-        required: true,
-        attributes: [],
-      },
-      {
-        model: UsersModelSequelize,
         required: true,
         attributes: [],
       },
@@ -403,9 +365,42 @@ exports.retrieveAllTag = async (tagName, result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  if (conditionalHelper.isArrayEmpty(queryResult)) {
+  if (conditionalHelper.isArrayEmpty(posts)) {
     return result(responseHandler(false, 404, 'There are no posts', null), null);
   }
 
-  return result(null, responseHandler(true, 200, 'Success', queryResult));
+  const postsMap = posts.map((post) => {
+    const {
+      // eslint-disable-next-line camelcase
+      id, user_id, views, title, body, tags,
+    } = post;
+
+    return {
+      id,
+      user_id,
+      views,
+      username: post.getDataValue('username'),
+      gravatar: post.getDataValue('gravatar'),
+      created_at: post.getDataValue('created_at'),
+      updated_at: post.getDataValue('updated_at'),
+      title,
+      body,
+      tags,
+    };
+  });
+
+  const postCountsMap = postCounts.map((post) => ({
+    id: post.getDataValue('id'),
+    answer_count: post.getDataValue('answer_count'),
+    comment_count: post.getDataValue('comment_count'),
+  }));
+
+  const mergeById = (a1, a2) => a1.map((itm) => ({
+    ...a2.find((item) => (item.id === itm.id) && item),
+    ...itm,
+  }));
+
+  const final = mergeById(postsMap, postCountsMap);
+
+  return result(null, responseHandler(true, 200, 'Success', final));
 };

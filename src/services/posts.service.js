@@ -13,6 +13,4 @@ exports.retrieveOne = (postId, result) => postsRepository.retrieveOne(postId, re
 
 exports.retrieveAll = (result) => postsRepository.retrieveAll(result);
 
-exports.retrieveAllTop = (result) => postsRepository.retrieveAllTop(result);
-
 exports.retrieveAllTag = (tagName, result) => postsRepository.retrieveAllTag(tagName, result);

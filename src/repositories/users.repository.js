@@ -109,11 +109,11 @@ exports.retrieveAll = async (result) => {
       {
         model: PostsModelSequelize,
         attributes: [],
-        required: false,
+        required: true,
         include: {
           model: TagsModelSequelize,
           attributes: [],
-          required: false,
+          required: true,
         },
       },
     ],
@@ -165,7 +165,7 @@ exports.retrieveOne = async (id, result) => {
     ],
     include: [
       {
-        required: false,
+        required: true,
         model: PostsModelSequelize,
         attributes: [],
         include: {

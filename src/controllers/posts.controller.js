@@ -21,25 +21,6 @@ exports.getPosts = asyncHandler(async (req, res) => {
   }
 });
 
-exports.getTopPosts = asyncHandler(async (req, res) => {
-  try {
-    await postsService.retrieveAllTop(
-      (err, data) => {
-        if (err) {
-          console.log(err);
-          return res.status(err.code).json(err);
-        }
-        return res.status(data.code).json(data);
-      },
-    );
-  } catch (err) {
-    console.log(err);
-    return res
-      .status(500)
-      .json(responseHandler(true, 500, 'Server Error', null));
-  }
-});
-
 exports.getTagPosts = asyncHandler(async (req, res) => {
   const tagName = req.params.tagname;
 
@@ -80,12 +61,12 @@ exports.getSinglePost = asyncHandler(async (req, res) => {
 });
 
 exports.addPost = asyncHandler(async (req, res) => {
-  // const errors = validationResult(req);
-  // if (!errors.isEmpty()) {
-  //   return res
-  //     .status(400)
-  //     .json(responseHandler(false, 400, errors.array()[0].msg, null));
-  // }
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res
+      .status(400)
+      .json(responseHandler(false, 400, errors.array()[0].msg, null));
+  }
   try {
     const post = new Post({
       title: req.body.title,
