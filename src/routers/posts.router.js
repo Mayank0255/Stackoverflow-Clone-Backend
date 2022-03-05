@@ -11,12 +11,6 @@ const router = express.Router();
 router.route('/')
   .get(postsController.getPosts);
 
-/** @route      GET /api/posts/top
- *  @desc       fetch all posts sorted by maximum interactivity
- */
-router.route('/top')
-  .get(postsController.getTopPosts);
-
 /** @route      GET /api/posts/tag/:tagname
  *  @desc       fetch all posts of a specific tag
  */

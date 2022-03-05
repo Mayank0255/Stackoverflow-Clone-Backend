@@ -7,6 +7,7 @@ const {
   calcHelper,
   conditionalHelper,
   getJwtToken,
+  format,
 } = require('../helpers');
 const {
   UsersModelSequelize,
@@ -109,11 +110,11 @@ exports.retrieveAll = async (result) => {
       {
         model: PostsModelSequelize,
         attributes: [],
-        required: false,
+        required: true,
         include: {
           model: TagsModelSequelize,
           attributes: [],
-          required: false,
+          required: true,
         },
       },
     ],
@@ -124,11 +125,22 @@ exports.retrieveAll = async (result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  if (conditionalHelper.isArrayEmpty(queryResult)) {
+  const usersMap = queryResult.map((user) => format.sequelizeResponse(
+    user,
+    'id',
+    'username',
+    'gravatar',
+    'views',
+    'created_at',
+    'posts_count',
+    'tags_count',
+  ));
+
+  if (conditionalHelper.isArrayEmpty(usersMap)) {
     return result(responseHandler(false, 404, 'There are no users', null), null);
   }
 
-  return result(null, responseHandler(true, 200, 'Success', queryResult));
+  return result(null, responseHandler(true, 200, 'Success', usersMap));
 };
 
 exports.retrieveOne = async (id, result) => {
@@ -150,7 +162,7 @@ exports.retrieveOne = async (id, result) => {
       );
     });
 
-  const queryResult = await UsersModelSequelize.findOne({
+  let queryResult = await UsersModelSequelize.findOne({
     where: { id },
     attributes: [
       'id',
@@ -165,7 +177,7 @@ exports.retrieveOne = async (id, result) => {
     ],
     include: [
       {
-        required: false,
+        required: true,
         model: PostsModelSequelize,
         attributes: [],
         include: {
@@ -196,10 +208,22 @@ exports.retrieveOne = async (id, result) => {
     return result(responseHandler(false, 404, 'This user doesn\'t exists', null), null);
   }
 
+  queryResult = format.sequelizeResponse(
+    queryResult,
+    'id',
+    'username',
+    'gravatar',
+    'views',
+    'created_at',
+    'posts_count',
+    'tags_count',
+    'answers_count',
+    'comments_count',
+  );
+
   return result(null, responseHandler(true, 200, 'Success', queryResult));
 };
 
-// eslint-disable-next-line camelcase
 exports.loadUser = async (userId, result) => {
   await UsersModelSequelize.findOne({
     where: { id: userId },
