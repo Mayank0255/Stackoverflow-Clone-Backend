@@ -1,5 +1,4 @@
 const Sequelize = require('sequelize');
-const Serializer = require('sequelize-to-json');
 const db = require('../config/db.config');
 const { responseHandler, conditionalHelper, investApi } = require('../helpers');
 const {
@@ -28,20 +27,14 @@ exports.create = async (newPost, result) => {
 
     const tags = newPost.tagName.split(',').map((item) => item.trim());
 
-    // eslint-disable-next-line no-restricted-syntax
-    for (const item of tags) {
-      // eslint-disable-next-line no-await-in-loop
-      const tagDescription = await investApi.fetchTagDesc(item);
+    const mapAllTags = [];
+    const mapAllTagsWithoutDesc = [];
 
-      // eslint-disable-next-line no-await-in-loop
-      const [tag] = await TagsModelSequelize.findOrCreate({
+    for (const item of tags) {
+      const tag = await TagsModelSequelize.findOne({
         where: {
           tagname: item,
         },
-        defaults: {
-          tagname: item,
-          description: tagDescription,
-        },
       })
         .catch((error) => {
           console.log(error);
@@ -49,17 +42,47 @@ exports.create = async (newPost, result) => {
           return null;
         });
 
-      // eslint-disable-next-line no-await-in-loop
-      await PostTagModelSequelize.create({
+      if (!conditionalHelper.isNull(tag)) {
+        mapAllTags.push({
+          post_id: post.id,
+          tag_id: tag.id,
+        });
+      } else {
+        mapAllTagsWithoutDesc.push(item);
+      }
+    }
+
+    const mapNewTags = [];
+
+    for (const item of mapAllTagsWithoutDesc) {
+      const tagDescription = await investApi.fetchTagDesc(item);
+
+      mapNewTags.push({
+        tagname: item,
+        description: tagDescription,
+      });
+    }
+
+    const newCreatedTags = await TagsModelSequelize.bulkCreate(mapNewTags)
+      .catch((error) => {
+        console.log(error);
+        result(responseHandler(false, 500, 'Something went wrong', null), null);
+        return null;
+      });
+
+    for (const tag of newCreatedTags) {
+      mapAllTags.push({
         post_id: post.id,
         tag_id: tag.id,
-      })
-        .catch((error) => {
-          console.log(error);
-          result(responseHandler(false, 500, 'Something went wrong', null), null);
-          return null;
-        });
+      });
     }
+
+    await PostTagModelSequelize.bulkCreate(mapAllTags)
+      .catch((error) => {
+        console.log(error);
+        result(responseHandler(false, 500, 'Something went wrong', null), null);
+        return null;
+      });
 
     result(
       null,

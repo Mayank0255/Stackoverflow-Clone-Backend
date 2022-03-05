@@ -2256,11 +2256,6 @@
   "resolved" "https://registry.npmjs.org/sequelize-pool/-/sequelize-pool-7.1.0.tgz"
   "version" "7.1.0"
 
-"sequelize-to-json@^0.10.4":
-  "integrity" "sha512-5dGPuURC113J99yga2ip554orbnowTMdUGIE6RiLXy+NbnIQ2QSQ93ZVCFYeX121sxfbi6PRJqi1Gw+j1Znx1A=="
-  "resolved" "https://registry.npmjs.org/sequelize-to-json/-/sequelize-to-json-0.10.4.tgz"
-  "version" "0.10.4"
-
 "sequelize@^6.6.4":
   "integrity" "sha512-P2E8TzlV3VwdvPqTS58ctIpcAOytXdaylUUfxxnALjtMmF6I+kfNtrqTP7WQFaenOboAtXPCJReZ9MPy+Zy/Ig=="
   "resolved" "https://registry.npmjs.org/sequelize/-/sequelize-6.12.4.tgz"
