@@ -1,6 +1,11 @@
 const Sequelize = require('sequelize');
 const db = require('../config/db.config');
-const { responseHandler, conditionalHelper, investApi } = require('../helpers');
+const {
+  responseHandler,
+  conditionalHelper,
+  investApi,
+  format
+} = require('../helpers');
 const {
   PostsModelSequelize,
   PostTagModelSequelize,
@@ -143,7 +148,7 @@ exports.retrieveOne = async (postId, result) => {
       );
     });
 
-  const queryResult = await PostsModelSequelize.findOne({
+  let queryResult = await PostsModelSequelize.findOne({
     distinct: true,
     where: {
       id: postId,
@@ -208,10 +213,24 @@ exports.retrieveOne = async (postId, result) => {
     return result(responseHandler(false, 404, 'There isn\'t any post by this id', null), null);
   }
 
+  queryResult = format.sequelizeResponse(
+    queryResult,
+    'id',
+    'user_id',
+    'gravatar',
+    'username',
+    'title',
+    'post_body',
+    'created_at',
+    'updated_at',
+    'views',
+    'tags',
+  );
+
   const response = {
     answer_count: answersCount,
     comment_count: commentsCount,
-    ...queryResult.dataValues,
+    ...queryResult,
   };
 
   return result(null, responseHandler(true, 200, 'Success', response));
@@ -279,40 +298,25 @@ exports.retrieveAll = async (result) => {
     return result(responseHandler(false, 404, 'There are no posts', null), null);
   }
 
-  const postsMap = posts.map((post) => {
-    const {
-      // eslint-disable-next-line camelcase
-      id, user_id, views, title, body, tags,
-    } = post;
+  const postsMap = posts.map((post) => format.sequelizeResponse(
+    post,
+    'id',
+    'user_id',
+    'views',
+    'title',
+    'body',
+    'tags',
+    'username',
+    'gravatar',
+    'created_at',
+    'updated_at',
+  ));
 
-    return {
-      id,
-      user_id,
-      views,
-      username: post.getDataValue('username'),
-      gravatar: post.getDataValue('gravatar'),
-      created_at: post.getDataValue('created_at'),
-      updated_at: post.getDataValue('updated_at'),
-      title,
-      body,
-      tags,
-    };
-  });
+  const postCountsMap = postCounts.map((post) => format.sequelizeResponse(post, 'id', 'answer_count', 'comment_count'));
 
-  const postCountsMap = postCounts.map((post) => ({
-    id: post.getDataValue('id'),
-    answer_count: post.getDataValue('answer_count'),
-    comment_count: post.getDataValue('comment_count'),
-  }));
+  const response = format.mergeById(postsMap, postCountsMap);
 
-  const mergeById = (a1, a2) => a1.map((itm) => ({
-    ...a2.find((item) => (item.id === itm.id) && item),
-    ...itm,
-  }));
-
-  const final = mergeById(postsMap, postCountsMap);
-
-  return result(null, responseHandler(true, 200, 'Success', final));
+  return result(null, responseHandler(true, 200, 'Success', response));
 };
 
 exports.retrieveAllTag = async (tagName, result) => {
@@ -388,38 +392,23 @@ exports.retrieveAllTag = async (tagName, result) => {
     return result(responseHandler(false, 404, 'There are no posts', null), null);
   }
 
-  const postsMap = posts.map((post) => {
-    const {
-      // eslint-disable-next-line camelcase
-      id, user_id, views, title, body, tags,
-    } = post;
+  const postsMap = posts.map((post) => format.sequelizeResponse(
+    post,
+    'id',
+    'user_id',
+    'views',
+    'title',
+    'body',
+    'tags',
+    'username',
+    'gravatar',
+    'created_at',
+    'updated_at',
+  ));
 
-    return {
-      id,
-      user_id,
-      views,
-      username: post.getDataValue('username'),
-      gravatar: post.getDataValue('gravatar'),
-      created_at: post.getDataValue('created_at'),
-      updated_at: post.getDataValue('updated_at'),
-      title,
-      body,
-      tags,
-    };
-  });
+  const postCountsMap = postCounts.map((post) => format.sequelizeResponse(post, 'id', 'answer_count', 'comment_count'));
 
-  const postCountsMap = postCounts.map((post) => ({
-    id: post.getDataValue('id'),
-    answer_count: post.getDataValue('answer_count'),
-    comment_count: post.getDataValue('comment_count'),
-  }));
+  const response = format.mergeById(postsMap, postCountsMap);
 
-  const mergeById = (a1, a2) => a1.map((itm) => ({
-    ...a2.find((item) => (item.id === itm.id) && item),
-    ...itm,
-  }));
-
-  const final = mergeById(postsMap, postCountsMap);
-
-  return result(null, responseHandler(true, 200, 'Success', final));
+  return result(null, responseHandler(true, 200, 'Success', response));
 };

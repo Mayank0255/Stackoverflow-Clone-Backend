@@ -7,6 +7,12 @@ const sequelizeResponse = (model, ...params) => {
   return result;
 };
 
+const mergeById = (arr1, arr2) => arr1.map((itemOne) => ({
+  ...arr2.find((itemTwo) => (itemTwo.id === itemOne.id) && itemTwo),
+  ...itemOne,
+}));
+
 module.exports = format = {
   sequelizeResponse,
+  mergeById,
 };
