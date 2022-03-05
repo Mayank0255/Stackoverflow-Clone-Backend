@@ -233,6 +233,7 @@ exports.retrieveAll = async (result) => {
   const postCounts = await PostsModelSequelize.findAll({
     distinct: true,
     attributes: [
+      'id',
       [Sequelize.literal('COUNT(DISTINCT(answers.id))'), 'answer_count'],
       [Sequelize.literal('COUNT(DISTINCT(comments.id))'), 'comment_count'],
     ],
@@ -259,20 +260,40 @@ exports.retrieveAll = async (result) => {
     return result(responseHandler(false, 404, 'There are no posts', null), null);
   }
 
-  const response = [];
-  posts.forEach((post, index) => {
-    const counts = postCounts[index].dataValues;
-    const postFormatted = post.dataValues;
+  const postsMap = posts.map((post) => {
+    const {
+      // eslint-disable-next-line camelcase
+      id, user_id, views, title, body, tags,
+    } = post;
 
-    const destructuredItem = {
-      ...counts,
-      ...postFormatted,
+    return {
+      id,
+      user_id,
+      views,
+      username: post.getDataValue('username'),
+      gravatar: post.getDataValue('gravatar'),
+      created_at: post.getDataValue('created_at'),
+      updated_at: post.getDataValue('updated_at'),
+      title,
+      body,
+      tags,
     };
-
-    response.push(destructuredItem);
   });
 
-  return result(null, responseHandler(true, 200, 'Success', response));
+  const postCountsMap = postCounts.map((post) => ({
+    id: post.getDataValue('id'),
+    answer_count: post.getDataValue('answer_count'),
+    comment_count: post.getDataValue('comment_count'),
+  }));
+
+  const mergeById = (a1, a2) => a1.map((itm) => ({
+    ...a2.find((item) => (item.id === itm.id) && item),
+    ...itm,
+  }));
+
+  const final = mergeById(postsMap, postCountsMap);
+
+  return result(null, responseHandler(true, 200, 'Success', final));
 };
 
 exports.retrieveAllTop = async (result) => {
