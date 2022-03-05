@@ -56,11 +56,6 @@ exports.retrieveAll = async (postId, result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  if (conditionalHelper.isArrayEmpty(queryResult)) {
-    console.log('error: ', 'There are no answers');
-    return result(responseHandler(false, 404, 'There are no answers', null), null);
-  }
-
   const queryResultMap = queryResult.map((answer) => format.sequelizeResponse(
     answer,
     'id',
@@ -71,6 +66,11 @@ exports.retrieveAll = async (postId, result) => {
     'username',
     'gravatar',
   ));
+
+  if (conditionalHelper.isArrayEmpty(queryResultMap)) {
+    console.log('error: ', 'There are no answers');
+    return result(responseHandler(false, 404, 'There are no answers', null), null);
+  }
 
   return result(null, responseHandler(true, 200, 'Success', queryResultMap));
 };

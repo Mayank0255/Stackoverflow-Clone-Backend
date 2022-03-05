@@ -294,10 +294,6 @@ exports.retrieveAll = async (result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  if (conditionalHelper.isArrayEmpty(posts)) {
-    return result(responseHandler(false, 404, 'There are no posts', null), null);
-  }
-
   const postsMap = posts.map((post) => format.sequelizeResponse(
     post,
     'id',
@@ -311,6 +307,10 @@ exports.retrieveAll = async (result) => {
     'created_at',
     'updated_at',
   ));
+
+  if (conditionalHelper.isArrayEmpty(postsMap)) {
+    return result(responseHandler(false, 404, 'There are no posts', null), null);
+  }
 
   const postCountsMap = postCounts.map((post) => format.sequelizeResponse(post, 'id', 'answer_count', 'comment_count'));
 
