@@ -30,15 +30,15 @@ exports.fetchTagDesc = async (tags) => {
  */
 exports.prepareTags = (tags, response) => {
   const resp = [];
-  for(let i=0; i < tags.length; i++) {
 
-    const foundTag = response.length && response.find((t) => t.tag_name === tags[i].toLowerCase())
+  for(const tag of tags) {
+    const foundTag = response.length && response.find((t) => t.tag_name === tag.toLowerCase())
     const obj = {
-      tagname:tags[i],
+      tagname:tag,
       description:''
     }
     if(!foundTag) {
-        obj.description = `A ${tags[i]} is a keyword or term assigned to a piece of information`
+        obj.description = `A ${tag} is a keyword or term assigned to a piece of information`
     } else {
       obj.description = foundTag.excerpt
     }

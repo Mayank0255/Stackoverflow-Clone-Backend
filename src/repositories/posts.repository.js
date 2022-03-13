@@ -58,20 +58,12 @@ exports.create = async (newPost, result) => {
       }
     }
 
-    let mapAllTagsWithoutDescString = '';
-
-    /**
+     /**
      * prepare a string of tags with ";" as delimeter
      * for eg:- [java, javascript] will become "java;javascript"
      */
-    for (let i = 0; i < mapAllTagsWithoutDesc.length; i++) {
-      if (i === mapAllTagsWithoutDesc.length - 1) {
-        mapAllTagsWithoutDescString += `${mapAllTagsWithoutDesc[i]}`
-      } else {
-        mapAllTagsWithoutDescString += `${mapAllTagsWithoutDesc[i]};`
-      }
-    }
-
+    const mapAllTagsWithoutDescString = mapAllTagsWithoutDesc.join(';');
+    
     const resp = await investApi.fetchTagDesc(mapAllTagsWithoutDescString)
     mapNewTags = investApi.prepareTags(mapAllTagsWithoutDesc, resp)
 
