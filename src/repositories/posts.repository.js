@@ -34,7 +34,7 @@ exports.create = async (newPost, result) => {
 
     const mapAllTags = [];
     const mapAllTagsWithoutDesc = [];
-    const mapNewTags = [];
+    let mapNewTags = [];
 
     for (const item of tags) {
       const tag = await TagsModelSequelize.findOne({
@@ -58,14 +58,22 @@ exports.create = async (newPost, result) => {
       }
     }
 
-    for (const item of mapAllTagsWithoutDesc) {
-      const tagDescription = await investApi.fetchTagDesc(item);
+    let mapAllTagsWithoutDescString = '';
 
-      mapNewTags.push({
-        tagname: item,
-        description: tagDescription,
-      });
+    /**
+     * prepare a string of tags with ";" as delimeter
+     * for eg:- [java, javascript] will become "java;javascript"
+     */
+    for (let i = 0; i < mapAllTagsWithoutDesc.length; i++) {
+      if (i === mapAllTagsWithoutDesc.length - 1) {
+        mapAllTagsWithoutDescString += `${mapAllTagsWithoutDesc[i]}`
+      } else {
+        mapAllTagsWithoutDescString += `${mapAllTagsWithoutDesc[i]};`
+      }
     }
+
+    const resp = await investApi.fetchTagDesc(mapAllTagsWithoutDescString)
+    mapNewTags = investApi.prepareTags(mapAllTagsWithoutDesc, resp)
 
     const newCreatedTags = await TagsModelSequelize.bulkCreate(mapNewTags)
       .catch((error) => {

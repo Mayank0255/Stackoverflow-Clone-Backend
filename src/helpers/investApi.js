@@ -1,8 +1,8 @@
 const axios = require('axios');
 const constantsHolder = require('../constants');
 
-exports.fetchTagDesc = async (tag) => {
-  const url = `${constantsHolder.API_BASE_URL}/tags/${tag}/wikis?site=stackoverflow`;
+exports.fetchTagDesc = async (tags) => {
+  const url = `${constantsHolder.API_BASE_URL}/tags/${tags}/wikis?site=stackoverflow`;
 
   const options = {
     method: 'GET',
@@ -13,11 +13,36 @@ exports.fetchTagDesc = async (tag) => {
     json: true,
   };
 
-  return await axios
-    .get(url, options)
-    .then((response) => response.data.items[0].excerpt)
+  const response = await axios.get(url, options)
+    .then((json) => json.data.items)
     .catch((err) => {
       console.log('error:', err);
-      return `A ${tag} is a keyword or term assigned to a piece of information`;
-    });
+    })
+  
+  return response;
 };
+
+/**
+ * @description - This function preapares an array of objects to be inserted into tags schema
+ * @param {tags} - array of strings
+ * @param {response} - array of objects
+ * @returns {resp} - array of objects
+ */
+exports.prepareTags = (tags, response) => {
+  const resp = [];
+  for(let i=0; i < tags.length; i++) {
+
+    const foundTag = response.length && response.find((t) => t.tag_name === tags[i].toLowerCase())
+    const obj = {
+      tagname:tags[i],
+      description:''
+    }
+    if(!foundTag) {
+        obj.description = `A ${tags[i]} is a keyword or term assigned to a piece of information`
+    } else {
+      obj.description = foundTag.excerpt
+    }
+    resp.push(obj)
+  }
+  return resp;
+}
