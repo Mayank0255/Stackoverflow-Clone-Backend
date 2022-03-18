@@ -19,6 +19,12 @@ exports.create = async (newPost, result) => {
   try {
     transaction = await db.transaction();
 
+    const tags = newPost.tagName.split(',').map((item) => item.trim());
+
+    if (tags.length > 5) {
+      return result(responseHandler(false, 400, 'Only Tags Upto 5 Are Allowed', null), null);
+    }
+
     const post = await PostsModelSequelize.create({
       title: newPost.title,
       body: newPost.body,
@@ -29,8 +35,6 @@ exports.create = async (newPost, result) => {
         result(responseHandler(false, 500, 'Something went wrong', null), null);
         return null;
       });
-
-    const tags = newPost.tagName.split(',').map((item) => item.trim());
 
     const mapAllTags = [];
     const mapAllTagsWithoutDesc = [];
