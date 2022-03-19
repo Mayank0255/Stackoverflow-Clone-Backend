@@ -32,14 +32,14 @@ exports.prepareTags = (tags, response) => {
   const resp = [];
 
   for (const tag of tags) {
-    const foundTag = response.length && response.find((t) => t.tag_name === tag.toLowerCase())
+    const foundTag = response.length && response.find((t) => t.tag_name === tag.toLowerCase());
     const obj = {
       tagname: tag,
       description: '',
     };
 
     if (!foundTag) {
-      obj.description = `A ${tag} is a keyword or term assigned to a piece of information`
+      obj.description = `A ${tag} is a keyword or term assigned to a piece of information`;
     } else {
       obj.description = foundTag.excerpt;
     }
