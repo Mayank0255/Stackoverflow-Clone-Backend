@@ -28,7 +28,7 @@ router.route('/:id')
   .delete(
     auth,
     checkOwnership,
-    commentsController.deleteComment
+    commentsController.deleteComment,
   );
 
 module.exports = router;

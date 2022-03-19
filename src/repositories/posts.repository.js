@@ -4,7 +4,7 @@ const {
   responseHandler,
   conditionalHelper,
   investApi,
-  format
+  format,
 } = require('../helpers');
 const {
   PostsModelSequelize,
@@ -62,14 +62,14 @@ exports.create = async (newPost, result) => {
       }
     }
 
-     /**
+    /**
      * prepare a string of tags with ";" as delimeter
      * for eg:- [java, javascript] will become "java;javascript"
      */
     const mapAllTagsWithoutDescString = mapAllTagsWithoutDesc.join(';');
-    
-    const resp = await investApi.fetchTagDesc(mapAllTagsWithoutDescString)
-    mapNewTags = investApi.prepareTags(mapAllTagsWithoutDesc, resp)
+
+    const resp = await investApi.fetchTagDesc(mapAllTagsWithoutDescString);
+    mapNewTags = investApi.prepareTags(mapAllTagsWithoutDesc, resp);
 
     const newCreatedTags = await TagsModelSequelize.bulkCreate(mapNewTags)
       .catch((error) => {
