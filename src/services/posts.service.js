@@ -1,9 +1,6 @@
-/* eslint-disable max-len */
-const { investApi } = require('../helpers');
 const { postsRepository } = require('../repositories');
 
 exports.create = (newPost, result) => {
-  // const tagDescription = await investApi.fetchTagDesc(newPost.tagName);
   postsRepository.create(newPost, result);
 };
 

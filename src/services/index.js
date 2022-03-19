@@ -10,4 +10,4 @@ module.exports = {
   commentsService,
   usersService,
   tagsService,
-}
+};
