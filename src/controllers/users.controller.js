@@ -1,7 +1,11 @@
 const { validationResult } = require('express-validator');
 const { responseHandler, asyncHandler } = require('../helpers');
-const { User } = require('../models');
 const { usersService } = require('../services');
+
+const User = (user) => ({
+  username: user.username,
+  password: user.password,
+});
 
 exports.getOneUser = asyncHandler(async (req, res) => {
   try {
@@ -53,7 +57,7 @@ exports.register = asyncHandler(async (req, res) => {
   }
   try {
     // Register user in the database
-    await usersService.register(new User(req.body), (err, data) => {
+    await usersService.register(User(req.body), (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);

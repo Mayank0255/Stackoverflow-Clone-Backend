@@ -1,7 +1,11 @@
 const { validationResult } = require('express-validator');
 const { responseHandler, asyncHandler } = require('../helpers');
-const { User } = require('../models');
 const { usersService } = require('../services');
+
+const User = (user) => ({
+  username: user.username,
+  password: user.password,
+});
 
 exports.loadUser = asyncHandler(async (req, res) => {
   try {
@@ -29,7 +33,7 @@ exports.login = asyncHandler(async (req, res) => {
   }
   try {
     // Login the user
-    await usersService.login(new User(req.body), (err, data) => {
+    await usersService.login(User(req.body), (err, data) => {
       if (err) {
         console.log(err);
         return res.status(err.code).json(err);

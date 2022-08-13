@@ -1,7 +1,12 @@
 const { validationResult } = require('express-validator');
 const { responseHandler, asyncHandler } = require('../helpers');
-const { Comment } = require('../models');
 const { commentsService } = require('../services');
+
+const Comment = (comment) => ({
+  body: comment.body,
+  userId: comment.userId,
+  postId: comment.postId,
+});
 
 exports.getComments = asyncHandler(async (req, res) => {
   try {
@@ -29,7 +34,7 @@ exports.addComment = asyncHandler(async (req, res) => {
   }
 
   try {
-    const comment = new Comment({
+    const comment = Comment({
       body: req.body.body,
       userId: req.user.id,
       postId: req.params.id,
