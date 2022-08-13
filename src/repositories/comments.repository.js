@@ -1,5 +1,6 @@
 const sequelize = require('sequelize');
-const { responseHandler, conditionalHelper, format } = require('../helpers');
+const utils = require('../utils');
+const { responseHandler } = require('../helpers');
 const { CommentsModel, UsersModel } = require('../models');
 
 exports.create = async (newComment, result) => {
@@ -48,7 +49,7 @@ exports.retrieveAll = async (postId, result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  const queryResultMap = queryResult.map((answer) => format.sequelizeResponse(
+  const queryResultMap = queryResult.map((answer) => utils.array.sequelizeResponse(
     answer,
     'id',
     'user_id',
@@ -58,7 +59,7 @@ exports.retrieveAll = async (postId, result) => {
     'username',
   ));
 
-  if (conditionalHelper.isArrayEmpty(queryResultMap)) {
+  if (utils.conditional.isArrayEmpty(queryResultMap)) {
     console.log('error: ', 'There are no comments');
     return result(responseHandler(false, 404, 'There are no comments', null), null);
   }

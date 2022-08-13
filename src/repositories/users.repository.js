@@ -4,11 +4,9 @@ const bcrypt = require('bcryptjs');
 const constantsHolder = require('../constants');
 const {
   responseHandler,
-  calcHelper,
-  conditionalHelper,
   getJwtToken,
-  format,
 } = require('../helpers');
+const utils = require('../utils');
 const {
   UsersModel,
   PostsModel,
@@ -24,7 +22,7 @@ exports.register = async (newUser, result) => {
   await UsersModel.create({
     username: newUser.username,
     password: newUser.password,
-    gravatar: constantsHolder.GRAVATAR_URL(calcHelper.getRandomInt()),
+    gravatar: constantsHolder.GRAVATAR_URL(utils.math.getRandomInt()),
   })
     .then((response) => {
       const payload = {
@@ -125,7 +123,7 @@ exports.retrieveAll = async (result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  const usersMap = queryResult.map((user) => format.sequelizeResponse(
+  const usersMap = queryResult.map((user) => utils.array.sequelizeResponse(
     user,
     'id',
     'username',
@@ -136,7 +134,7 @@ exports.retrieveAll = async (result) => {
     'tags_count',
   ));
 
-  if (conditionalHelper.isArrayEmpty(usersMap)) {
+  if (utils.conditional.isArrayEmpty(usersMap)) {
     return result(responseHandler(false, 404, 'There are no users', null), null);
   }
 
@@ -204,11 +202,11 @@ exports.retrieveOne = async (id, result) => {
       return result(responseHandler(false, 500, 'Something went wrong', null), null);
     });
 
-  if (conditionalHelper.isNull(queryResult)) {
+  if (utils.conditional.isNull(queryResult)) {
     return result(responseHandler(false, 404, 'This user doesn\'t exists', null), null);
   }
 
-  queryResult = format.sequelizeResponse(
+  queryResult = utils.array.sequelizeResponse(
     queryResult,
     'id',
     'username',

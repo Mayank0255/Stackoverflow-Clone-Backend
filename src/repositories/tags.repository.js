@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
-const { conditionalHelper, responseHandler, format } = require('../helpers');
+const utils = require('../utils');
+const { responseHandler } = require('../helpers');
 const { TagsModel, PostsModel } = require('../models');
 
 exports.retrieveAll = async (result) => {
@@ -24,7 +25,7 @@ exports.retrieveAll = async (result) => {
       return result(responseHandler(false, 500, 'Something went wrong', null), null);
     });
 
-  const tagsMap = queryResult.map((tag) => format.sequelizeResponse(
+  const tagsMap = queryResult.map((tag) => utils.array.sequelizeResponse(
     tag,
     'id',
     'tagname',
@@ -33,7 +34,7 @@ exports.retrieveAll = async (result) => {
     'created_at',
   ));
 
-  if (conditionalHelper.isArrayEmpty(tagsMap)) {
+  if (utils.conditional.isArrayEmpty(tagsMap)) {
     return result(responseHandler(false, 404, 'There are no tags', null), null);
   }
 
@@ -62,11 +63,11 @@ exports.retrieveOne = async (tagName, result) => {
       return result(responseHandler(false, 500, 'Something went wrong', null), null);
     });
 
-  if (conditionalHelper.isNull(queryResult)) {
+  if (utils.conditional.isNull(queryResult)) {
     return result(responseHandler(false, 404, 'This tag doesn\'t exists', null), null);
   }
 
-  queryResult = format.sequelizeResponse(
+  queryResult = utils.array.sequelizeResponse(
     queryResult,
     'id',
     'tagname',

@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
-const { responseHandler, conditionalHelper, format } = require('../helpers');
+const utils = require('../utils');
+const { responseHandler } = require('../helpers');
 const { UsersModel, AnswersModel } = require('../models');
 
 exports.create = async (newAnswer, result) => {
@@ -56,7 +57,7 @@ exports.retrieveAll = async (postId, result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  const queryResultMap = queryResult.map((answer) => format.sequelizeResponse(
+  const queryResultMap = queryResult.map((answer) => utils.array.sequelizeResponse(
     answer,
     'id',
     'user_id',
@@ -67,7 +68,7 @@ exports.retrieveAll = async (postId, result) => {
     'gravatar',
   ));
 
-  if (conditionalHelper.isArrayEmpty(queryResultMap)) {
+  if (utils.conditional.isArrayEmpty(queryResultMap)) {
     console.log('error: ', 'There are no answers');
     return result(responseHandler(false, 404, 'There are no answers', null), null);
   }

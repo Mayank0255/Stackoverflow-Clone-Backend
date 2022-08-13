@@ -12,7 +12,7 @@ const mergeById = (arr1, arr2) => arr1.map((itemOne) => ({
   ...itemOne,
 }));
 
-module.exports = format = {
+module.exports = array = {
   sequelizeResponse,
   mergeById,
 };

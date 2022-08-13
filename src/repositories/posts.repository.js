@@ -1,10 +1,9 @@
 const Sequelize = require('sequelize');
 const db = require('../config/db.config');
+const utils = require('../utils');
 const {
   responseHandler,
-  conditionalHelper,
   investApi,
-  format,
 } = require('../helpers');
 const {
   PostsModel,
@@ -52,7 +51,7 @@ exports.create = async (newPost, result) => {
           return null;
         });
 
-      if (!conditionalHelper.isNull(tag)) {
+      if (!utils.conditional.isNull(tag)) {
         mapAllTags.push({
           post_id: post.id,
           tag_id: tag.id,
@@ -213,11 +212,11 @@ exports.retrieveOne = async (postId, result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  if (conditionalHelper.isNull(queryResult)) {
+  if (utils.conditional.isNull(queryResult)) {
     return result(responseHandler(false, 404, 'There isn\'t any post by this id', null), null);
   }
 
-  queryResult = format.sequelizeResponse(
+  queryResult = utils.array.sequelizeResponse(
     queryResult,
     'id',
     'user_id',
@@ -298,7 +297,7 @@ exports.retrieveAll = async (result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  const postsMap = posts.map((post) => format.sequelizeResponse(
+  const postsMap = posts.map((post) => utils.array.sequelizeResponse(
     post,
     'id',
     'user_id',
@@ -312,13 +311,13 @@ exports.retrieveAll = async (result) => {
     'updated_at',
   ));
 
-  if (conditionalHelper.isArrayEmpty(postsMap)) {
+  if (utils.conditional.isArrayEmpty(postsMap)) {
     return result(responseHandler(false, 404, 'There are no posts', null), null);
   }
 
-  const postCountsMap = postCounts.map((post) => format.sequelizeResponse(post, 'id', 'answer_count', 'comment_count'));
+  const postCountsMap = postCounts.map((post) => utils.array.sequelizeResponse(post, 'id', 'answer_count', 'comment_count'));
 
-  const response = format.mergeById(postsMap, postCountsMap);
+  const response = utils.array.mergeById(postsMap, postCountsMap);
 
   return result(null, responseHandler(true, 200, 'Success', response));
 };
@@ -392,11 +391,11 @@ exports.retrieveAllTag = async (tagName, result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  if (conditionalHelper.isArrayEmpty(posts)) {
+  if (utils.conditional.isArrayEmpty(posts)) {
     return result(responseHandler(false, 404, 'There are no posts', null), null);
   }
 
-  const postsMap = posts.map((post) => format.sequelizeResponse(
+  const postsMap = posts.map((post) => utils.array.sequelizeResponse(
     post,
     'id',
     'user_id',
@@ -410,9 +409,9 @@ exports.retrieveAllTag = async (tagName, result) => {
     'updated_at',
   ));
 
-  const postCountsMap = postCounts.map((post) => format.sequelizeResponse(post, 'id', 'answer_count', 'comment_count'));
+  const postCountsMap = postCounts.map((post) => utils.array.sequelizeResponse(post, 'id', 'answer_count', 'comment_count'));
 
-  const response = format.mergeById(postsMap, postCountsMap);
+  const response = utils.array.mergeById(postsMap, postCountsMap);
 
   return result(null, responseHandler(true, 200, 'Success', response));
 };
