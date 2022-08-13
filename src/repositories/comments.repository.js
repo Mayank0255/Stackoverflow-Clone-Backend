@@ -1,9 +1,9 @@
 const sequelize = require('sequelize');
 const { responseHandler, conditionalHelper, format } = require('../helpers');
-const { CommentsModelSequelize, UsersModelSequelize } = require('../models');
+const { CommentsModel, UsersModel } = require('../models');
 
 exports.create = async (newComment, result) => {
-  await CommentsModelSequelize.create({
+  await CommentsModel.create({
     body: newComment.body,
     user_id: newComment.userId,
     post_id: newComment.postId,
@@ -21,7 +21,7 @@ exports.create = async (newComment, result) => {
 };
 
 exports.remove = async (id, result) => {
-  await CommentsModelSequelize.destroy({
+  await CommentsModel.destroy({
     where: { id },
   })
     .then(() => {
@@ -34,13 +34,13 @@ exports.remove = async (id, result) => {
 };
 
 exports.retrieveAll = async (postId, result) => {
-  const queryResult = await CommentsModelSequelize.findAll({
+  const queryResult = await CommentsModel.findAll({
     where: {
       post_id: postId,
     },
     attributes: ['id', 'user_id', 'post_id', 'body', 'created_at', [sequelize.literal('user.username'), 'username']],
     include: {
-      model: UsersModelSequelize,
+      model: UsersModel,
       attributes: [],
     },
   }).catch((error) => {

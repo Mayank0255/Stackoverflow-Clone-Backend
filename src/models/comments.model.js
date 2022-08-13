@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db.config');
 
-const CommentsModelSequelize = db.define('comments', {
+const CommentsModel = db.define('comments', {
   id: {
     type: DataTypes.UUID,
     allowNull: false,
@@ -43,4 +43,4 @@ const CommentsModelSequelize = db.define('comments', {
   ],
 });
 
-module.exports = { CommentsModelSequelize };
+module.exports = { CommentsModel };

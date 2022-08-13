@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db.config');
 
-const PostsModelSequelize = db.define('posts', {
+const PostsModel = db.define('posts', {
   id: {
     type: DataTypes.UUID,
     allowNull: false,
@@ -45,4 +45,4 @@ const PostsModelSequelize = db.define('posts', {
   ],
 });
 
-module.exports = { PostsModelSequelize };
+module.exports = { PostsModel };

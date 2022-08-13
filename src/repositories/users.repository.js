@@ -10,18 +10,18 @@ const {
   format,
 } = require('../helpers');
 const {
-  UsersModelSequelize,
-  PostsModelSequelize,
-  TagsModelSequelize,
-  AnswersModelSequelize,
-  CommentsModelSequelize,
+  UsersModel,
+  PostsModel,
+  TagsModel,
+  AnswersModel,
+  CommentsModel,
 } = require('../models');
 
 exports.register = async (newUser, result) => {
   const salt = await bcrypt.genSalt(10);
   newUser.password = await bcrypt.hash(newUser.password, salt);
 
-  await UsersModelSequelize.create({
+  await UsersModel.create({
     username: newUser.username,
     password: newUser.password,
     gravatar: constantsHolder.GRAVATAR_URL(calcHelper.getRandomInt()),
@@ -45,7 +45,7 @@ exports.register = async (newUser, result) => {
 };
 
 exports.login = async (newUser, result) => {
-  const user = await UsersModelSequelize.findOne({
+  const user = await UsersModel.findOne({
     where: {
       username: newUser.username,
     },
@@ -95,7 +95,7 @@ exports.login = async (newUser, result) => {
 };
 
 exports.retrieveAll = async (result) => {
-  const queryResult = await UsersModelSequelize.findAll({
+  const queryResult = await UsersModel.findAll({
     distinct: true,
     attributes: [
       'id',
@@ -108,11 +108,11 @@ exports.retrieveAll = async (result) => {
     ],
     include: [
       {
-        model: PostsModelSequelize,
+        model: PostsModel,
         attributes: [],
         required: true,
         include: {
-          model: TagsModelSequelize,
+          model: TagsModel,
           attributes: [],
           required: true,
         },
@@ -144,7 +144,7 @@ exports.retrieveAll = async (result) => {
 };
 
 exports.retrieveOne = async (id, result) => {
-  await UsersModelSequelize.increment('views',
+  await UsersModel.increment('views',
     {
       by: 1,
       where: { id },
@@ -162,7 +162,7 @@ exports.retrieveOne = async (id, result) => {
       );
     });
 
-  let queryResult = await UsersModelSequelize.findOne({
+  let queryResult = await UsersModel.findOne({
     where: { id },
     attributes: [
       'id',
@@ -178,23 +178,23 @@ exports.retrieveOne = async (id, result) => {
     include: [
       {
         required: true,
-        model: PostsModelSequelize,
+        model: PostsModel,
         attributes: [],
         include: {
           attributes: [],
           required: true,
-          model: TagsModelSequelize,
+          model: TagsModel,
         },
       },
       {
         attributes: [],
         required: false,
-        model: AnswersModelSequelize,
+        model: AnswersModel,
       },
       {
         attributes: [],
         required: false,
-        model: CommentsModelSequelize,
+        model: CommentsModel,
       },
     ],
     group: ['users.id'],
@@ -225,7 +225,7 @@ exports.retrieveOne = async (id, result) => {
 };
 
 exports.loadUser = async (userId, result) => {
-  await UsersModelSequelize.findOne({
+  await UsersModel.findOne({
     where: { id: userId },
     attributes: ['id', 'username', 'gravatar', 'views', 'created_at'],
   })

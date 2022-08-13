@@ -1,9 +1,9 @@
 const Sequelize = require('sequelize');
 const { conditionalHelper, responseHandler, format } = require('../helpers');
-const { TagsModelSequelize, PostsModelSequelize } = require('../models');
+const { TagsModel, PostsModel } = require('../models');
 
 exports.retrieveAll = async (result) => {
-  const queryResult = await TagsModelSequelize.findAll({
+  const queryResult = await TagsModel.findAll({
     distinct: true,
     attributes: [
       'id',
@@ -13,7 +13,7 @@ exports.retrieveAll = async (result) => {
       'created_at',
     ],
     include: {
-      model: PostsModelSequelize,
+      model: PostsModel,
       attributes: [],
     },
     group: ['tags.id'],
@@ -41,7 +41,7 @@ exports.retrieveAll = async (result) => {
 };
 
 exports.retrieveOne = async (tagName, result) => {
-  let queryResult = await TagsModelSequelize.findOne({
+  let queryResult = await TagsModel.findOne({
     require: false,
     attributes: [
       'id',
@@ -51,7 +51,7 @@ exports.retrieveOne = async (tagName, result) => {
       'created_at',
     ],
     include: {
-      model: PostsModelSequelize,
+      model: PostsModel,
       attributes: [],
     },
     where: { tagname: tagName },

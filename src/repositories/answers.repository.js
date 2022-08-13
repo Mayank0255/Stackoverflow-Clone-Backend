@@ -1,9 +1,9 @@
 const Sequelize = require('sequelize');
 const { responseHandler, conditionalHelper, format } = require('../helpers');
-const { UsersModelSequelize, AnswersModelSequelize } = require('../models');
+const { UsersModel, AnswersModel } = require('../models');
 
 exports.create = async (newAnswer, result) => {
-  await AnswersModelSequelize.create({
+  await AnswersModel.create({
     body: newAnswer.body,
     user_id: newAnswer.userId,
     post_id: newAnswer.postId,
@@ -21,7 +21,7 @@ exports.create = async (newAnswer, result) => {
 };
 
 exports.remove = async (id, result) => {
-  await AnswersModelSequelize.destroy({
+  await AnswersModel.destroy({
     where: { id },
   })
     .then(() => {
@@ -34,7 +34,7 @@ exports.remove = async (id, result) => {
 };
 
 exports.retrieveAll = async (postId, result) => {
-  const queryResult = await AnswersModelSequelize.findAll({
+  const queryResult = await AnswersModel.findAll({
     where: {
       post_id: postId,
     },
@@ -48,7 +48,7 @@ exports.retrieveAll = async (postId, result) => {
       [Sequelize.literal('user.gravatar'), 'gravatar'],
     ],
     include: {
-      model: UsersModelSequelize,
+      model: UsersModel,
       attributes: [],
     },
   }).catch((error) => {

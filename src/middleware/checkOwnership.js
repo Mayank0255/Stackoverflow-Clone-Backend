@@ -1,15 +1,15 @@
 const { responseHandler } = require('../helpers');
-const { PostsModelSequelize, AnswersModelSequelize, CommentsModelSequelize } = require('../models');
+const { PostsModel, AnswersModel, CommentsModel } = require('../models');
 
 const checkOwnership = async (req, res, next) => {
   let Model;
   if (req.originalUrl.includes('posts')) {
     if (req.originalUrl.includes('answers')) {
-      Model = AnswersModelSequelize;
+      Model = AnswersModel;
     } else if (req.originalUrl.includes('comments')) {
-      Model = CommentsModelSequelize;
+      Model = CommentsModel;
     } else {
-      Model = PostsModelSequelize;
+      Model = PostsModel;
     }
   } else {
     next();

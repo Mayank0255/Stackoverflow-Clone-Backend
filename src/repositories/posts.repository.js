@@ -7,11 +7,11 @@ const {
   format,
 } = require('../helpers');
 const {
-  PostsModelSequelize,
-  PostTagModelSequelize,
-  TagsModelSequelize,
-  AnswersModelSequelize,
-  CommentsModelSequelize, UsersModelSequelize,
+  PostsModel,
+  PostTagModel,
+  TagsModel,
+  AnswersModel,
+  CommentsModel, UsersModel,
 } = require('../models');
 
 exports.create = async (newPost, result) => {
@@ -25,7 +25,7 @@ exports.create = async (newPost, result) => {
       return result(responseHandler(false, 400, 'Only Tags Upto 5 Are Allowed', null), null);
     }
 
-    const post = await PostsModelSequelize.create({
+    const post = await PostsModel.create({
       title: newPost.title,
       body: newPost.body,
       user_id: newPost.userId,
@@ -41,7 +41,7 @@ exports.create = async (newPost, result) => {
     let mapNewTags = [];
 
     for (const item of tags) {
-      const tag = await TagsModelSequelize.findOne({
+      const tag = await TagsModel.findOne({
         where: {
           tagname: item,
         },
@@ -71,7 +71,7 @@ exports.create = async (newPost, result) => {
     const resp = await investApi.fetchTagDesc(mapAllTagsWithoutDescString);
     mapNewTags = investApi.prepareTags(mapAllTagsWithoutDesc, resp);
 
-    const newCreatedTags = await TagsModelSequelize.bulkCreate(mapNewTags)
+    const newCreatedTags = await TagsModel.bulkCreate(mapNewTags)
       .catch((error) => {
         console.log(error);
         result(responseHandler(false, 500, 'Something went wrong', null), null);
@@ -85,7 +85,7 @@ exports.create = async (newPost, result) => {
       });
     }
 
-    await PostTagModelSequelize.bulkCreate(mapAllTags)
+    await PostTagModel.bulkCreate(mapAllTags)
       .catch((error) => {
         console.log(error);
         result(responseHandler(false, 500, 'Something went wrong', null), null);
@@ -110,13 +110,13 @@ exports.remove = async (id, result) => {
   try {
     transaction = await db.transaction();
 
-    await PostTagModelSequelize.destroy({ where: { post_id: id } });
+    await PostTagModel.destroy({ where: { post_id: id } });
 
-    await AnswersModelSequelize.destroy({ where: { post_id: id } });
+    await AnswersModel.destroy({ where: { post_id: id } });
 
-    await CommentsModelSequelize.destroy({ where: { post_id: id } });
+    await CommentsModel.destroy({ where: { post_id: id } });
 
-    await PostsModelSequelize.destroy({ where: { id } });
+    await PostsModel.destroy({ where: { id } });
 
     result(
       null,
@@ -134,7 +134,7 @@ exports.remove = async (id, result) => {
 };
 
 exports.retrieveOne = async (postId, result) => {
-  await PostsModelSequelize.increment('views',
+  await PostsModel.increment('views',
     {
       by: 1,
       where: { id: postId },
@@ -152,7 +152,7 @@ exports.retrieveOne = async (postId, result) => {
       );
     });
 
-  let queryResult = await PostsModelSequelize.findOne({
+  let queryResult = await PostsModel.findOne({
     distinct: true,
     where: {
       id: postId,
@@ -170,12 +170,12 @@ exports.retrieveOne = async (postId, result) => {
     ],
     include: [
       {
-        model: TagsModelSequelize,
+        model: TagsModel,
         required: true,
         attributes: ['id', 'tagname'],
       },
       {
-        model: UsersModelSequelize,
+        model: UsersModel,
         required: true,
         attributes: [],
       },
@@ -185,12 +185,12 @@ exports.retrieveOne = async (postId, result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  const answersCount = await PostsModelSequelize.count({
+  const answersCount = await PostsModel.count({
     where: {
       id: postId,
     },
     include: {
-      model: AnswersModelSequelize,
+      model: AnswersModel,
       required: true,
       attributes: [],
     },
@@ -199,12 +199,12 @@ exports.retrieveOne = async (postId, result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  const commentsCount = await PostsModelSequelize.count({
+  const commentsCount = await PostsModel.count({
     where: {
       id: postId,
     },
     include: {
-      model: CommentsModelSequelize,
+      model: CommentsModel,
       required: true,
       attributes: [],
     },
@@ -241,7 +241,7 @@ exports.retrieveOne = async (postId, result) => {
 };
 
 exports.retrieveAll = async (result) => {
-  const posts = await PostsModelSequelize.findAll({
+  const posts = await PostsModel.findAll({
     distinct: true,
     attributes: [
       'id',
@@ -256,12 +256,12 @@ exports.retrieveAll = async (result) => {
     ],
     include: [
       {
-        model: TagsModelSequelize,
+        model: TagsModel,
         required: true,
         attributes: ['id', 'tagname'],
       },
       {
-        model: UsersModelSequelize,
+        model: UsersModel,
         required: true,
         attributes: [],
       },
@@ -272,7 +272,7 @@ exports.retrieveAll = async (result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  const postCounts = await PostsModelSequelize.findAll({
+  const postCounts = await PostsModel.findAll({
     distinct: true,
     attributes: [
       'id',
@@ -281,12 +281,12 @@ exports.retrieveAll = async (result) => {
     ],
     include: [
       {
-        model: AnswersModelSequelize,
+        model: AnswersModel,
         required: false,
         attributes: [],
       },
       {
-        model: CommentsModelSequelize,
+        model: CommentsModel,
         required: false,
         attributes: [],
       },
@@ -324,7 +324,7 @@ exports.retrieveAll = async (result) => {
 };
 
 exports.retrieveAllTag = async (tagName, result) => {
-  const posts = await PostsModelSequelize.findAll({
+  const posts = await PostsModel.findAll({
     where: {
       '$tags.tagname$': tagName,
     },
@@ -342,12 +342,12 @@ exports.retrieveAllTag = async (tagName, result) => {
     ],
     include: [
       {
-        model: TagsModelSequelize,
+        model: TagsModel,
         required: true,
         attributes: ['id', 'tagname'],
       },
       {
-        model: UsersModelSequelize,
+        model: UsersModel,
         required: true,
         attributes: [],
       },
@@ -358,7 +358,7 @@ exports.retrieveAllTag = async (tagName, result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  const postCounts = await PostsModelSequelize.findAll({
+  const postCounts = await PostsModel.findAll({
     distinct: true,
     where: {
       '$tags.tagname$': tagName,
@@ -370,17 +370,17 @@ exports.retrieveAllTag = async (tagName, result) => {
     ],
     include: [
       {
-        model: TagsModelSequelize,
+        model: TagsModel,
         required: true,
         attributes: [],
       },
       {
-        model: AnswersModelSequelize,
+        model: AnswersModel,
         required: false,
         attributes: [],
       },
       {
-        model: CommentsModelSequelize,
+        model: CommentsModel,
         required: false,
         attributes: [],
       },

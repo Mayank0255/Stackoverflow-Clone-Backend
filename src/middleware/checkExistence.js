@@ -1,10 +1,10 @@
 const { responseHandler } = require('../helpers');
-const { UsersModelSequelize } = require('../models');
+const { UsersModel } = require('../models');
 
 const checkExistence = async (req, res, next) => {
   const { username } = req.body;
 
-  const user = await UsersModelSequelize
+  const user = await UsersModel
     .findOne({ where: { username } })
     .catch((error) => {
       console.log(error.message);
