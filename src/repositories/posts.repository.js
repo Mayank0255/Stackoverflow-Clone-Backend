@@ -12,6 +12,7 @@ const {
   AnswersModel,
   CommentsModel, UsersModel,
 } = require('../models');
+const PostTagRepository = require('./posttag.repository');
 
 exports.create = async (newPost, result) => {
   let transaction;
@@ -104,31 +105,29 @@ exports.create = async (newPost, result) => {
 };
 
 exports.remove = async (id, result) => {
-  let transaction;
+  let t;
 
   try {
-    transaction = await db.transaction();
+    t = await db.transaction();
 
-    await PostTagModel.destroy({ where: { post_id: id } });
+    await AnswersModel.destroy({ where: { post_id: id } }, { transaction: t });
 
-    await AnswersModel.destroy({ where: { post_id: id } });
+    await CommentsModel.destroy({ where: { post_id: id } }, { transaction: t });
 
-    await CommentsModel.destroy({ where: { post_id: id } });
+    await PostTagRepository.remove(id, t);
 
-    await PostsModel.destroy({ where: { id } });
+    await PostsModel.destroy({ where: { id } }, { transaction: t });
 
     result(
       null,
       responseHandler(true, 200, 'Post Removed', null),
     );
 
-    await transaction.commit();
+    await t.commit();
   } catch (error) {
     console.log(error);
     result(responseHandler(false, 500, 'Something went wrong', null), null);
-    if (transaction) {
-      await transaction.rollback();
-    }
+    await t.rollback();
   }
 };
 
