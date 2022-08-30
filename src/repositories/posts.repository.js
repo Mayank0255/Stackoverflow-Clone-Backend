@@ -7,7 +7,6 @@ const {
 } = require('../helpers');
 const {
   PostsModel,
-  PostTagModel,
   TagsModel,
   AnswersModel,
   CommentsModel, UsersModel,
@@ -85,12 +84,7 @@ exports.create = async (newPost, result) => {
       });
     }
 
-    await PostTagModel.bulkCreate(mapAllTags)
-      .catch((error) => {
-        console.log(error);
-        result(responseHandler(false, 500, 'Something went wrong', null), null);
-        return null;
-      });
+    PostTagRepository.bulkCreate(mapAllTags);
 
     result(null, responseHandler(true, 200, 'Post Created', post.id));
 
