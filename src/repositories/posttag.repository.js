@@ -1,7 +1,7 @@
 const { PostTagModel } = require('../models');
 
-exports.remove = (postId, t) => {
-  PostTagModel
+exports.remove = async (postId, t) => {
+  await PostTagModel
     .destroy({ where: { post_id: postId } }, { transaction: t })
     .then(() => ({ status: true, message: 'PostTag Removed' }))
     .catch((error) => {
@@ -9,8 +9,8 @@ exports.remove = (postId, t) => {
     });
 };
 
-exports.bulkCreate = (tags) => {
-  PostTagModel.bulkCreate(tags)
+exports.bulkCreate = async (tags) => {
+  await PostTagModel.bulkCreate(tags)
     .catch((error) => {
       console.log(error);
       result(responseHandler(false, 500, 'Something went wrong', null), null);

@@ -9,9 +9,12 @@ const {
   PostsModel,
   TagsModel,
   AnswersModel,
-  CommentsModel, UsersModel,
+  CommentsModel,
+  UsersModel,
 } = require('../models');
 const PostTagRepository = require('./posttag.repository');
+const CommentsRepository = require('./comments.repository');
+const AnswersRepository = require('./answers.repository');
 
 exports.create = async (newPost, result) => {
   let transaction;
@@ -104,9 +107,9 @@ exports.remove = async (id, result) => {
   try {
     t = await db.transaction();
 
-    await AnswersModel.destroy({ where: { post_id: id } }, { transaction: t });
+    await AnswersRepository.removePostAnswers(id, t);
 
-    await CommentsModel.destroy({ where: { post_id: id } }, { transaction: t });
+    await CommentsRepository.removePostComments(id, t);
 
     await PostTagRepository.remove(id, t);
 
@@ -177,33 +180,9 @@ exports.retrieveOne = async (postId, result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  const answersCount = await PostsModel.count({
-    where: {
-      id: postId,
-    },
-    include: {
-      model: AnswersModel,
-      required: true,
-      attributes: [],
-    },
-  }).catch((error) => {
-    console.log(error);
-    return result(responseHandler(false, 500, 'Something went wrong!', null), null);
-  });
+  const answersCount = await this.countAnswersForOne(postId);
 
-  const commentsCount = await PostsModel.count({
-    where: {
-      id: postId,
-    },
-    include: {
-      model: CommentsModel,
-      required: true,
-      attributes: [],
-    },
-  }).catch((error) => {
-    console.log(error);
-    return result(responseHandler(false, 500, 'Something went wrong!', null), null);
-  });
+  const commentsCount = await this.countCommentsForOne(postId);
 
   if (utils.conditional.isNull(queryResult)) {
     return result(responseHandler(false, 404, 'There isn\'t any post by this id', null), null);
@@ -264,31 +243,7 @@ exports.retrieveAll = async (result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  const postCounts = await PostsModel.findAll({
-    distinct: true,
-    attributes: [
-      'id',
-      [Sequelize.literal('COUNT(DISTINCT(answers.id))'), 'answer_count'],
-      [Sequelize.literal('COUNT(DISTINCT(comments.id))'), 'comment_count'],
-    ],
-    include: [
-      {
-        model: AnswersModel,
-        required: false,
-        attributes: [],
-      },
-      {
-        model: CommentsModel,
-        required: false,
-        attributes: [],
-      },
-    ],
-    group: ['id'],
-    order: [['created_at', 'DESC']],
-  }).catch((error) => {
-    console.log(error);
-    return result(responseHandler(false, 500, 'Something went wrong!', null), null);
-  });
+  const postCounts = await this.countForAll();
 
   const postsMap = posts.map((post) => utils.array.sequelizeResponse(
     post,
@@ -350,39 +305,7 @@ exports.retrieveAllTag = async (tagName, result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  const postCounts = await PostsModel.findAll({
-    distinct: true,
-    where: {
-      '$tags.tagname$': tagName,
-    },
-    attributes: [
-      'id',
-      [Sequelize.literal('COUNT(DISTINCT(answers.id))'), 'answer_count'],
-      [Sequelize.literal('COUNT(DISTINCT(comments.id))'), 'comment_count'],
-    ],
-    include: [
-      {
-        model: TagsModel,
-        required: true,
-        attributes: [],
-      },
-      {
-        model: AnswersModel,
-        required: false,
-        attributes: [],
-      },
-      {
-        model: CommentsModel,
-        required: false,
-        attributes: [],
-      },
-    ],
-    group: ['id'],
-    order: [['created_at', 'DESC']],
-  }).catch((error) => {
-    console.log(error);
-    return result(responseHandler(false, 500, 'Something went wrong!', null), null);
-  });
+  const postCounts = await this.countForAll(tagName);
 
   if (utils.conditional.isArrayEmpty(posts)) {
     return result(responseHandler(false, 404, 'There are no posts', null), null);
@@ -407,4 +330,76 @@ exports.retrieveAllTag = async (tagName, result) => {
   const response = utils.array.mergeById(postsMap, postCountsMap);
 
   return result(null, responseHandler(true, 200, 'Success', response));
+};
+
+exports.countCommentsForOne = async (postId) => await PostsModel.count({
+  where: {
+    id: postId,
+  },
+  include: {
+    model: CommentsModel,
+    required: true,
+    attributes: [],
+  },
+}).catch((error) => {
+  console.log(error);
+  return result(responseHandler(false, 500, 'Something went wrong!', null), null);
+});
+
+exports.countAnswersForOne = async (postId) => await PostsModel.count({
+  where: {
+    id: postId,
+  },
+  include: {
+    model: AnswersModel,
+    required: true,
+    attributes: [],
+  },
+}).catch((error) => {
+  console.log(error);
+  return result(responseHandler(false, 500, 'Something went wrong!', null), null);
+});
+
+exports.countForAll = async (tagName = '') => {
+  const req = {
+    distinct: true,
+    attributes: [
+      'id',
+      [Sequelize.literal('COUNT(DISTINCT(answers.id))'), 'answer_count'],
+      [Sequelize.literal('COUNT(DISTINCT(comments.id))'), 'comment_count'],
+    ],
+    include: [
+      {
+        model: AnswersModel,
+        required: false,
+        attributes: [],
+      },
+      {
+        model: CommentsModel,
+        required: false,
+        attributes: [],
+      },
+    ],
+    group: ['id'],
+    order: [['created_at', 'DESC']],
+  };
+
+  if (tagName !== '') {
+    req.where = {
+      '$tags.tagname$': tagName,
+    };
+
+    req.include.push({
+      model: TagsModel,
+      required: true,
+      attributes: [],
+    });
+  }
+
+  return await PostsModel
+    .findAll(req)
+    .catch((error) => {
+      console.log(error);
+      throw error;
+    });
 };

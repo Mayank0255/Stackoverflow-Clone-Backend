@@ -34,6 +34,15 @@ exports.remove = async (id, result) => {
     });
 };
 
+exports.removePostComments = async (postId, t) => {
+  await CommentsModel
+    .destroy({ where: { post_id: postId } }, { transaction: t })
+    .then(() => ({ status: true, message: 'Comment Removed' }))
+    .catch((error) => {
+      throw new Error(`Comment Delete Operation Failed: ${error}`);
+    });
+};
+
 exports.retrieveAll = async (postId, result) => {
   const queryResult = await CommentsModel.findAll({
     where: {
