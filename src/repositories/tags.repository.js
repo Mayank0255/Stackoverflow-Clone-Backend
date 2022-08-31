@@ -41,7 +41,7 @@ exports.retrieveAll = async (result) => {
   result(null, responseHandler(true, 200, 'Success', tagsMap));
 };
 
-exports.retrieveOne = async (tagName, result) => {
+exports.retrieveOneWithCount = async (tagName, result) => {
   let queryResult = await TagsModel.findOne({
     require: false,
     attributes: [
@@ -78,3 +78,21 @@ exports.retrieveOne = async (tagName, result) => {
 
   result(null, responseHandler(true, 200, 'Success', queryResult));
 };
+
+exports.bulkCreate = async (tags) => await TagsModel.bulkCreate(tags)
+  .catch((error) => {
+    console.log(error);
+    result(responseHandler(false, 500, 'Something went wrong', null), null);
+    return null;
+  });
+
+exports.retrieveOne = async (tagname) => await TagsModel.findOne({
+  where: {
+    tagname,
+  },
+})
+  .catch((error) => {
+    console.log(error);
+    result(responseHandler(false, 500, 'Something went wrong', null), null);
+    return null;
+  });

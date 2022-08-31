@@ -12,9 +12,12 @@ const {
   CommentsModel,
   UsersModel,
 } = require('../models');
-const PostTagRepository = require('./posttag.repository');
-const CommentsRepository = require('./comments.repository');
-const AnswersRepository = require('./answers.repository');
+const {
+  PostTagRepository,
+  CommentsRepository,
+  AnswersRepository,
+  TagsRepository,
+} = require('./index');
 
 exports.create = async (newPost, result) => {
   let transaction;
@@ -43,16 +46,7 @@ exports.create = async (newPost, result) => {
     let mapNewTags = [];
 
     for (const item of tags) {
-      const tag = await TagsModel.findOne({
-        where: {
-          tagname: item,
-        },
-      })
-        .catch((error) => {
-          console.log(error);
-          result(responseHandler(false, 500, 'Something went wrong', null), null);
-          return null;
-        });
+      const tag = await TagsRepository.retrieveOne(item);
 
       if (!utils.conditional.isNull(tag)) {
         mapAllTags.push({
@@ -73,12 +67,7 @@ exports.create = async (newPost, result) => {
     const resp = await investApi.fetchTagDesc(mapAllTagsWithoutDescString);
     mapNewTags = investApi.prepareTags(mapAllTagsWithoutDesc, resp);
 
-    const newCreatedTags = await TagsModel.bulkCreate(mapNewTags)
-      .catch((error) => {
-        console.log(error);
-        result(responseHandler(false, 500, 'Something went wrong', null), null);
-        return null;
-      });
+    const newCreatedTags = await TagsRepository.bulkCreate(mapNewTags);
 
     for (const tag of newCreatedTags) {
       mapAllTags.push({
@@ -87,7 +76,7 @@ exports.create = async (newPost, result) => {
       });
     }
 
-    PostTagRepository.bulkCreate(mapAllTags);
+    await PostTagRepository.bulkCreate(mapAllTags);
 
     result(null, responseHandler(true, 200, 'Post Created', post.id));
 
