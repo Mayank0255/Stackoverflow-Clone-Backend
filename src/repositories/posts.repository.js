@@ -1,10 +1,6 @@
 const Sequelize = require('sequelize');
-const db = require('../config/db.config');
 const utils = require('../utils');
-const {
-  responseHandler,
-  investApi,
-} = require('../helpers');
+const { responseHandler } = require('../helpers');
 const {
   PostsModel,
   TagsModel,
@@ -12,112 +8,30 @@ const {
   CommentsModel,
   UsersModel,
 } = require('../models');
-const {
-  PostTagRepository,
-  CommentsRepository,
-  AnswersRepository,
-  TagsRepository,
-} = require('./index');
 
-exports.create = async (newPost, result) => {
-  let transaction;
-  try {
-    transaction = await db.transaction();
-
-    const tags = newPost.tagName.split(',').map((item) => item.trim());
-
-    if (tags.length > 5) {
-      return result(responseHandler(false, 400, 'Only Tags Upto 5 Are Allowed', null), null);
-    }
-
-    const post = await PostsModel.create({
-      title: newPost.title,
-      body: newPost.body,
-      user_id: newPost.userId,
-    })
-      .catch((error) => {
-        console.log(error);
-        result(responseHandler(false, 500, 'Something went wrong', null), null);
-        return null;
-      });
-
-    const mapAllTags = [];
-    const mapAllTagsWithoutDesc = [];
-    let mapNewTags = [];
-
-    for (const item of tags) {
-      const tag = await TagsRepository.retrieveOne(item);
-
-      if (!utils.conditional.isNull(tag)) {
-        mapAllTags.push({
-          post_id: post.id,
-          tag_id: tag.id,
-        });
-      } else {
-        mapAllTagsWithoutDesc.push(item);
-      }
-    }
-
-    /**
-     * prepare a string of tags with ";" as delimeter
-     * for eg:- [java, javascript] will become "java;javascript"
-     */
-    const mapAllTagsWithoutDescString = mapAllTagsWithoutDesc.join(';');
-
-    const resp = await investApi.fetchTagDesc(mapAllTagsWithoutDescString);
-    mapNewTags = investApi.prepareTags(mapAllTagsWithoutDesc, resp);
-
-    const newCreatedTags = await TagsRepository.bulkCreate(mapNewTags);
-
-    for (const tag of newCreatedTags) {
-      mapAllTags.push({
-        post_id: post.id,
-        tag_id: tag.id,
-      });
-    }
-
-    await PostTagRepository.bulkCreate(mapAllTags);
-
-    result(null, responseHandler(true, 200, 'Post Created', post.id));
-
-    await transaction.commit();
-  } catch (error) {
+exports.create = async (newPost, result) => await PostsModel
+  .create({
+    title: newPost.title,
+    body: newPost.body,
+    user_id: newPost.userId,
+  })
+  .catch((error) => {
     console.log(error);
     result(responseHandler(false, 500, 'Something went wrong', null), null);
-    if (transaction) {
-      await transaction.rollback();
-    }
-  }
+    return null;
+  });
+
+exports.remove = async (postId, t) => {
+  await PostsModel
+    .destroy({ where: { id: postId } }, { transaction: t })
+    .then(() => ({ status: true, message: 'Post Removed' }))
+    .catch((error) => {
+      console.log(error);
+      throw new Error(`Post Delete Operation Failed: ${error}`);
+    });
 };
 
-exports.remove = async (id, result) => {
-  let t;
-
-  try {
-    t = await db.transaction();
-
-    await AnswersRepository.removePostAnswers(id, t);
-
-    await CommentsRepository.removePostComments(id, t);
-
-    await PostTagRepository.remove(id, t);
-
-    await PostsModel.destroy({ where: { id } }, { transaction: t });
-
-    result(
-      null,
-      responseHandler(true, 200, 'Post Removed', null),
-    );
-
-    await t.commit();
-  } catch (error) {
-    console.log(error);
-    result(responseHandler(false, 500, 'Something went wrong', null), null);
-    await t.rollback();
-  }
-};
-
-exports.retrieveOne = async (postId, result) => {
+exports.incrementViews = async (postId) => {
   await PostsModel.increment('views',
     {
       by: 1,
@@ -125,17 +39,11 @@ exports.retrieveOne = async (postId, result) => {
     })
     .catch((error) => {
       console.log('error: ', error);
-      return result(
-        responseHandler(
-          false,
-          error ? error.statusCode : 404,
-          error ? error.message : 'There isn\'t any post by this id',
-          null,
-        ),
-        null,
-      );
+      throw new Error('There isn\'t any post by this id');
     });
+};
 
+exports.retrieveOne = async (postId) => {
   let queryResult = await PostsModel.findOne({
     distinct: true,
     where: {
@@ -166,15 +74,11 @@ exports.retrieveOne = async (postId, result) => {
     ],
   }).catch((error) => {
     console.log(error);
-    return result(responseHandler(false, 500, 'Something went wrong!', null), null);
+    throw new Error('Something went wrong!');
   });
 
-  const answersCount = await this.countAnswersForOne(postId);
-
-  const commentsCount = await this.countCommentsForOne(postId);
-
   if (utils.conditional.isNull(queryResult)) {
-    return result(responseHandler(false, 404, 'There isn\'t any post by this id', null), null);
+    throw new Error('There isn\'t any post by this id');
   }
 
   queryResult = utils.array.sequelizeResponse(
@@ -191,17 +95,11 @@ exports.retrieveOne = async (postId, result) => {
     'tags',
   );
 
-  const response = {
-    answer_count: answersCount,
-    comment_count: commentsCount,
-    ...queryResult,
-  };
-
-  return result(null, responseHandler(true, 200, 'Success', response));
+  return queryResult;
 };
 
-exports.retrieveAll = async (result) => {
-  const posts = await PostsModel.findAll({
+exports.retrieveAll = async (tagName = '') => {
+  const query = {
     distinct: true,
     attributes: [
       'id',
@@ -227,12 +125,20 @@ exports.retrieveAll = async (result) => {
       },
     ],
     order: [['created_at', 'DESC']],
-  }).catch((error) => {
-    console.log(error);
-    return result(responseHandler(false, 500, 'Something went wrong!', null), null);
-  });
+  };
 
-  const postCounts = await this.countForAll();
+  if (tagName !== '') {
+    query.where = {
+      '$tags.tagname$': tagName,
+    };
+  }
+
+  const posts = await PostsModel
+    .findAll(query)
+    .catch((error) => {
+      console.log(error);
+      throw new Error('Something went wrong!');
+    });
 
   const postsMap = posts.map((post) => utils.array.sequelizeResponse(
     post,
@@ -249,76 +155,10 @@ exports.retrieveAll = async (result) => {
   ));
 
   if (utils.conditional.isArrayEmpty(postsMap)) {
-    return result(responseHandler(false, 404, 'There are no posts', null), null);
+    throw new Error('There are no posts');
   }
 
-  const postCountsMap = postCounts.map((post) => utils.array.sequelizeResponse(post, 'id', 'answer_count', 'comment_count'));
-
-  const response = utils.array.mergeById(postsMap, postCountsMap);
-
-  return result(null, responseHandler(true, 200, 'Success', response));
-};
-
-exports.retrieveAllTag = async (tagName, result) => {
-  const posts = await PostsModel.findAll({
-    where: {
-      '$tags.tagname$': tagName,
-    },
-    distinct: true,
-    attributes: [
-      'id',
-      'user_id',
-      'views',
-      [Sequelize.literal('user.username'), 'username'],
-      [Sequelize.literal('user.gravatar'), 'gravatar'],
-      'created_at',
-      'updated_at',
-      'title',
-      'body',
-    ],
-    include: [
-      {
-        model: TagsModel,
-        required: true,
-        attributes: ['id', 'tagname'],
-      },
-      {
-        model: UsersModel,
-        required: true,
-        attributes: [],
-      },
-    ],
-    order: [['created_at', 'DESC']],
-  }).catch((error) => {
-    console.log(error);
-    return result(responseHandler(false, 500, 'Something went wrong!', null), null);
-  });
-
-  const postCounts = await this.countForAll(tagName);
-
-  if (utils.conditional.isArrayEmpty(posts)) {
-    return result(responseHandler(false, 404, 'There are no posts', null), null);
-  }
-
-  const postsMap = posts.map((post) => utils.array.sequelizeResponse(
-    post,
-    'id',
-    'user_id',
-    'views',
-    'title',
-    'body',
-    'tags',
-    'username',
-    'gravatar',
-    'created_at',
-    'updated_at',
-  ));
-
-  const postCountsMap = postCounts.map((post) => utils.array.sequelizeResponse(post, 'id', 'answer_count', 'comment_count'));
-
-  const response = utils.array.mergeById(postsMap, postCountsMap);
-
-  return result(null, responseHandler(true, 200, 'Success', response));
+  return postsMap;
 };
 
 exports.countCommentsForOne = async (postId) => await PostsModel.count({

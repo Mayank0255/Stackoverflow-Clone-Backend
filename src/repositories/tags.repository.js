@@ -86,13 +86,16 @@ exports.bulkCreate = async (tags) => await TagsModel.bulkCreate(tags)
     return null;
   });
 
-exports.retrieveOne = async (tagname) => await TagsModel.findOne({
-  where: {
-    tagname,
-  },
-})
-  .catch((error) => {
-    console.log(error);
-    result(responseHandler(false, 500, 'Something went wrong', null), null);
-    return null;
-  });
+exports.retrieveOne = async (tagname) => {
+  console.log('hello', tagname);
+  return await TagsModel.findOne({
+    where: {
+      tagname,
+    },
+  })
+    .catch((error) => {
+      console.log(error);
+      result(responseHandler(false, 500, 'Something went wrong', null), null);
+      return null;
+    });
+};
