@@ -1,14 +1,7 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db.config');
 
-// eslint-disable-next-line func-names
-const Comment = function (answer) {
-  this.body = answer.body;
-  this.userId = answer.userId;
-  this.postId = answer.postId;
-};
-
-const CommentsModelSequelize = db.define('comments', {
+const CommentsModel = db.define('comments', {
   id: {
     type: DataTypes.UUID,
     allowNull: false,
@@ -50,4 +43,4 @@ const CommentsModelSequelize = db.define('comments', {
   ],
 });
 
-module.exports = { Comment, CommentsModelSequelize };
+module.exports = { CommentsModel };

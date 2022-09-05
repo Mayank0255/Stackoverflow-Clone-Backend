@@ -1,13 +1,15 @@
-const usersRepository = require('./users.repository');
-const postsRepository = require('./posts.repository');
-const answersRepository = require('./answers.repository');
-const commentsRepository = require('./comments.repository');
-const tagsRepository = require('./tags.repository');
+const UsersRepository = require('./users.repository');
+const PostsRepository = require('./posts.repository');
+const AnswersRepository = require('./answers.repository');
+const CommentsRepository = require('./comments.repository');
+const TagsRepository = require('./tags.repository');
+const PostTagRepository = require('./posttag.repository');
 
 module.exports = {
-  usersRepository,
-  postsRepository,
-  answersRepository,
-  commentsRepository,
-  tagsRepository,
+  UsersRepository,
+  PostsRepository,
+  AnswersRepository,
+  CommentsRepository,
+  TagsRepository,
+  PostTagRepository,
 };

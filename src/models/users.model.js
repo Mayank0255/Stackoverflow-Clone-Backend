@@ -1,14 +1,7 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db.config');
 
-// constructor
-// eslint-disable-next-line func-names
-const User = function (user) {
-  this.username = user.username;
-  this.password = user.password;
-};
-
-const UsersModelSequelize = db.define('users', {
+const UsersModel = db.define('users', {
   id: {
     type: DataTypes.UUID,
     allowNull: false,
@@ -58,4 +51,4 @@ const UsersModelSequelize = db.define('users', {
   ],
 });
 
-module.exports = { User, UsersModelSequelize };
+module.exports = { UsersModel };

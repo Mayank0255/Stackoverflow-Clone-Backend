@@ -1,7 +1,13 @@
 const { validationResult } = require('express-validator');
 const { responseHandler, asyncHandler } = require('../helpers');
-const { Post } = require('../models');
 const { postsService } = require('../services');
+
+const Post = (post) => ({
+  title: post.title,
+  body: post.body,
+  userId: post.userId,
+  tagName: post.tagName,
+});
 
 exports.getPosts = asyncHandler(async (req, res) => {
   try {
@@ -68,7 +74,7 @@ exports.addPost = asyncHandler(async (req, res) => {
       .json(responseHandler(false, 400, errors.array()[0].msg, null));
   }
   try {
-    const post = new Post({
+    const post = Post({
       title: req.body.title,
       body: req.body.body,
       userId: req.user.id,

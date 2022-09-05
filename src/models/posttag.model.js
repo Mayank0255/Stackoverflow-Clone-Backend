@@ -1,6 +1,6 @@
 const db = require('../config/db.config');
 
-const PostTagModelSequelize = db.define('posttag', {}, {
+const PostTagModel = db.define('posttag', {}, {
   db,
   tableName: 'posttag',
   underscored: true,
@@ -25,4 +25,4 @@ const PostTagModelSequelize = db.define('posttag', {}, {
   ],
 });
 
-module.exports = { PostTagModelSequelize };
+module.exports = { PostTagModel };
