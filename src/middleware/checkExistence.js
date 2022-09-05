@@ -1,17 +1,11 @@
 const { responseHandler } = require('../helpers');
 const { UsersModel } = require('../models');
+const { UsersRepository } = require('../repositories');
 
 const checkExistence = async (req, res, next) => {
   const { username } = req.body;
 
-  const user = await UsersModel
-    .findOne({ where: { username } })
-    .catch((error) => {
-      console.log(error.message);
-      return res
-        .status(error.statusCode)
-        .json(responseHandler(false, error.statusCode, 'Some error occurred while logging in the user.', null));
-    });
+  const user = await UsersRepository.retrieveOne({ username });
 
   if (user !== null) {
     return res
