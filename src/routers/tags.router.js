@@ -15,4 +15,7 @@ router.route('/')
 router.route('/:tagname')
   .get(tagsController.getSingleTag);
 
+router.route('/insert')
+  .post(tagsController.insert);
+
 module.exports = router;

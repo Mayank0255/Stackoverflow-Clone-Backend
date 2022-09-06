@@ -82,8 +82,7 @@ exports.retrieveOneWithCount = async (tagName, result) => {
 exports.bulkCreate = async (tags) => await TagsModel.bulkCreate(tags)
   .catch((error) => {
     console.log(error);
-    result(responseHandler(false, 500, 'Something went wrong', null), null);
-    return null;
+    throw new Error('Something went wrong');
   });
 
 exports.retrieveOne = async (tagname) => {

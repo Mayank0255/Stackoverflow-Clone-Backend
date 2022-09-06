@@ -48,6 +48,7 @@ exports.create = async (newPost, result) => {
     const resp = await investApi.fetchTagDesc(mapAllTagsWithoutDescString);
     mapNewTags = investApi.prepareTags(mapAllTagsWithoutDesc, resp);
 
+    console.log('mapNewTags: ', mapNewTags);
     const newCreatedTags = await TagsRepository.bulkCreate(mapNewTags);
 
     for (const tag of newCreatedTags) {
