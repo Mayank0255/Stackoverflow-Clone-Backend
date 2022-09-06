@@ -38,11 +38,11 @@ exports.retrieveAll = async (result) => {
       {
         model: PostsModel,
         attributes: [],
-        required: true,
+        required: false,
         include: {
           model: TagsModel,
           attributes: [],
-          required: true,
+          required: false,
         },
       },
     ],
@@ -99,12 +99,12 @@ exports.retrieveOneWithCounts = async (id) => {
     ],
     include: [
       {
-        required: true,
+        required: false,
         model: PostsModel,
         attributes: [],
         include: {
           attributes: [],
-          required: true,
+          required: false,
           model: TagsModel,
         },
       },

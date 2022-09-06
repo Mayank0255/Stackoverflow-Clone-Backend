@@ -63,12 +63,12 @@ exports.retrieveOne = async (postId) => {
     include: [
       {
         model: TagsModel,
-        required: true,
+        required: false,
         attributes: ['id', 'tagname'],
       },
       {
         model: UsersModel,
-        required: true,
+        required: false,
         attributes: [],
       },
     ],
@@ -115,12 +115,12 @@ exports.retrieveAll = async (tagName = '') => {
     include: [
       {
         model: TagsModel,
-        required: true,
+        required: false,
         attributes: ['id', 'tagname'],
       },
       {
         model: UsersModel,
-        required: true,
+        required: false,
         attributes: [],
       },
     ],
@@ -167,7 +167,7 @@ exports.countCommentsForOne = async (postId) => await PostsModel.count({
   },
   include: {
     model: CommentsModel,
-    required: true,
+    required: false,
     attributes: [],
   },
 }).catch((error) => {
@@ -181,7 +181,7 @@ exports.countAnswersForOne = async (postId) => await PostsModel.count({
   },
   include: {
     model: AnswersModel,
-    required: true,
+    required: false,
     attributes: [],
   },
 }).catch((error) => {
@@ -220,7 +220,7 @@ exports.countForAll = async (tagName = '') => {
 
     req.include.push({
       model: TagsModel,
-      required: true,
+      required: false,
       attributes: [],
     });
   }
