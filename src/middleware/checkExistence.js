@@ -1,5 +1,4 @@
 const { responseHandler } = require('../helpers');
-const { UsersModel } = require('../models');
 const { UsersRepository } = require('../repositories');
 
 const checkExistence = async (req, res, next) => {
