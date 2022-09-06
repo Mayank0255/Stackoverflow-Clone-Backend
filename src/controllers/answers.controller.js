@@ -1,7 +1,12 @@
 const { validationResult } = require('express-validator');
 const { responseHandler, asyncHandler } = require('../helpers');
-const { Answer } = require('../models');
 const { answersService } = require('../services');
+
+const Answer = (answer) => ({
+  body: answer.body,
+  userId: answer.userId,
+  postId: answer.postId,
+});
 
 exports.getAnswers = asyncHandler(async (req, res) => {
   try {
@@ -28,7 +33,7 @@ exports.addAnswer = asyncHandler(async (req, res) => {
       .json(responseHandler(false, 400, errors.array()[0].msg, null));
   }
   try {
-    const answer = new Answer({
+    const answer = Answer({
       body: req.body.text,
       userId: req.user.id,
       postId: req.params.id,

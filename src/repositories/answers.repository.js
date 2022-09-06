@@ -1,9 +1,10 @@
 const Sequelize = require('sequelize');
-const { responseHandler, conditionalHelper, format } = require('../helpers');
-const { UsersModelSequelize, AnswersModelSequelize } = require('../models');
+const utils = require('../utils');
+const { responseHandler } = require('../helpers');
+const { UsersModel, AnswersModel } = require('../models');
 
 exports.create = async (newAnswer, result) => {
-  await AnswersModelSequelize.create({
+  await AnswersModel.create({
     body: newAnswer.body,
     user_id: newAnswer.userId,
     post_id: newAnswer.postId,
@@ -21,7 +22,7 @@ exports.create = async (newAnswer, result) => {
 };
 
 exports.remove = async (id, result) => {
-  await AnswersModelSequelize.destroy({
+  await AnswersModel.destroy({
     where: { id },
   })
     .then(() => {
@@ -33,8 +34,17 @@ exports.remove = async (id, result) => {
     });
 };
 
+exports.removePostAnswers = async (postId, t) => {
+  await AnswersModel
+    .destroy({ where: { post_id: postId } }, { transaction: t })
+    .then(() => ({ status: true, message: 'Answer Removed' }))
+    .catch((error) => {
+      throw new Error(`Answer Delete Operation Failed: ${error}`);
+    });
+};
+
 exports.retrieveAll = async (postId, result) => {
-  const queryResult = await AnswersModelSequelize.findAll({
+  const queryResult = await AnswersModel.findAll({
     where: {
       post_id: postId,
     },
@@ -48,7 +58,7 @@ exports.retrieveAll = async (postId, result) => {
       [Sequelize.literal('user.gravatar'), 'gravatar'],
     ],
     include: {
-      model: UsersModelSequelize,
+      model: UsersModel,
       attributes: [],
     },
   }).catch((error) => {
@@ -56,7 +66,7 @@ exports.retrieveAll = async (postId, result) => {
     return result(responseHandler(false, 500, 'Something went wrong!', null), null);
   });
 
-  const queryResultMap = queryResult.map((answer) => format.sequelizeResponse(
+  const queryResultMap = queryResult.map((answer) => utils.array.sequelizeResponse(
     answer,
     'id',
     'user_id',
@@ -67,7 +77,7 @@ exports.retrieveAll = async (postId, result) => {
     'gravatar',
   ));
 
-  if (conditionalHelper.isArrayEmpty(queryResultMap)) {
+  if (utils.conditional.isArrayEmpty(queryResultMap)) {
     console.log('error: ', 'There are no answers');
     return result(responseHandler(false, 404, 'There are no answers', null), null);
   }

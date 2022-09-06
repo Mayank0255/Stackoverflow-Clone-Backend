@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db.config');
 
-const TagsModelSequelize = db.define('tags', {
+const TagsModel = db.define('tags', {
   id: {
     type: DataTypes.UUID,
     allowNull: false,
@@ -42,4 +42,4 @@ const TagsModelSequelize = db.define('tags', {
   ],
 });
 
-module.exports = { TagsModelSequelize };
+module.exports = { TagsModel };
