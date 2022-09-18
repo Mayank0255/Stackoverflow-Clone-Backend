@@ -1,4 +1,5 @@
 const db = require('../config/db.config');
+const client = require('../config/redis');
 const { responseHandler, investApi } = require('../helpers');
 const utils = require('../utils');
 const {
@@ -117,7 +118,18 @@ exports.retrieveOne = async (postId, result) => {
 };
 
 exports.retrieveAll = async (result) => {
-  const postsMap = await PostsRepository.retrieveAll();
+  await client.set('key', 'testing');
+  const value = await client.get('key');
+
+  console.log('value: ', value);
+
+  await client.rpush(['frameworks_list', 'ReactJS', 'Angular']);
+
+  const frameworksList = await client.get('frameworks_list');
+
+  console.log('frameworksList: ', frameworksList);
+
+  postsMap = await PostsRepository.retrieveAll();
 
   const postCounts = await PostsRepository.countForAll();
 

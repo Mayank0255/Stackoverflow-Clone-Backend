@@ -25,6 +25,11 @@ const config = {
     SECRET: getEnvVariable('JWT_SECRET'),
     EXPIRES_IN: +getEnvVariable('JWT_EXPIRES_IN'),
   },
+  REDIS: {
+    HOST: getEnvVariable('REDIS_HOST'),
+    PORT: getEnvVariable('REDIS_PORT'),
+    PASSWORD: getEnvVariable('REDIS_PASSWORD'),
+  },
 };
 
 module.exports = config;
