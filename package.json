@@ -24,10 +24,13 @@
     "express-session": "^1.17.0",
     "express-validator": "^6.4.0",
     "helmet": "^3.23.3",
+    "ioredis": "^5.2.3",
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.10.0",
     "mysql2": "^2.3.2",
     "nodemon": "^2.0.15",
+    "redis": "^4.3.1",
+    "redis-om": "^0.3.6",
     "sequelize": "^6.6.4",
     "xss-clean": "^0.1.1"
   },
