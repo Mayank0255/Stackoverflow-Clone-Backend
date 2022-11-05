@@ -17,6 +17,7 @@ const getEnvVariable = (key) => {
 const config = {
   DB: {
     HOST: getEnvVariable('HOST'),
+    PORT: getEnvVariable('DATABASE_PORT'),
     USER: getEnvVariable('USER'),
     DATABASE: getEnvVariable('DATABASE'),
     PASSWORD: getEnvVariable('PASSWORD'),
