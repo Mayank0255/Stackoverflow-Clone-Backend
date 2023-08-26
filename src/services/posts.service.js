@@ -7,6 +7,7 @@ const {
   CommentsRepository,
   PostTagRepository,
   TagsRepository,
+  VotesRepository,
 } = require('../repositories');
 
 exports.create = async (newPost, result) => {
@@ -82,6 +83,8 @@ exports.remove = async (id, result) => {
     await CommentsRepository.removePostComments(id, t);
 
     await PostTagRepository.remove(id, t);
+
+    await VotesRepository.removeAllVotes("posts",id,t)
 
     await PostsRepository.remove(id, t);
 
