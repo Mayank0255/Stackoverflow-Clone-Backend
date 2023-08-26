@@ -20,17 +20,14 @@ exports.create = async (newAnswer, result) => {
       result(responseHandler(false, 500, 'Some error occurred while adding the answer.', null), null);
     });
 };
-
-exports.remove = async (id, result) => {
-  await AnswersModel.destroy({
-    where: { id },
-  })
-    .then(() => {
-      result(null, responseHandler(true, 200, 'Answer Removed', null));
-    })
+ 
+exports.remove = async (id, t) => {
+  await AnswersModel
+    .destroy({ where: { id } }, { transaction: t })
+    .then(() => ({ status: true, message: 'Answer Removed' }))
     .catch((error) => {
-      console.log(error.message);
-      result(responseHandler(false, 404, 'This answer doesn\'t exists', null), null);
+      console.log(error);
+      throw new Error(`Answer Delete Operation Failed: ${error}`);
     });
 };
 

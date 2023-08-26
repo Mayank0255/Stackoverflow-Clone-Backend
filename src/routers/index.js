@@ -8,5 +8,6 @@ router.use('/posts', require('./posts.router'));
 router.use('/tags', require('./tags.router'));
 router.use('/posts/answers', require('./answers.router'));
 router.use('/posts/comments', require('./comments.router'));
+router.use('/votes', require('./votes.router'));
 
 module.exports = router;
